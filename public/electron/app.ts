@@ -1,7 +1,9 @@
-import path from 'path';
-
+const path = require('path');
 const { app, BrowserWindow } = require('electron');
 const isDev = require('electron-is-dev');
+const api = require('./api');
+
+api();
 
 function createWindow() {
   // Create the browser window.
@@ -22,7 +24,7 @@ function createWindow() {
   );
   // Open the DevTools.
   if (isDev) {
-    win.webContents.openDevTools({ mode: 'detach' });
+    win.webContents.openDevTools({ mode: 'right' });
   }
 }
 

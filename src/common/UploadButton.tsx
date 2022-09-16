@@ -1,11 +1,17 @@
 import { Button } from '@chakra-ui/react';
-import './UploadButton.css';
+import React from 'react';
+import './UploadButton.scss';
 
-function UploadButton({ onChange }: { onChange: () => void }) {
+function UploadButton({
+  onChange
+}: {
+  onChange: (e: React.SyntheticEvent<HTMLInputElement>) => void;
+}) {
   return (
     <div className="upload-button">
       <input
         type="file"
+        // @ts-ignore
         webkitdirectory=""
         directory=""
         multiple
