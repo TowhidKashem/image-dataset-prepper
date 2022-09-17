@@ -1,6 +1,6 @@
 import PubSub from 'pubsub-js';
 import { useState, useEffect, useRef } from 'react';
-import { useToast, Heading } from '@chakra-ui/react';
+import { useToast, Heading, Image } from '@chakra-ui/react';
 import UploadButton from 'common/UploadButton';
 import './App.scss';
 
@@ -23,16 +23,16 @@ window.electron.ipcRenderer.on(DELETE_IMAGE, (response) => {
 function App() {
   const toast = useToast();
 
-  const [directory, setDirectory] = useState<string>(null);
-  const directoryRef = useRef<string>(null);
+  const [image, setImage] = useState('');
+  const [emptyMessage, setEmptyMessage] = useState(false);
 
-  const [images, setImages] = useState<string[]>([]);
-  const imagesRef = useRef<string[]>([]);
-
+  const [directory, setDirectory] = useState('');
+  const [images, setImages] = useState([]);
   const [imageIndex, setImageIndex] = useState(0);
-  const imageIndexRef = useRef(0);
 
-  const [image, setImage] = useState<string>(null);
+  const directoryRef = useRef('');
+  const imagesRef = useRef([]);
+  const imageIndexRef = useRef(0);
 
   useEffect(() => {
     // keyboard navigation
@@ -46,27 +46,18 @@ function App() {
       }
     });
 
-    PubSub.subscribe(GET_ALL_IMAGES, async (topic, payload) => {
-      // console.warn('sub:', topic, payload);
-
+    PubSub.subscribe(GET_ALL_IMAGES, async (_, payload) => {
       setImages(payload);
       imagesRef.current = payload;
-
-      // setImageIndex(1);
-      // imageIndexRef.current = 1;
 
       getImage(); // get the first image
     });
 
-    PubSub.subscribe(GET_IMAGE, (topic, payload) => {
-      // console.warn('sub:', topic, payload);
-
+    PubSub.subscribe(GET_IMAGE, (_, payload) => {
       setImage(payload);
     });
 
-    PubSub.subscribe(DELETE_IMAGE, (topic, payload) => {
-      // console.warn('sub:', topic, payload);
-
+    PubSub.subscribe(DELETE_IMAGE, (_, payload) => {
       if (payload.success) {
         const newImages = [...imagesRef.current].filter(
           (image) => image !== imagesRef.current[imageIndexRef.current]
@@ -85,20 +76,36 @@ function App() {
         if (newImages.length > 0) {
           nextImage();
         } else {
-          setImage(null);
-          imagesRef.current = null;
+          resetAll();
+          setEmptyMessage(true);
         }
       } else {
         alert(payload.error);
       }
     });
+
+    // eslint-disable-next-line
   }, []);
+
+  const resetAll = () => {
+    setImage('');
+
+    setImages([]);
+    setImageIndex(0);
+    setDirectory('');
+
+    imagesRef.current = [];
+    imageIndexRef.current = 0;
+    directoryRef.current = '';
+  };
 
   const chooseFolder = (e) => {
     const { path } = e.currentTarget.files[0];
     const segments = path.split('/');
     segments.pop();
     const directory = segments.join('/');
+
+    setEmptyMessage(false);
 
     setDirectory(directory);
     directoryRef.current = directory;
@@ -109,37 +116,33 @@ function App() {
   const getImage = () => {
     const imageFile = imagesRef.current[imageIndexRef.current];
 
-    console.warn(GET_IMAGE, {
-      imageIndex: imageIndexRef.current,
-      imageFile
-    });
-
     if (imageFile) {
       window.electron.ipcRenderer.sendMessage(GET_IMAGE, {
         directory: directoryRef.current,
         filename: imageFile
       });
     }
+
+    console.warn(GET_IMAGE, {
+      imageIndex: imageIndexRef.current,
+      imageFile
+    });
   };
 
   const nextImage = () => {
     let newIndex = imageIndexRef.current + 1;
-    if (newIndex > imagesRef.current.length - 1) {
-      // console.warn('reset back to begining');
-      newIndex = 0;
-    }
+    if (newIndex > imagesRef.current.length - 1) newIndex = 0;
 
+    setImageIndex(newIndex);
     imageIndexRef.current = newIndex;
     getImage();
   };
 
   const prevImage = () => {
     let newIndex = imageIndexRef.current - 1;
-    if (newIndex < 0) {
-      // console.warn('reset back to end');
-      newIndex = imagesRef.current.length - 1;
-    }
+    if (newIndex < 0) newIndex = imagesRef.current.length - 1;
 
+    setImageIndex(newIndex);
     imageIndexRef.current = newIndex;
     getImage();
   };
@@ -154,23 +157,25 @@ function App() {
   const extension =
     images.length > 0 ? images[imageIndex].split('.').pop() : null;
 
+  const showUploadButton = !directory || emptyMessage;
+
   return (
     <div className="app">
-      {directory ? (
-        <div className="preview">
-          {!images.length && (
-            <Heading as="h1" size="3xl">
-              All images deleted, choose another folder.
-            </Heading>
-          )}
+      {emptyMessage && (
+        <Heading as="h2" size="2xl" className="empty">
+          All images deleted in this folder
+        </Heading>
+      )}
 
+      {directory && (
+        <div className="preview">
           {image && (
-            <img src={`data:image/${extension};base64,${image}`} alt="" />
+            <Image src={`data:image/${extension};base64,${image}`} alt="" />
           )}
         </div>
-      ) : (
-        <UploadButton onChange={chooseFolder} />
       )}
+
+      {showUploadButton && <UploadButton onChange={chooseFolder} />}
     </div>
   );
 }
