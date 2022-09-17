@@ -1,6 +1,6 @@
 import PubSub from 'pubsub-js';
 import { useState, useEffect, useRef } from 'react';
-import { useToast } from '@chakra-ui/react';
+import { useToast, Heading } from '@chakra-ui/react';
 import UploadButton from 'common/UploadButton';
 import './App.scss';
 
@@ -81,6 +81,13 @@ function App() {
           position: 'top',
           duration: 2000
         });
+
+        if (newImages.length > 0) {
+          nextImage();
+        } else {
+          setImage(null);
+          imagesRef.current = null;
+        }
       } else {
         alert(payload.error);
       }
@@ -151,6 +158,12 @@ function App() {
     <div className="app">
       {directory ? (
         <div className="preview">
+          {!images.length && (
+            <Heading as="h1" size="3xl">
+              All images deleted, choose another folder.
+            </Heading>
+          )}
+
           {image && (
             <img src={`data:image/${extension};base64,${image}`} alt="" />
           )}
