@@ -10,6 +10,8 @@
 
 # production
 /build
+/dist
+/ImageReviewer.app
 
 # misc
 .DS_Store

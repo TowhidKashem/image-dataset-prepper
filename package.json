@@ -13,7 +13,7 @@
     "build:windows": "yarn prebuild && electron-builder -w -c.extraMetadata.main=build/electron.js",
     "build:linux": "yarn prebuild && electron-builder -l -c.extraMetadata.main=build/electron.js",
     "prebuild": "rm -rf build dist && react-scripts build",
-    "move-mac-build": "cp -r dist/mac/ImageReviewer.app ./ImageReviewer-mac.app",
+    "move-mac-build": "cp -r dist/mac/ImageReviewer.app ./ImageReviewer.app",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
@@ -45,12 +45,14 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
     "react-scripts": "5.0.1",
+    "styled-components": "^5.3.5",
     "typescript": "^4.8.3"
   },
   "devDependencies": {
     "@types/node": "^16.11.59",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.6",
+    "@types/styled-components": "^5.1.26",
     "concurrently": "^7.4.0",
     "electron": "^20.1.4",
     "electron-builder": "^23.3.3",

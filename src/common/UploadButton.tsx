@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@chakra-ui/react';
-import './UploadButton.scss';
+import styled from 'styled-components';
 
 function UploadButton({
   label,
@@ -12,7 +12,7 @@ function UploadButton({
   const [hover, setHover] = useState(false);
 
   return (
-    <div className="upload-button">
+    <UploadButtonWrapper>
       <input
         type="file"
         // @ts-ignore
@@ -30,8 +30,13 @@ function UploadButton({
       <Button size="lg" colorScheme={hover ? 'twitter' : 'blue'}>
         {label}
       </Button>
-    </div>
+    </UploadButtonWrapper>
   );
 }
+
+const UploadButtonWrapper = styled.div`
+  position: relative;
+  display: inline-block;
+`;
 
 export default UploadButton;

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useToast, Heading, Image, Icon } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
+import styled from 'styled-components';
 import UploadButton from 'common/UploadButton';
-import './App.scss';
 
 const GET_ALL_IMAGES = 'GET_ALL_IMAGES';
 const GET_IMAGE = 'GET_IMAGE';
@@ -39,7 +39,6 @@ function App() {
     window.electron.ipcRenderer.once(GET_ALL_IMAGES, (images) => {
       setImages(images);
       imagesRef.current = images;
-
       getImage(); // get the first image
     });
 
@@ -100,11 +99,6 @@ function App() {
         filename: imageFile
       });
     }
-
-    // console.warn(GET_IMAGE, {
-    //   imageIndex: imageIndexRef.current,
-    //   imageFile
-    // });
   };
 
   const navigate = (callback: () => number) => {
@@ -160,7 +154,7 @@ function App() {
     images.length > 0 ? images[imageIndex].split('.').pop() : null;
 
   return (
-    <div className="app">
+    <ImageReviewer>
       {directory ? (
         <div className="preview">
           {image && (
@@ -168,20 +162,42 @@ function App() {
           )}
 
           {emptyMessage && (
-            <section className="empty">
-              <Heading as="h2" size="2xl" className="msg">
+            <EmptyMessage>
+              <EmptyHeader as="h2" size="2xl" className="msg">
                 All images deleted in this folder
-              </Heading>
+              </EmptyHeader>
 
               <Icon boxSize="4.5rem" as={FcOpenedFolder} />
-            </section>
+            </EmptyMessage>
           )}
         </div>
       ) : (
         <UploadButton label="Choose Folder" onChange={chooseFolder} />
       )}
-    </div>
+    </ImageReviewer>
   );
 }
+
+const ImageReviewer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+`;
+
+const EmptyMessage = styled.section`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+`;
+
+const EmptyHeader = styled(Heading)<{
+  size: string;
+}>`
+  color: white;
+  text-align: center;
+  margin-bottom: 40px;
+`;
 
 export default App;
