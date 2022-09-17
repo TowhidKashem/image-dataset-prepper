@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useToast, Heading, Image, Icon } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
 import UploadButton from 'common/UploadButton';
@@ -17,11 +17,11 @@ function App() {
   const isLoopComplete = useRef(false);
 
   const [directory, setDirectory] = useState('');
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<string[]>([]);
   const [imageIndex, setImageIndex] = useState(0);
 
   const directoryRef = useRef('');
-  const imagesRef = useRef([]);
+  const imagesRef = useRef<string[]>([]);
   const imageIndexRef = useRef(0);
 
   useEffect(() => {
@@ -77,8 +77,10 @@ function App() {
     // eslint-disable-next-line
   }, []);
 
-  const chooseFolder = (e) => {
-    const { path } = e.currentTarget.files[0];
+  const chooseFolder = (e: React.SyntheticEvent<HTMLInputElement>) => {
+    if (!e.currentTarget.files) return;
+
+    const { path } = e.currentTarget.files[0] as FileWithPath;
     const segments = path.split('/');
     segments.pop();
     const directory = segments.join('/');
@@ -105,7 +107,7 @@ function App() {
     // });
   };
 
-  const navigate = (callback) => {
+  const navigate = (callback: () => number) => {
     if (imagesRef.current.length > 0) {
       const newIndex = callback();
 
@@ -176,7 +178,7 @@ function App() {
           )}
         </div>
       ) : (
-        <UploadButton onChange={chooseFolder} />
+        <UploadButton label="Choose Folder" onChange={chooseFolder} />
       )}
     </div>
   );

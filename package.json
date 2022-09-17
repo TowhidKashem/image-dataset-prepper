@@ -1,21 +1,40 @@
 {
   "name": "image-reviewer-gui",
-  "main": "public/electron/app.ts",
+  "main": "./public/electron.js",
+  "homepage": "./",
+  "author": "Towhid Kashem",
+  "description": "A minimal desktop app to quickly review and delete images for ML datasets",
   "version": "0.1.0",
   "license": "MIT",
   "private": true,
-  "build": {
-    "extends": null,
-    "productName": "ImageReviewer",
-    "appId": "com.imageReviewer.app"
-  },
   "scripts": {
-    "start": "NODE_ENV=development concurrently -k 'BROWSER=none react-scripts start' 'npm:electron'",
-    "electron": "wait-on tcp:3000 && electron .",
-    "build": "yarn clean && electron-builder",
-    "build:test": "yarn clean && electron-builder --dir",
-    "clean": "rm -rf dist",
+    "start": "NODE_ENV=development BROWSER=none concurrently -k 'react-scripts start' 'wait-on tcp:3000 && electron .'",
+    "build:mac": "yarn prebuild && electron-builder -m -c.extraMetadata.main=build/electron.js && yarn move-mac-build",
+    "build:windows": "yarn prebuild && electron-builder -w -c.extraMetadata.main=build/electron.js",
+    "build:linux": "yarn prebuild && electron-builder -l -c.extraMetadata.main=build/electron.js",
+    "prebuild": "rm -rf build dist && react-scripts build",
+    "move-mac-build": "cp -r dist/mac/ImageReviewer.app ./ImageReviewer-mac.app",
     "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.imageReviewer.app",
+    "productName": "ImageReviewer",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "public"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "deb"
+    }
   },
   "dependencies": {
     "@chakra-ui/react": "^2.3.2",
@@ -38,21 +57,17 @@
     "node-sass": "^7.0.3",
     "wait-on": "^6.0.1"
   },
+  "browserslist": {
+    "production": [
+      "last 1 electron version"
+    ],
+    "development": [
+      "last 1 electron version"
+    ]
+  },
   "eslintConfig": {
     "extends": [
       "react-app"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
     ]
   }
 }

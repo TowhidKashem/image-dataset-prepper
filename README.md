@@ -1,16 +1,15 @@
 # Image Reviewer GUI
 
-Install and run the dev server:
+Install and run the dev instance:
 
 ```
-> yarn install
-> yarn start
+> yarn install && yarn start
 ```
 
-Build the app as a standalone portable on mac:
+Build for production:
 
 ```
-> yarn build
+> yarn build:mac | yarn build:windows | yarn build:linux
 ```
 
 ## Usage
@@ -21,5 +20,5 @@ Build the app as a standalone portable on mac:
 
 ## Files
 
-- Electron backend - `public/electron/*`
+- Electron backend - `public/*`
 - React frontend - `src/*`
