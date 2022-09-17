@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { useToast, Heading, Image } from '@chakra-ui/react';
+import { useToast, Heading, Image, Icon } from '@chakra-ui/react';
+import { FcOpenedFolder } from 'react-icons/fc';
 import UploadButton from 'common/UploadButton';
 import './App.scss';
 
@@ -12,6 +13,8 @@ function App() {
 
   const [image, setImage] = useState('');
   const [emptyMessage, setEmptyMessage] = useState(false);
+
+  const isLoopComplete = useRef(false);
 
   const [directory, setDirectory] = useState('');
   const [images, setImages] = useState([]);
@@ -63,6 +66,7 @@ function App() {
         if (newImages.length > 0) {
           nextImage();
         } else {
+          setImage('');
           setEmptyMessage(true);
         }
       } else {
@@ -95,32 +99,50 @@ function App() {
       });
     }
 
-    console.warn(GET_IMAGE, {
-      imageIndex: imageIndexRef.current,
-      imageFile
-    });
+    // console.warn(GET_IMAGE, {
+    //   imageIndex: imageIndexRef.current,
+    //   imageFile
+    // });
+  };
+
+  const navigate = (callback) => {
+    if (imagesRef.current.length > 0) {
+      const newIndex = callback();
+
+      setImageIndex(newIndex);
+      imageIndexRef.current = newIndex;
+      getImage();
+    }
   };
 
   const nextImage = () => {
-    if (imagesRef.current.length > 0) {
+    navigate(() => {
       let newIndex = imageIndexRef.current + 1;
-      if (newIndex > imagesRef.current.length - 1) newIndex = 0;
+      // end reached
+      if (newIndex > imagesRef.current.length - 1) {
+        newIndex = 0;
 
-      setImageIndex(newIndex);
-      imageIndexRef.current = newIndex;
-      getImage();
-    }
+        if (!isLoopComplete.current) {
+          isLoopComplete.current = true;
+
+          toast({
+            description: 'All images in folder seen',
+            status: 'info',
+            position: 'top',
+            duration: null
+          });
+        }
+      }
+      return newIndex;
+    });
   };
 
   const prevImage = () => {
-    if (imagesRef.current.length > 0) {
+    navigate(() => {
       let newIndex = imageIndexRef.current - 1;
       if (newIndex < 0) newIndex = imagesRef.current.length - 1;
-
-      setImageIndex(newIndex);
-      imageIndexRef.current = newIndex;
-      getImage();
-    }
+      return newIndex;
+    });
   };
 
   const deleteImage = () => {
@@ -142,10 +164,15 @@ function App() {
           {image && (
             <Image src={`data:image/${extension};base64,${image}`} alt="" />
           )}
+
           {emptyMessage && (
-            <Heading as="h2" size="2xl" className="empty">
-              All images deleted in this folder
-            </Heading>
+            <section className="empty">
+              <Heading as="h2" size="2xl" className="msg">
+                All images deleted in this folder
+              </Heading>
+
+              <Icon boxSize="4.5rem" as={FcOpenedFolder} />
+            </section>
           )}
         </div>
       ) : (
