@@ -1,124 +1,148 @@
-import { useState, useEffect } from 'react';
+import PubSub from 'pubsub-js';
+import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@chakra-ui/react';
 import UploadButton from 'common/UploadButton';
 import './App.scss';
+
+const GET_ALL_IMAGES = 'GET_ALL_IMAGES';
+const GET_IMAGE = 'GET_IMAGE';
+const DELETE_IMAGE = 'DELETE_IMAGE';
+
+window.electron.ipcRenderer.once(GET_ALL_IMAGES, (images) => {
+  PubSub.publish(GET_ALL_IMAGES, images);
+});
+
+window.electron.ipcRenderer.on(GET_IMAGE, (base64) => {
+  PubSub.publish(GET_IMAGE, base64);
+});
+
+window.electron.ipcRenderer.on(DELETE_IMAGE, (response) => {
+  PubSub.publish(DELETE_IMAGE, response);
+});
 
 function App() {
   const toast = useToast();
 
   const [directory, setDirectory] = useState<string>(null);
+  const directoryRef = useRef<string>(null);
+
   const [images, setImages] = useState<string[]>([]);
-  const [image, setImage] = useState<string>(null);
+  const imagesRef = useRef<string[]>([]);
+
   const [imageIndex, setImageIndex] = useState(0);
+  const imageIndexRef = useRef(0);
 
-  const getImage = (image) => {
-    console.warn('fetch image', image);
+  const [image, setImage] = useState<string>(null);
 
-    window.electron.ipcRenderer.sendMessage('get_image', {
-      filename: images[imageIndex],
-      directory
-    } as any);
-  };
+  useEffect(() => {
+    // keyboard navigation
+    window.addEventListener('keyup', (e) => {
+      if (e.key === ' ') {
+        deleteImage();
+      } else if (e.key === 'ArrowRight') {
+        nextImage();
+      } else if (e.key === 'ArrowLeft') {
+        prevImage();
+      }
+    });
 
-  const nextImage = () => {
-    console.log('nextImage()', imageIndex);
+    PubSub.subscribe(GET_ALL_IMAGES, async (topic, payload) => {
+      // console.warn('sub:', topic, payload);
 
-    let newIndex = imageIndex + 1;
-    if (newIndex > images.length - 1) {
-      console.warn('reset back to begining');
-      newIndex = 0;
-    }
+      setImages(payload);
+      imagesRef.current = payload;
 
-    getImage(newIndex);
-  };
+      // setImageIndex(1);
+      // imageIndexRef.current = 1;
 
-  const prevImage = () => {
-    let newIndex = imageIndex - 1;
-    if (newIndex < 0) newIndex = images.length - 1;
+      getImage(); // get the first image
+    });
 
-    getImage(newIndex);
-  };
+    PubSub.subscribe(GET_IMAGE, (topic, payload) => {
+      // console.warn('sub:', topic, payload);
 
-  const deleteImage = () => {
-    window.electron.ipcRenderer.sendMessage('delete_image', {
-      filename: images[imageIndex],
-      directory
-    } as any);
-  };
+      setImage(payload);
+    });
+
+    PubSub.subscribe(DELETE_IMAGE, (topic, payload) => {
+      // console.warn('sub:', topic, payload);
+
+      if (payload.success) {
+        const newImages = [...imagesRef.current].filter(
+          (image) => image !== imagesRef.current[imageIndexRef.current]
+        );
+
+        setImages(newImages);
+        imagesRef.current = newImages;
+
+        toast({
+          description: 'Image deleted successfully',
+          status: 'success',
+          position: 'top',
+          duration: 2000
+        });
+      } else {
+        alert(payload.error);
+      }
+    });
+  }, []);
 
   const chooseFolder = (e) => {
-    console.warn('choose folder');
-
     const { path } = e.currentTarget.files[0];
     const segments = path.split('/');
     segments.pop();
     const directory = segments.join('/');
 
     setDirectory(directory);
-    getImageList(directory);
+    directoryRef.current = directory;
+
+    window.electron.ipcRenderer.sendMessage(GET_ALL_IMAGES, { directory });
   };
 
-  const getImageList = (directory) => {
-    window.electron.ipcRenderer.sendMessage('get_all_images', {
-      directory
-    } as any);
+  const getImage = () => {
+    const imageFile = imagesRef.current[imageIndexRef.current];
 
-    window.electron.ipcRenderer.once('get_all_images', (images) => {
-      setImages(images as string[]);
+    console.warn(GET_IMAGE, {
+      imageIndex: imageIndexRef.current,
+      imageFile
+    });
 
-      // get the first image
-      getImage(images[imageIndex]);
-      setImageIndex(imageIndex + 1);
+    if (imageFile) {
+      window.electron.ipcRenderer.sendMessage(GET_IMAGE, {
+        directory: directoryRef.current,
+        filename: imageFile
+      });
+    }
+  };
+
+  const nextImage = () => {
+    let newIndex = imageIndexRef.current + 1;
+    if (newIndex > imagesRef.current.length - 1) {
+      // console.warn('reset back to begining');
+      newIndex = 0;
+    }
+
+    imageIndexRef.current = newIndex;
+    getImage();
+  };
+
+  const prevImage = () => {
+    let newIndex = imageIndexRef.current - 1;
+    if (newIndex < 0) {
+      // console.warn('reset back to end');
+      newIndex = imagesRef.current.length - 1;
+    }
+
+    imageIndexRef.current = newIndex;
+    getImage();
+  };
+
+  const deleteImage = () => {
+    window.electron.ipcRenderer.sendMessage(DELETE_IMAGE, {
+      directory: directoryRef.current,
+      filename: imagesRef.current[imageIndexRef.current]
     });
   };
-
-  // useEffect(() => {
-  //   if (images.length > 0) {
-  //     getImage(imageIndex);
-  //   }
-  // }, [images]);
-
-  useEffect(() => {
-    // // keyboard navigation
-    // window.addEventListener('keyup', (event) => {
-    //   if (event.key === ' ') {
-    //     deleteImage();
-    //   } else if (event.key === 'ArrowRight') {
-    //     nextImage();
-    //   } else if (event.key === 'ArrowLeft') {
-    //     prevImage();
-    //   }
-    // });
-    //
-    // // get single image
-    // window.electron.ipcRenderer.on('get_image', (base64) => {
-    //   alert('image got');
-    //   setImage(base64 as string);
-    // });
-    //
-    // // delete image
-    // window.electron.ipcRenderer.on(
-    //   'delete_image',
-    //   ({ success, error }: any) => {
-    //     if (success) {
-    //       const newImages = [...images].filter(
-    //         (image) => image !== images[imageIndex]
-    //       );
-    //       setImages(newImages);
-    //       toast({
-    //         title: 'Deleted!',
-    //         description: 'Image deleted successfully',
-    //         status: 'success',
-    //         duration: 800,
-    //         isClosable: true
-    //       });
-    //     } else {
-    //       // eslint-disable-next-line no-alert
-    //       alert(error as string);
-    //     }
-    //   }
-    // );
-  }, []);
 
   const extension =
     images.length > 0 ? images[imageIndex].split('.').pop() : null;

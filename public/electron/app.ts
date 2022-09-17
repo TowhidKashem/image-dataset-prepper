@@ -1,20 +1,16 @@
 const fs = require('fs');
 const path = require('path');
-const {
-  app,
-  BrowserWindow,
-  ipcMain,
-  contextBridge,
-  ipcRenderer
-} = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const isDev = require('electron-is-dev');
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    icon: path.join(__dirname, '../logo192.png'),
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'preload.ts')
     }
   });
 
@@ -49,55 +45,43 @@ app.on('activate', () => {
   }
 });
 
-contextBridge.exposeInMainWorld('electron', {
-  ipcRenderer: {
-    sendMessage(channel, args) {
-      ipcRenderer.send(channel, args);
-    },
-    on(channel, func: (...args) => void) {
-      const subscription = (_event, ...args) => func(...args);
-      ipcRenderer.on(channel, subscription);
-      return () => ipcRenderer.removeListener(channel, subscription);
-    },
-    once(channel, func: (...args) => void) {
-      ipcRenderer.once(channel, (_event, ...args) => func(...args));
-    }
-  }
-});
-
 //*--------------------------------------- endpoints ---------------------------------------*//
 
-ipcMain.on('get_all_images', async (event, args) => {
+const GET_ALL_IMAGES = 'GET_ALL_IMAGES';
+const GET_IMAGE = 'GET_IMAGE';
+const DELETE_IMAGE = 'DELETE_IMAGE';
+
+ipcMain.on(GET_ALL_IMAGES, async (event, args) => {
   try {
     const images = fs.readdirSync(args.directory);
-    event.reply('get_all_images', images);
+    event.reply(GET_ALL_IMAGES, images);
   } catch (error) {
-    event.reply('get_all_images', {
+    event.reply(GET_ALL_IMAGES, {
       error,
       directory: args.directory
     });
   }
 });
 
-ipcMain.on('get_image', async (event, args) => {
+ipcMain.on(GET_IMAGE, async (event, args) => {
   try {
     const file = args.directory + '/' + args.filename;
     const image = fs.readFileSync(file);
 
-    event.reply('get_image', image.toString('base64'));
+    event.reply(GET_IMAGE, image.toString('base64'));
   } catch (error) {
-    event.reply('get_all_images', error);
+    event.reply(GET_IMAGE, error);
   }
 });
 
-ipcMain.on('delete_image', async (event, args) => {
+ipcMain.on(DELETE_IMAGE, async (event, args) => {
   try {
     const file = args.directory + '/' + args.filename;
     fs.unlinkSync(file);
 
-    event.reply('delete_image', { success: true });
+    event.reply(DELETE_IMAGE, { success: true });
   } catch (error) {
-    event.reply('delete_image', {
+    event.reply(DELETE_IMAGE, {
       success: false,
       error
     });

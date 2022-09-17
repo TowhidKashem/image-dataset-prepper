@@ -1,5 +1,5 @@
+import React, { useState } from 'react';
 import { Button } from '@chakra-ui/react';
-import React from 'react';
 import './UploadButton.scss';
 
 function UploadButton({
@@ -7,6 +7,8 @@ function UploadButton({
 }: {
   onChange: (e: React.SyntheticEvent<HTMLInputElement>) => void;
 }) {
+  const [hover, setHover] = useState(false);
+
   return (
     <div className="upload-button">
       <input
@@ -17,8 +19,15 @@ function UploadButton({
         multiple
         onInput={onChange}
         onChange={onChange}
+        onClick={({ target }) => {
+          (target as HTMLInputElement).value = null;
+        }}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
       />
-      <Button colorScheme="blue">Choose Folder</Button>
+      <Button size="lg" colorScheme={hover ? 'twitter' : 'blue'}>
+        Choose Folder
+      </Button>
     </div>
   );
 }

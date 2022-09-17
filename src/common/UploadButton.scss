@@ -10,5 +10,10 @@
     height: 100%;
     z-index: 1;
     opacity: 0;
+
+    &,
+    &::-webkit-file-upload-button {
+      cursor: pointer;
+    }
   }
 }
