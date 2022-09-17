@@ -1,4 +1,3 @@
-import PubSub from 'pubsub-js';
 import { useState, useEffect, useRef } from 'react';
 import { useToast, Heading, Image } from '@chakra-ui/react';
 import UploadButton from 'common/UploadButton';
@@ -7,18 +6,6 @@ import './App.scss';
 const GET_ALL_IMAGES = 'GET_ALL_IMAGES';
 const GET_IMAGE = 'GET_IMAGE';
 const DELETE_IMAGE = 'DELETE_IMAGE';
-
-window.electron.ipcRenderer.once(GET_ALL_IMAGES, (images) => {
-  PubSub.publish(GET_ALL_IMAGES, images);
-});
-
-window.electron.ipcRenderer.on(GET_IMAGE, (base64) => {
-  PubSub.publish(GET_IMAGE, base64);
-});
-
-window.electron.ipcRenderer.on(DELETE_IMAGE, (response) => {
-  PubSub.publish(DELETE_IMAGE, response);
-});
 
 function App() {
   const toast = useToast();
@@ -46,19 +33,19 @@ function App() {
       }
     });
 
-    PubSub.subscribe(GET_ALL_IMAGES, async (_, payload) => {
-      setImages(payload);
-      imagesRef.current = payload;
+    window.electron.ipcRenderer.once(GET_ALL_IMAGES, (images) => {
+      setImages(images);
+      imagesRef.current = images;
 
       getImage(); // get the first image
     });
 
-    PubSub.subscribe(GET_IMAGE, (_, payload) => {
-      setImage(payload);
+    window.electron.ipcRenderer.on(GET_IMAGE, (base64) => {
+      setImage(base64);
     });
 
-    PubSub.subscribe(DELETE_IMAGE, (_, payload) => {
-      if (payload.success) {
+    window.electron.ipcRenderer.on(DELETE_IMAGE, (response) => {
+      if (response.success) {
         const newImages = [...imagesRef.current].filter(
           (image) => image !== imagesRef.current[imageIndexRef.current]
         );
@@ -76,36 +63,21 @@ function App() {
         if (newImages.length > 0) {
           nextImage();
         } else {
-          resetAll();
           setEmptyMessage(true);
         }
       } else {
-        alert(payload.error);
+        alert(response.error);
       }
     });
 
     // eslint-disable-next-line
   }, []);
 
-  const resetAll = () => {
-    setImage('');
-
-    setImages([]);
-    setImageIndex(0);
-    setDirectory('');
-
-    imagesRef.current = [];
-    imageIndexRef.current = 0;
-    directoryRef.current = '';
-  };
-
   const chooseFolder = (e) => {
     const { path } = e.currentTarget.files[0];
     const segments = path.split('/');
     segments.pop();
     const directory = segments.join('/');
-
-    setEmptyMessage(false);
 
     setDirectory(directory);
     directoryRef.current = directory;
@@ -130,52 +102,55 @@ function App() {
   };
 
   const nextImage = () => {
-    let newIndex = imageIndexRef.current + 1;
-    if (newIndex > imagesRef.current.length - 1) newIndex = 0;
+    if (imagesRef.current.length > 0) {
+      let newIndex = imageIndexRef.current + 1;
+      if (newIndex > imagesRef.current.length - 1) newIndex = 0;
 
-    setImageIndex(newIndex);
-    imageIndexRef.current = newIndex;
-    getImage();
+      setImageIndex(newIndex);
+      imageIndexRef.current = newIndex;
+      getImage();
+    }
   };
 
   const prevImage = () => {
-    let newIndex = imageIndexRef.current - 1;
-    if (newIndex < 0) newIndex = imagesRef.current.length - 1;
+    if (imagesRef.current.length > 0) {
+      let newIndex = imageIndexRef.current - 1;
+      if (newIndex < 0) newIndex = imagesRef.current.length - 1;
 
-    setImageIndex(newIndex);
-    imageIndexRef.current = newIndex;
-    getImage();
+      setImageIndex(newIndex);
+      imageIndexRef.current = newIndex;
+      getImage();
+    }
   };
 
   const deleteImage = () => {
-    window.electron.ipcRenderer.sendMessage(DELETE_IMAGE, {
-      directory: directoryRef.current,
-      filename: imagesRef.current[imageIndexRef.current]
-    });
+    if (imagesRef.current.length > 0) {
+      window.electron.ipcRenderer.sendMessage(DELETE_IMAGE, {
+        directory: directoryRef.current,
+        filename: imagesRef.current[imageIndexRef.current]
+      });
+    }
   };
 
   const extension =
     images.length > 0 ? images[imageIndex].split('.').pop() : null;
 
-  const showUploadButton = !directory || emptyMessage;
-
   return (
     <div className="app">
-      {emptyMessage && (
-        <Heading as="h2" size="2xl" className="empty">
-          All images deleted in this folder
-        </Heading>
-      )}
-
-      {directory && (
+      {directory ? (
         <div className="preview">
           {image && (
             <Image src={`data:image/${extension};base64,${image}`} alt="" />
           )}
+          {emptyMessage && (
+            <Heading as="h2" size="2xl" className="empty">
+              All images deleted in this folder
+            </Heading>
+          )}
         </div>
+      ) : (
+        <UploadButton onChange={chooseFolder} />
       )}
-
-      {showUploadButton && <UploadButton onChange={chooseFolder} />}
     </div>
   );
 }
