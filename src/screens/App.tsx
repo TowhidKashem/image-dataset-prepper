@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useToast, Heading, Image, Icon } from '@chakra-ui/react';
+import { useToast, Heading, Image, Icon, Badge, Text } from '@chakra-ui/react';
 import { FcOpenedFolder, FcCancel, FcImageFile } from 'react-icons/fc';
 import styled from '@emotion/styled';
 import UploadButton from 'common/UploadButton';
@@ -7,6 +7,8 @@ import UploadButton from 'common/UploadButton';
 const GET_ALL_IMAGES = 'GET_ALL_IMAGES';
 const GET_IMAGE = 'GET_IMAGE';
 const DELETE_IMAGE = 'DELETE_IMAGE';
+
+const TOAST_DURATION = 2_000;
 
 function App() {
   const toast = useToast();
@@ -17,12 +19,12 @@ function App() {
   const [directory, setDirectory] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [imageIndex, setImageIndex] = useState(0);
+  const [loopCount, setLoopCount] = useState(0);
 
   const directoryRef = useRef('');
   const imagesRef = useRef<string[]>([]);
   const imageIndexRef = useRef(0);
-
-  const isLoopComplete = useRef(false);
+  const loopCountRef = useRef(0);
 
   useEffect(() => {
     // keyboard navigation
@@ -47,14 +49,14 @@ function App() {
     window.electron.ipcRenderer.on(DELETE_IMAGE, (response) => {
       if (response.error) {
         return toast({
-          description: response.error,
+          description: response.error.toString(),
           status: 'error',
           position: 'top',
-          duration: 2000
+          duration: TOAST_DURATION
         });
       }
 
-      const newImages = [...imagesRef.current].filter(
+      const newImages = imagesRef.current.filter(
         (image) => image !== imagesRef.current[imageIndexRef.current]
       );
 
@@ -65,7 +67,7 @@ function App() {
         description: 'Image deleted successfully',
         status: 'success',
         position: 'top',
-        duration: 2000
+        duration: TOAST_DURATION
       });
 
       if (newImages.length > 0) {
@@ -122,16 +124,10 @@ function App() {
       if (newIndex > imagesRef.current.length - 1) {
         newIndex = 0;
 
-        if (!isLoopComplete.current) {
-          isLoopComplete.current = true;
+        const newLoopCount = loopCountRef.current + 1;
 
-          toast({
-            description: 'All images in folder seen',
-            status: 'info',
-            position: 'top',
-            duration: null
-          });
-        }
+        setLoopCount(newLoopCount);
+        loopCountRef.current = newLoopCount;
       }
       return newIndex;
     });
@@ -161,6 +157,24 @@ function App() {
     fileName.split('.').pop();
 
   const extension = images.length > 0 ? getExtension(images[imageIndex]) : null;
+
+  const listItems = [
+    {
+      key: 'count',
+      show: images.length > 0,
+      value: `${imageIndex + 1}/${images.length} images`
+    },
+    {
+      key: 'loops',
+      show: directory,
+      value: `${loopCount} loops`
+    },
+    {
+      key: 'extension',
+      show: extension,
+      value: extension
+    }
+  ];
 
   return (
     <ImageReviewer>
@@ -199,6 +213,20 @@ function App() {
       ) : (
         <UploadButton label="Choose Folder" onChange={chooseFolder} />
       )}
+
+      <InfoList>
+        {listItems.map(({ key, show, value }) =>
+          show ? (
+            <li key={key}>
+              <Badge>
+                <Text fontSize="md" px="2.5" py="0.5">
+                  {value}
+                </Text>
+              </Badge>
+            </li>
+          ) : null
+        )}
+      </InfoList>
     </ImageReviewer>
   );
 }
@@ -242,6 +270,17 @@ const WrongIcon = styled(Icon)`
   position: absolute;
   top: -10px;
   left: -5px;
+`;
+
+const InfoList = styled.ul`
+  list-style-type: none;
+  position: fixed;
+  top: 15px;
+  right: 15px;
+
+  li {
+    text-align: right;
+  }
 `;
 
 export default App;

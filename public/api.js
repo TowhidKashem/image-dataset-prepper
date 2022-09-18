@@ -8,6 +8,7 @@ const DELETE_IMAGE = 'DELETE_IMAGE';
 ipcMain.on(GET_ALL_IMAGES, async (event, args) => {
   try {
     const images = fs.readdirSync(args.directory);
+
     event.reply(GET_ALL_IMAGES, images);
   } catch (error) {
     event.reply(GET_ALL_IMAGES, {
@@ -31,7 +32,16 @@ ipcMain.on(GET_IMAGE, async (event, args) => {
 ipcMain.on(DELETE_IMAGE, async (event, args) => {
   try {
     const file = args.directory + '/' + args.filename;
-    fs.unlinkSync(file);
+    const isDir = fs.lstatSync(file).isDirectory();
+
+    if (isDir) {
+      fs.rmSync(file, {
+        recursive: true,
+        force: true
+      });
+    } else {
+      fs.unlinkSync(file);
+    }
 
     event.reply(DELETE_IMAGE, { success: true });
   } catch (error) {
