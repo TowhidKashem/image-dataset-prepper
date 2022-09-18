@@ -166,12 +166,14 @@ function App() {
     <ImageReviewer>
       {directory ? (
         <>
-          {image ? (
+          {image && (
             <PreviewImage
               src={`data:image/${extension};base64,${image}`}
               alt=""
             />
-          ) : (
+          )}
+
+          {extension && !isImage(extension) && (
             <NoImageWrapper>
               <NoImageIcon>
                 <WrongIcon boxSize="2.5rem" as={FcCancel} />
