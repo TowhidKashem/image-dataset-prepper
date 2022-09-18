@@ -3,7 +3,7 @@
   "main": "./public/electron.js",
   "homepage": "./",
   "author": "Towhid Kashem",
-  "description": "A minimal desktop app to quickly review and delete images for ML datasets",
+  "description": "A minimal desktop app to quickly review and delete images when collecting data sets for machine learning",
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {

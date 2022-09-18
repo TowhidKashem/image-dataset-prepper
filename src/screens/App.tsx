@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useToast, Heading, Image, Icon } from '@chakra-ui/react';
-import { FcOpenedFolder } from 'react-icons/fc';
+import { FcOpenedFolder, FcCancel, FcImageFile } from 'react-icons/fc';
 import styled from '@emotion/styled';
 import UploadButton from 'common/UploadButton';
 
@@ -14,8 +14,6 @@ function App() {
   const [image, setImage] = useState('');
   const [emptyMessage, setEmptyMessage] = useState(false);
 
-  const isLoopComplete = useRef(false);
-
   const [directory, setDirectory] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [imageIndex, setImageIndex] = useState(0);
@@ -23,6 +21,8 @@ function App() {
   const directoryRef = useRef('');
   const imagesRef = useRef<string[]>([]);
   const imageIndexRef = useRef(0);
+
+  const isLoopComplete = useRef(false);
 
   useEffect(() => {
     // keyboard navigation
@@ -42,34 +42,37 @@ function App() {
       getImage(); // get the first image
     });
 
-    window.electron.ipcRenderer.on(GET_IMAGE, (base64) => {
-      setImage(base64);
-    });
+    window.electron.ipcRenderer.on(GET_IMAGE, (base64) => setImage(base64));
 
     window.electron.ipcRenderer.on(DELETE_IMAGE, (response) => {
-      if (response.success) {
-        const newImages = [...imagesRef.current].filter(
-          (image) => image !== imagesRef.current[imageIndexRef.current]
-        );
-
-        setImages(newImages);
-        imagesRef.current = newImages;
-
-        toast({
-          description: 'Image deleted successfully',
-          status: 'success',
+      if (response.error) {
+        return toast({
+          description: response.error,
+          status: 'error',
           position: 'top',
           duration: 2000
         });
+      }
 
-        if (newImages.length > 0) {
-          nextImage();
-        } else {
-          setImage('');
-          setEmptyMessage(true);
-        }
+      const newImages = [...imagesRef.current].filter(
+        (image) => image !== imagesRef.current[imageIndexRef.current]
+      );
+
+      setImages(newImages);
+      imagesRef.current = newImages;
+
+      toast({
+        description: 'Image deleted successfully',
+        status: 'success',
+        position: 'top',
+        duration: 2000
+      });
+
+      if (newImages.length > 0) {
+        nextImage();
       } else {
-        alert(response.error);
+        setImage('');
+        setEmptyMessage(true);
       }
     });
 
@@ -92,13 +95,14 @@ function App() {
 
   const getImage = () => {
     const imageFile = imagesRef.current[imageIndexRef.current];
+    const extension = getExtension(imageFile) || '';
 
-    if (imageFile) {
-      window.electron.ipcRenderer.sendMessage(GET_IMAGE, {
-        directory: directoryRef.current,
-        filename: imageFile
-      });
-    }
+    if (!isImage(extension)) return setImage('');
+
+    window.electron.ipcRenderer.sendMessage(GET_IMAGE, {
+      directory: directoryRef.current,
+      filename: imageFile
+    });
   };
 
   const navigate = (callback: () => number) => {
@@ -150,15 +154,34 @@ function App() {
     }
   };
 
-  const extension =
-    images.length > 0 ? images[imageIndex].split('.').pop() : null;
+  const isImage = (extension: string): boolean =>
+    ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(extension);
+
+  const getExtension = (fileName: string): string | undefined =>
+    fileName.split('.').pop();
+
+  const extension = images.length > 0 ? getExtension(images[imageIndex]) : null;
 
   return (
     <ImageReviewer>
       {directory ? (
-        <div className="preview">
-          {image && (
-            <Image src={`data:image/${extension};base64,${image}`} alt="" />
+        <>
+          {image ? (
+            <PreviewImage
+              src={`data:image/${extension};base64,${image}`}
+              alt=""
+            />
+          ) : (
+            <NoImageWrapper>
+              <NoImageIcon>
+                <WrongIcon boxSize="2.5rem" as={FcCancel} />
+                <Icon boxSize="4.5rem" as={FcImageFile} />
+              </NoImageIcon>
+
+              <Heading as="h4" size="lg" className="msg">
+                .{extension}
+              </Heading>
+            </NoImageWrapper>
           )}
 
           {emptyMessage && (
@@ -170,7 +193,7 @@ function App() {
               <Icon boxSize="4.5rem" as={FcOpenedFolder} />
             </EmptyMessage>
           )}
-        </div>
+        </>
       ) : (
         <UploadButton label="Choose Folder" onChange={chooseFolder} />
       )}
@@ -193,9 +216,30 @@ const EmptyMessage = styled.section`
 `;
 
 const EmptyHeader = styled(Heading)`
-  color: white;
+  color: #ffffff;
   text-align: center;
   margin-bottom: 40px;
+`;
+
+const PreviewImage = styled(Image)`
+  box-shadow: 0px 5px 19px -4px #090b0f;
+`;
+
+const NoImageWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+`;
+
+const NoImageIcon = styled.div`
+  position: relative;
+  margin-bottom: 10px;
+`;
+
+const WrongIcon = styled(Icon)`
+  position: absolute;
+  top: -10px;
+  left: -5px;
 `;
 
 export default App;

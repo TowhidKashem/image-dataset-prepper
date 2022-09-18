@@ -1,6 +1,6 @@
 # Image Reviewer GUI
 
-![Alt text](screenshot.png?raw=true 'Screenshot')
+![screenshot](screenshot.png)
 
 ## Installation
 
