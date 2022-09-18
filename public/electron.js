@@ -9,7 +9,7 @@ const isDev = process.env.NODE_ENV === 'development';
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 800,
     icon: path.join(__dirname, 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),

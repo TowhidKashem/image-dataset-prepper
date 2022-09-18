@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@chakra-ui/react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 function UploadButton({
   label,

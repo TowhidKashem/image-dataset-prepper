@@ -6,7 +6,6 @@
   "description": "A minimal desktop app to quickly review and delete images for ML datasets",
   "version": "0.1.0",
   "license": "MIT",
-  "private": true,
   "scripts": {
     "start": "NODE_ENV=development BROWSER=none concurrently -k 'react-scripts start' 'wait-on tcp:3000 && electron .'",
     "build:mac": "yarn prebuild && electron-builder -m -c.extraMetadata.main=build/electron.js && yarn move-mac-build",
@@ -45,20 +44,28 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
     "react-scripts": "5.0.1",
-    "styled-components": "^5.3.5",
     "typescript": "^4.8.3"
   },
   "devDependencies": {
     "@types/node": "^16.11.59",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.6",
-    "@types/styled-components": "^5.1.26",
     "concurrently": "^7.4.0",
     "electron": "^20.1.4",
     "electron-builder": "^23.3.3",
     "node-sass": "^7.0.3",
     "wait-on": "^6.0.1"
   },
+  "keywords": [
+    "image viewer",
+    "image explorer",
+    "file explorer",
+    "image explorer for machine learning data sets",
+    "machine learning image organizer",
+    "organizing machine learning data sets",
+    "organizing images for machine learning",
+    "machine learning image classification tool"
+  ],
   "browserslist": {
     "production": [
       "last 1 electron version"

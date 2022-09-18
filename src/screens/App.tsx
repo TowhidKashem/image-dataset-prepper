@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useToast, Heading, Image, Icon } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import UploadButton from 'common/UploadButton';
 
 const GET_ALL_IMAGES = 'GET_ALL_IMAGES';
@@ -163,7 +163,7 @@ function App() {
 
           {emptyMessage && (
             <EmptyMessage>
-              <EmptyHeader as="h2" size="2xl" className="msg">
+              <EmptyHeader as="h2" size="xl" className="msg">
                 All images deleted in this folder
               </EmptyHeader>
 
@@ -192,9 +192,7 @@ const EmptyMessage = styled.section`
   flex-direction: column;
 `;
 
-const EmptyHeader = styled(Heading)<{
-  size: string;
-}>`
+const EmptyHeader = styled(Heading)`
   color: white;
   text-align: center;
   margin-bottom: 40px;
