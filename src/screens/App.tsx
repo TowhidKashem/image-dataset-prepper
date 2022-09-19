@@ -253,6 +253,7 @@ const EmptyHeader = styled(Heading)`
 
 const PreviewImage = styled(Image)`
   box-shadow: 0px 5px 19px -4px #090b0f;
+  max-height: 100vh;
 `;
 
 const NoImageWrapper = styled.div`
