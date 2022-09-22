@@ -122,6 +122,8 @@ function App() {
       let newIndex = imageIndexRef.current + 1;
       // end reached
       if (newIndex > imagesRef.current.length - 1) {
+        new Audio('./pop.mp3').play();
+
         newIndex = 0;
 
         const newLoopCount = loopCountRef.current + 1;
