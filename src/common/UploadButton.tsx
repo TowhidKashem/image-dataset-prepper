@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@chakra-ui/react';
 import styled from '@emotion/styled';
 
-function UploadButton({
+export function UploadButton({
   label,
   onChange
 }: {
@@ -38,5 +38,3 @@ const UploadButtonWrapper = styled.div`
   position: relative;
   display: inline-block;
 `;
-
-export default UploadButton;

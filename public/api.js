@@ -1,24 +1,25 @@
 const fs = require('fs');
 const { ipcMain } = require('electron');
 
-const GET_ALL_IMAGES = 'GET_ALL_IMAGES';
+const GET_FOLDER_CONTENTS = 'GET_FOLDER_CONTENTS';
 const GET_IMAGE = 'GET_IMAGE';
 const DELETE_IMAGE = 'DELETE_IMAGE';
 
-ipcMain.on(GET_ALL_IMAGES, async (event, args) => {
+function getFolderContents(event, args) {
   try {
-    const images = fs.readdirSync(args.directory);
-
-    event.reply(GET_ALL_IMAGES, images);
+    event.reply(GET_FOLDER_CONTENTS, {
+      contents: fs.readdirSync(args.directory),
+      args
+    });
   } catch (error) {
-    event.reply(GET_ALL_IMAGES, {
+    event.reply(GET_FOLDER_CONTENTS, {
       error,
       directory: args.directory
     });
   }
-});
+}
 
-ipcMain.on(GET_IMAGE, async (event, args) => {
+function getImage(event, args) {
   try {
     const file = args.directory + '/' + args.filename;
     const image = fs.readFileSync(file);
@@ -27,9 +28,9 @@ ipcMain.on(GET_IMAGE, async (event, args) => {
   } catch (error) {
     event.reply(GET_IMAGE, error);
   }
-});
+}
 
-ipcMain.on(DELETE_IMAGE, async (event, args) => {
+function deleteImage(event, args) {
   try {
     const file = args.directory + '/' + args.filename;
     const isDir = fs.lstatSync(file).isDirectory();
@@ -50,4 +51,9 @@ ipcMain.on(DELETE_IMAGE, async (event, args) => {
       error
     });
   }
-});
+}
+
+// routes
+ipcMain.on(GET_FOLDER_CONTENTS, getFolderContents);
+ipcMain.on(GET_IMAGE, getImage);
+ipcMain.on(DELETE_IMAGE, deleteImage);

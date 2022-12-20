@@ -1,10 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useToast, Heading, Image, Icon, Badge, Text } from '@chakra-ui/react';
-import { FcOpenedFolder, FcCancel, FcImageFile } from 'react-icons/fc';
+import {
+  useToast,
+  SimpleGrid,
+  Box,
+  Flex,
+  Container,
+  Center,
+  Heading,
+  Image,
+  Icon,
+  Badge,
+  Text
+} from '@chakra-ui/react';
+import {
+  FcFolder,
+  FcOpenedFolder,
+  FcCancel,
+  FcImageFile
+} from 'react-icons/fc';
 import styled from '@emotion/styled';
-import UploadButton from 'common/UploadButton';
+import { UploadButton } from 'common/UploadButton';
+import { BreadCrumbs } from 'common/BreadCrumbs';
 
-const GET_ALL_IMAGES = 'GET_ALL_IMAGES';
+const GET_FOLDER_CONTENTS = 'GET_FOLDER_CONTENTS';
 const GET_IMAGE = 'GET_IMAGE';
 const DELETE_IMAGE = 'DELETE_IMAGE';
 
@@ -13,14 +31,17 @@ const TOAST_DURATION = 2_000;
 function App() {
   const toast = useToast();
 
+  const [directories, setDirectories] = useState<string[]>([]);
+  const [directory, setDirectory] = useState('');
+
+  const [images, setImages] = useState<string[]>([]);
   const [image, setImage] = useState('');
+  const [imageIndex, setImageIndex] = useState(0);
+
+  const [loopCount, setLoopCount] = useState(0);
   const [emptyMessage, setEmptyMessage] = useState(false);
 
-  const [directory, setDirectory] = useState('');
-  const [images, setImages] = useState<string[]>([]);
-  const [imageIndex, setImageIndex] = useState(0);
-  const [loopCount, setLoopCount] = useState(0);
-
+  const directoriesRef = useRef<string[]>([]);
   const directoryRef = useRef('');
   const imagesRef = useRef<string[]>([]);
   const imageIndexRef = useRef(0);
@@ -38,11 +59,19 @@ function App() {
       }
     });
 
-    window.electron.ipcRenderer.once(GET_ALL_IMAGES, (images) => {
-      setImages(images);
-      imagesRef.current = images;
-      getImage(); // get the first image
-    });
+    window.electron.ipcRenderer.once(
+      GET_FOLDER_CONTENTS,
+      ({ contents, args }) => {
+        if (args.root) {
+          setDirectories(contents);
+          directoriesRef.current = contents;
+        } else {
+          setImages(contents);
+          imagesRef.current = contents;
+          getImage(); // get the first image
+        }
+      }
+    );
 
     window.electron.ipcRenderer.on(GET_IMAGE, (base64) => setImage(base64));
 
@@ -77,22 +106,26 @@ function App() {
         setEmptyMessage(true);
       }
     });
-
-    // eslint-disable-next-line
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const chooseFolder = (e: React.SyntheticEvent<HTMLInputElement>) => {
     if (!e.currentTarget.files) return;
 
+    console.log('mma', e.currentTarget.files[0]);
+
     const { path } = e.currentTarget.files[0] as FileWithPath;
     const segments = path.split('/');
     segments.pop();
-    const directory = segments.join('/');
+    segments.pop();
+    const rootDirectory = segments.join('/');
 
-    setDirectory(directory);
-    directoryRef.current = directory;
+    setDirectory(rootDirectory);
+    directoryRef.current = rootDirectory;
 
-    window.electron.ipcRenderer.sendMessage(GET_ALL_IMAGES, { directory });
+    window.electron.ipcRenderer.sendMessage(GET_FOLDER_CONTENTS, {
+      directory: rootDirectory,
+      root: true
+    });
   };
 
   const getImage = () => {
@@ -178,8 +211,50 @@ function App() {
     }
   ];
 
+  // let dirName = directory.split('/');
+  // dirName = dirName.pop();
+
+  if (directories.length) {
+    return (
+      <Flex
+        flexDirection="column"
+        padding="2rem"
+        style={{ minHeight: '100vh' }}
+      >
+        <BreadCrumbs path={directory} />
+
+        <SimpleGrid columns={{ sm: 2, md: 10 }} spacing={2}>
+          {directories.map((directory) => (
+            <Flex
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              padding={3}
+              _hover={{
+                background: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: 5,
+                cursor: 'pointer'
+              }}
+            >
+              <Icon boxSize="4rem" marginBottom={1} as={FcOpenedFolder} />
+
+              <Heading as="h6" size="xs">
+                {directory}
+              </Heading>
+            </Flex>
+          ))}
+        </SimpleGrid>
+      </Flex>
+    );
+  }
+
   return (
-    <ImageReviewer>
+    <Flex
+      alignItems="center"
+      justifyContent="center"
+      padding="1rem"
+      style={{ height: '100vh', border: '10px solid red' }}
+    >
       {directory ? (
         <>
           {image && (
@@ -213,7 +288,7 @@ function App() {
           )}
         </>
       ) : (
-        <UploadButton label="Choose Folder" onChange={chooseFolder} />
+        <UploadButton label="Choose Root Folder" onChange={chooseFolder} />
       )}
 
       <InfoList>
@@ -229,9 +304,25 @@ function App() {
           ) : null
         )}
       </InfoList>
-    </ImageReviewer>
+    </Flex>
   );
 }
+
+// const App = styled.div`
+//   border: 2px solid blue;
+// `;
+
+const Folders = styled.div`
+  display: flex;
+  flex-direction: column;
+  /* display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; */
+  border: 2px solid blue;
+`;
+
+////////
 
 const ImageReviewer = styled.div`
   display: flex;

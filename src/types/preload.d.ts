@@ -3,9 +3,10 @@ declare global {
     electron: {
       ipcRenderer: {
         sendMessage(
-          channel: 'GET_ALL_IMAGES' | 'GET_IMAGE' | 'DELETE_IMAGE',
+          channel: 'GET_FOLDER_CONTENTS' | 'GET_IMAGE' | 'DELETE_IMAGE',
           args: {
             directory: string;
+            root?: boolean;
             filename?: string;
           }
         ): void;
