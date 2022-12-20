@@ -2,7 +2,7 @@ const url = require('url');
 const path = require('path');
 const { app, protocol, BrowserWindow } = require('electron');
 
-require('./api');
+require('./routes');
 
 const isDev = process.env.NODE_ENV === 'development';
 

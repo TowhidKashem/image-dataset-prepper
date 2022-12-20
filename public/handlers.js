@@ -1,9 +1,5 @@
 const fs = require('fs');
-const { ipcMain } = require('electron');
-
-const GET_FOLDER_CONTENTS = 'GET_FOLDER_CONTENTS';
-const GET_IMAGE = 'GET_IMAGE';
-const DELETE_IMAGE = 'DELETE_IMAGE';
+const { GET_FOLDER_CONTENTS, GET_IMAGE, DELETE_IMAGE } = require('./_config');
 
 function getFolderContents(event, args) {
   try {
@@ -21,7 +17,7 @@ function getFolderContents(event, args) {
 
 function getImage(event, args) {
   try {
-    const file = args.directory + '/' + args.filename;
+    const file = `${args.directory}/${args.filename}`;
     const image = fs.readFileSync(file);
 
     event.reply(GET_IMAGE, image.toString('base64'));
@@ -32,7 +28,7 @@ function getImage(event, args) {
 
 function deleteImage(event, args) {
   try {
-    const file = args.directory + '/' + args.filename;
+    const file = `${args.directory}/${args.filename}`;
     const isDir = fs.lstatSync(file).isDirectory();
 
     if (isDir) {
@@ -53,7 +49,4 @@ function deleteImage(event, args) {
   }
 }
 
-// routes
-ipcMain.on(GET_FOLDER_CONTENTS, getFolderContents);
-ipcMain.on(GET_IMAGE, getImage);
-ipcMain.on(DELETE_IMAGE, deleteImage);
+module.exports = { getFolderContents, getImage, deleteImage };
