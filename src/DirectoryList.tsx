@@ -1,14 +1,12 @@
+import { useContext } from 'react';
 import { SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
-import { BreadCrumbs } from 'common/BreadCrumbs';
+import { BreadCrumbs } from './BreadCrumbs';
+import { AppContext } from './_data';
 
-export function DirectoryList({
-  directories,
-  directory
-}: {
-  directories: string[];
-  directory: string;
-}) {
+export function DirectoryList() {
+  const { directory, directories } = useContext(AppContext);
+
   return (
     <Flex flexDirection="column" padding="2rem" minHeight="100vh">
       <BreadCrumbs path={directory} />

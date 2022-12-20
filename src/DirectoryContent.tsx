@@ -22,13 +22,7 @@ import {
 } from 'react-icons/fc';
 import styled from '@emotion/styled';
 
-export function DirectoryContent({
-  directories,
-  directory
-}: {
-  directories: string[];
-  directory: string;
-}) {
+export function DirectoryContent() {
   const [imageIndex, setImageIndex] = useState(0);
   const [loopCount, setLoopCount] = useState(0);
 
