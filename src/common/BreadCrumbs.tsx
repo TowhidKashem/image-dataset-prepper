@@ -7,17 +7,25 @@ export function BreadCrumbs({ path }: { path: string }) {
 
   const curDir = segments[segments.length - 1];
 
+  const commonProps = {
+    fontSize: 'lg',
+    cursor: 'default',
+    _hover: {
+      textDecoration: 'none'
+    }
+  };
+
   return (
     <Breadcrumb
       marginBottom={8}
       separator={<ChevronRightIcon color="gray.500" />}
     >
       <BreadcrumbItem>
-        <BreadcrumbLink href="#">{segments.join('/')}</BreadcrumbLink>
+        <BreadcrumbLink {...commonProps}>{segments.join('/')}</BreadcrumbLink>
       </BreadcrumbItem>
 
       <BreadcrumbItem isCurrentPage>
-        <BreadcrumbLink href="#">{curDir}</BreadcrumbLink>
+        <BreadcrumbLink {...commonProps}>{curDir}</BreadcrumbLink>
       </BreadcrumbItem>
     </Breadcrumb>
   );
