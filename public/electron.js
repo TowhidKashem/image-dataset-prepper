@@ -13,6 +13,7 @@ function createWindow() {
     icon: path.join(__dirname, 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      webSecurity: false,
       nodeIntegration: true
     }
   });

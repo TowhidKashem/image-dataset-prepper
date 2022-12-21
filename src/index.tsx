@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     const { GET_FOLDER_CONTENTS, GET_IMAGE, DELETE_IMAGE } = topics;
 
-    window.electron.ipcRenderer.once(GET_FOLDER_CONTENTS, (response) =>
+    window.electron.ipcRenderer.on(GET_FOLDER_CONTENTS, (response) =>
       PubSub.publish(GET_FOLDER_CONTENTS, response)
     );
     window.electron.ipcRenderer.on(GET_IMAGE, (response) =>

@@ -1,7 +1,21 @@
 import { createContext, SetStateAction, Dispatch } from 'react';
 import { UseStateCallbackT } from 'hooks/useStateCallback';
 
-export type ScreenT = 'chooseDirectory' | 'directoryList' | 'directoryContent';
+export const topics = {
+  GET_FOLDER_CONTENTS: 'GET_FOLDER_CONTENTS',
+  GET_IMAGE: 'GET_IMAGE',
+  DELETE_IMAGE: 'DELETE_IMAGE'
+} as const;
+
+export const screen = {
+  chooseDirectory: 'chooseDirectory',
+  directoryList: 'directoryList',
+  directoryContent: 'directoryContent'
+} as const;
+
+export type TopicT = keyof typeof topics;
+
+export type ScreenT = keyof typeof screen;
 
 type AppContextT = {
   screen: ScreenT;
@@ -18,11 +32,3 @@ type AppContextT = {
 };
 
 export const AppContext = createContext<AppContextT>(null);
-
-export const topics = {
-  GET_FOLDER_CONTENTS: 'GET_FOLDER_CONTENTS',
-  GET_IMAGE: 'GET_IMAGE',
-  DELETE_IMAGE: 'DELETE_IMAGE'
-} as const;
-
-export type TopicT = keyof typeof topics;

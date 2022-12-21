@@ -31,7 +31,7 @@ export function DirectoryList() {
     };
 
     PubSub.subscribe(topics.GET_FOLDER_CONTENTS, (_topic, payload) => {
-      alert('lmaooo');
+      console.warn('mma', payload);
       getFolderContents(payload);
     });
   }, []);

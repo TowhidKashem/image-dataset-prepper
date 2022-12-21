@@ -1,115 +1,68 @@
-import { useState, useEffect, useRef, useContext } from 'react';
-import ReactDOM from 'react-dom/client';
-import {
-  ChakraProvider,
-  useToast,
-  SimpleGrid,
-  Box,
-  Flex,
-  Container,
-  Center,
-  Heading,
-  Image,
-  Icon,
-  Badge,
-  Text
-} from '@chakra-ui/react';
-import {
-  FcFolder,
-  FcOpenedFolder,
-  FcCancel,
-  FcImageFile
-} from 'react-icons/fc';
-import styled from '@emotion/styled';
-import {
-  AppContext
-  // GET_FOLDER_CONTENTS,
-  // GET_IMAGE
-  // DELETE_IMAGE,
-  // TOAST_DURATION
-} from './_data';
+import { useState, useEffect, useContext } from 'react';
+import { Image, useToast, Flex } from '@chakra-ui/react';
+import { AppContext } from './_data';
+import { getPathInfo } from './_utils';
 
 export function DirectoryContent() {
-  const { screen } = useContext(AppContext);
+  const toast = useToast();
 
-  // on use effect:
-  // // getImage(); // get the first image
+  const { screen, directoryPath, images } = useContext(AppContext);
 
   // export const TOAST_DURATION = 2_000;
 
-  // const toast = useToast();
+  const [imageIndex, setImageIndex] = useState(0);
+  const [loopCount, setLoopCount] = useState(0);
 
-  // const [imageIndex, setImageIndex] = useState(0);
-  // const [loopCount, setLoopCount] = useState(0);
+  const directory = getPathInfo(directoryPath).dirName;
 
-  // const loopCountRef = useRef(0);
-
-  // useEffect(() => {
-  //   // keyboard navigation
-  //   window.addEventListener('keyup', (e) => {
-  //     if (e.key === ' ') {
-  //       deleteImage();
-  //     } else if (e.key === 'ArrowRight') {
-  //       nextImage();
-  //     } else if (e.key === 'ArrowLeft') {
-  //       prevImage();
-  //     }
-  //   });
-  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const getImage = () => {
-    // const imageFile = imagesRef.current[imageIndexRef.current];
-    // const extension = getExtension(imageFile) || '';
-    // if (!isImage(extension)) return setImage('');
-    // window.electron.ipcRenderer.sendMessage(GET_IMAGE, {
-    //   directory: directoryRef.current,
-    //   filename: imageFile
-    // });
-  };
-
-  const navigate = (callback: () => number) => {
-    // if (imagesRef.current.length > 0) {
-    //   const newIndex = callback();
-    //   setImageIndex(newIndex);
-    //   imageIndexRef.current = newIndex;
-    //   getImage();
-    // }
-  };
+  // keyboard navigation
+  useEffect(() => {
+    window.addEventListener('keyup', (e) => {
+      switch (e.key) {
+        case ' ':
+          return deleteImage(null);
+        case 'ArrowRight':
+          return nextImage();
+        case 'ArrowLeft':
+          return prevImage();
+      }
+    });
+  }, []);
 
   const nextImage = () => {
-    // navigate(() => {
-    //   let newIndex = imageIndexRef.current + 1;
-    //   // end reached
-    //   if (newIndex > imagesRef.current.length - 1) {
-    //     new Audio('./pop.mp3').play();
-    //     newIndex = 0;
-    //     const newLoopCount = loopCountRef.current + 1;
-    //     setLoopCount(newLoopCount);
-    //     loopCountRef.current = newLoopCount;
-    //   }
-    //   return newIndex;
-    // });
+    if (images.length < 0) return;
+
+    let newIndex = imageIndex + 1;
+
+    // end reached
+    if (newIndex > images.length - 1) {
+      new Audio('./pop.mp3').play();
+      newIndex = 0;
+      const newLoopCount = loopCount + 1;
+      setLoopCount(newLoopCount);
+    }
+
+    setImageIndex(newIndex);
   };
 
   const prevImage = () => {
-    // navigate(() => {
-    //   let newIndex = imageIndexRef.current - 1;
-    //   if (newIndex < 0) newIndex = imagesRef.current.length - 1;
-    //   return newIndex;
-    // });
+    if (images.length < 0) return;
+    let newIndex = imageIndex - 1;
+    if (newIndex < 0) newIndex = images.length - 1;
+    setImageIndex(newIndex);
   };
-
-  // const deleteImage = () => {
-  //   // if (imagesRef.current.length > 0) {
-  //   //   window.electron.ipcRenderer.sendMessage(DELETE_IMAGE, {
-  //   //     directory: directoryRef.current,
-  //   //     filename: imagesRef.current[imageIndexRef.current]
-  //   //   });
-  //   // }
-  // };
 
   const deleteImage = (response: any) => {
     // if (response.error) {
+    // if (imagesRef.current.length > 0) {
+    //   window.electron.ipcRenderer.sendMessage(DELETE_IMAGE, {
+    //     directory: directoryRef.current,
+    //     filename: imagesRef.current[imageIndexRef.current]
+    //   });
+    // }
+    //
+    //
+    //
     //   return toast({
     //     description: response.error.toString(),
     //     status: 'error',
@@ -157,13 +110,9 @@ export function DirectoryContent() {
     // }
   ];
 
-  // const isImage = (extension: string): boolean =>
-  //   ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(extension);
-
-  // const getExtension = (fileName: string): string | undefined =>
-  //   fileName.split('.').pop();
-
   if (screen !== 'directoryContent') return null;
+
+  const activeImage = images[imageIndex];
 
   return (
     <Flex
@@ -172,9 +121,9 @@ export function DirectoryContent() {
       padding="1rem"
       style={{ height: '100vh' }}
     >
-      {/* {image && (
-        <PreviewImage src={`data:image/${extension};base64,${image}`} alt="" />
-      )}
+      <Image src={`file://${activeImage}`} alt="" maxHeight="100vh" />
+
+      {/*
 
       {extension && !isImage(extension) && (
         <NoImageWrapper>

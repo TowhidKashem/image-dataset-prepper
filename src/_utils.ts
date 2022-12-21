@@ -12,3 +12,9 @@ export const getPathInfo = (
     dirName
   };
 };
+
+export const getFileExtension = (fileName: string): string =>
+  fileName.split('.').pop();
+
+export const isImage = (extension: string): boolean =>
+  ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(extension);
