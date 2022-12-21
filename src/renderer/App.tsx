@@ -1,50 +1,67 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import icon from '../../assets/icon.svg';
-import './App.css';
+import { useEffect, useState } from 'react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
+import { useStateCallback } from './hooks/useStateCallback';
+import { ChooseDirectory } from './ChooseDirectory';
+import { DirectoryList } from './DirectoryList';
+import { DirectoryContent } from './DirectoryContent';
+import { ScreenT } from './_types';
+import { AppContext, topics } from './_data';
 
-const Hello = () => {
+export function App() {
+  const [screen, setScreen] = useState<ScreenT>('chooseDirectory');
+  const [directoryPath, setDirectoryPath] = useState('');
+  const [directories, setDirectories] = useStateCallback<string[]>([]);
+  const [images, setImages] = useStateCallback<string[]>([]);
+
+  useEffect(() => {
+    const { GET_SUB_FOLDERS } = topics;
+
+    // calling IPC exposed from preload script
+    // window.electron.ipcRenderer.on('ipc-example', (arg) => {
+    //   alert(arg);
+    //   console.log(arg);
+    // });
+
+    // window.electrons.ipcRenderer.sendMessage('ipc-example', ['ping']);
+
+    // window.electron.ipcRenderer.on(GET_SUB_FOLDERS, ({ contents }) => {
+    //   alert('GET_SUB_FOLDERS - xoxo');
+    //   // console.log('GET_SUB_FOLDERS:', contents);
+    //   // setDirectories(contents, () => setScreen('directoryList'));
+    // });
+  });
+
   return (
-    <div>
-      <div className="Hello">
-        <img width="200" alt="icon" src={icon} />
-      </div>
-      <h1>electron-react-boilerplate</h1>
-      <div className="Hello">
-        <a
-          href="https://electron-react-boilerplate.js.org/"
-          target="_blank"
-          rel="noreferrer"
+    <ChakraProvider>
+      <AppContext.Provider
+        value={{
+          screen,
+          setScreen,
+          directoryPath,
+          setDirectoryPath,
+          directories,
+          setDirectories,
+          images,
+          setImages,
+        }}
+      >
+        <Flex
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          padding="2rem"
+          minHeight="100vh"
         >
-          <button type="button">
-            <span role="img" aria-label="books">
-              📚
-            </span>
-            Read our docs
-          </button>
-        </a>
-
-        <button
-          type="button"
-          onClick={() => {
-            window.electron.ipcRenderer.sendMessage('ipc-example', ['ping']);
-          }}
-        >
-          <span role="img" aria-label="folded hands">
-            🙏
-          </span>
-          Donate
-        </button>
-      </div>
-    </div>
-  );
-};
-
-export default function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-      </Routes>
-    </Router>
+          <MemoryRouter>
+            <Routes>
+              <Route path="/" element={<ChooseDirectory />} />
+              <Route path="/dir" element={<DirectoryList />} />
+              <Route path="/dir/content" element={<DirectoryContent />} />
+            </Routes>
+          </MemoryRouter>
+        </Flex>
+      </AppContext.Provider>
+    </ChakraProvider>
   );
 }

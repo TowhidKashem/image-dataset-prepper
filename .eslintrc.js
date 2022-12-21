@@ -2,10 +2,12 @@ module.exports = {
   extends: 'erb',
   rules: {
     // A temporary hack related to IDE not resolving correct package.json
-    'import/no-extraneous-dependencies': 'off',
-    'import/no-unresolved': 'error',
+    'import/no-extraneous-dependencies': 0,
+    'import/no-unresolved': 2,
+    'import/prefer-default-export': 0,
+    'import/no-cycle': 0,
     // Since React 17 and typescript 4.1 you can safely disable the rule
-    'react/react-in-jsx-scope': 'off',
+    'react/react-in-jsx-scope': 0,
   },
   parserOptions: {
     ecmaVersion: 2020,

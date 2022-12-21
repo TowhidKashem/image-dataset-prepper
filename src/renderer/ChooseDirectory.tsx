@@ -4,6 +4,10 @@ import { AppContext, topics } from './_data';
 
 const { GET_SUB_FOLDERS } = topics;
 
+interface FileWithPath extends File {
+  path: string;
+}
+
 export function ChooseDirectory() {
   const { screen, setDirectoryPath } = useContext(AppContext);
 
