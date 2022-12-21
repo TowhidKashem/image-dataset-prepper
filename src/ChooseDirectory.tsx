@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
-import { Button } from '@chakra-ui/react';
-import styled from '@emotion/styled';
+import React, { useState, useContext } from 'react';
+import { Box, Button } from '@chakra-ui/react';
+import { AppContext, GET_FOLDER_CONTENTS } from './_data';
 
 export function ChooseDirectory() {
+  const { screen, setDirectory } = useContext(AppContext);
+
+  const [hover, setHover] = useState(false);
+
   const chooseFolder = (e: React.SyntheticEvent<HTMLInputElement>): void => {
     if (!e.currentTarget.files) return;
 
@@ -13,7 +17,6 @@ export function ChooseDirectory() {
     const rootDirectory = segments.join('/');
 
     setDirectory(rootDirectory);
-    directoryRef.current = rootDirectory;
 
     window.electron.ipcRenderer.sendMessage(GET_FOLDER_CONTENTS, {
       directory: rootDirectory,
@@ -21,10 +24,10 @@ export function ChooseDirectory() {
     });
   };
 
-  const [hover, setHover] = useState(false);
+  if (screen !== 'chooseDirectory') return null;
 
   return (
-    <UploadButtonWrapper>
+    <Box position="relative">
       <input
         type="file"
         // @ts-ignore
@@ -42,11 +45,6 @@ export function ChooseDirectory() {
       <Button size="lg" colorScheme={hover ? 'twitter' : 'blue'}>
         Choose Root Folder
       </Button>
-    </UploadButtonWrapper>
+    </Box>
   );
 }
-
-const UploadButtonWrapper = styled.div`
-  position: relative;
-  display: inline-block;
-`;

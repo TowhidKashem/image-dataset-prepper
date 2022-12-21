@@ -1,15 +1,49 @@
-import { useContext } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
+import PubSub from 'pubsub-js';
 import { SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
-import { BreadCrumbs } from './BreadCrumbs';
-import { AppContext } from './_data';
+import { PathNav } from './PathNav';
+import {
+  AppContext,
+  GET_FOLDER_CONTENTS
+  // GET_IMAGE,
+  // DELETE_IMAGE,
+  // TOAST_DURATION
+} from './_data';
 
 export function DirectoryList() {
-  const { directory, directories } = useContext(AppContext);
+  const { screen, setScreen, directory, directories, setDirectories } =
+    useContext(AppContext);
+
+  const getFolderContents = useCallback(
+    ({ contents, args }: { contents: any; args: any }) => {
+      if (args.root) {
+        setDirectories(contents, () => {
+          setScreen('directoryList');
+        });
+      } else {
+        // setImages(contents);
+        // imagesRef.current = contents;
+        // getImage(); // get the first image
+        // setCommand('GET_NEXT_IMAGE');
+      }
+    },
+    [setDirectories, setScreen]
+  );
+
+  useEffect(() => {
+    PubSub.subscribe(GET_FOLDER_CONTENTS, (_, payload) => {
+      console.log('⭐️', { event: GET_FOLDER_CONTENTS, payload });
+
+      getFolderContents(payload);
+    });
+  }, [getFolderContents]);
+
+  if (screen !== 'directoryList') return null;
 
   return (
-    <Flex flexDirection="column" padding="2rem" minHeight="100vh">
-      <BreadCrumbs path={directory} />
+    <>
+      <PathNav path={directory} />
 
       <SimpleGrid columns={{ sm: 2, md: 10 }} spacing={2}>
         {directories.map((directory) => (
@@ -33,6 +67,6 @@ export function DirectoryList() {
           </Flex>
         ))}
       </SimpleGrid>
-    </Flex>
+    </>
   );
 }

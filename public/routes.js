@@ -1,5 +1,5 @@
 const { ipcMain } = require('electron');
-const { GET_FOLDER_CONTENTS, GET_IMAGE, DELETE_IMAGE } = require('./_config');
+const { GET_FOLDER_CONTENTS, GET_IMAGE, DELETE_IMAGE } = require('./_data');
 const { getFolderContents, getImage, deleteImage } = require('./handlers');
 
 ipcMain.on(GET_FOLDER_CONTENTS, getFolderContents);

@@ -1,103 +1,86 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
-import { ChakraProvider, useToast } from '@chakra-ui/react';
+import PubSub from 'pubsub-js';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
 import { ChooseDirectory } from './ChooseDirectory';
 import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
+import { useStateCallback } from './hooks/useStateCallback';
 import {
+  ScreenT,
   AppContext,
   GET_FOLDER_CONTENTS,
   GET_IMAGE,
-  DELETE_IMAGE,
-  TOAST_DURATION
+  DELETE_IMAGE
 } from './_data';
 import 'global.scss';
 
-function App() {
-  const toast = useToast();
+// useEffect(() => {
+//   PubSub.subscribe(GET_IMAGE, (_, payload) => {
+//     console.warn('mma', payload);
+//   });
+// }, []);
 
-  const [directories, setDirectories] = useState<string[]>([]);
+// PubSub.subscribe('MY TOPIC', mySubscriber);
+
+function App() {
+  const [screen, setScreen] = useState<ScreenT>('chooseDirectory');
+  const [directories, setDirectories] = useStateCallback<string[]>([]);
   const [directory, setDirectory] = useState('');
 
-  const [images, setImages] = useState<string[]>([]);
-  const [image, setImage] = useState('');
+  // const [images, setImages] = useState<string[]>([]);
+  // const [image, setImage] = useState('');
 
-  const [emptyMessage, setEmptyMessage] = useState(false);
+  // const [emptyMessage, setEmptyMessage] = useState(false);
 
-  const directoriesRef = useRef<string[]>([]);
-  const directoryRef = useRef('');
-  const imagesRef = useRef<string[]>([]);
-  const imageIndexRef = useRef(0);
+  // const directoriesRef = useRef<string[]>([]);
+  // const imagesRef = useRef<string[]>([]);
+  // const imageIndexRef = useRef(0);
 
   useEffect(() => {
-    window.electron.ipcRenderer.once(GET_FOLDER_CONTENTS, getFolderContents);
-    window.electron.ipcRenderer.on(GET_IMAGE, (base64) => setImage(base64));
-    window.electron.ipcRenderer.on(DELETE_IMAGE, deleteImage);
+    window.electron.ipcRenderer.once(GET_FOLDER_CONTENTS, (response) =>
+      PubSub.publish(GET_FOLDER_CONTENTS, response)
+    );
+    window.electron.ipcRenderer.on(GET_IMAGE, (response) =>
+      PubSub.publish(GET_IMAGE, response)
+    );
+    window.electron.ipcRenderer.on(DELETE_IMAGE, (response) =>
+      PubSub.publish(DELETE_IMAGE, response)
+    );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const getFolderContents = ({ contents, args }) => {
-    if (args.root) {
-      setDirectories(contents);
-      directoriesRef.current = contents;
-    } else {
-      setImages(contents);
-      imagesRef.current = contents;
-      getImage(); // get the first image
-    }
-  };
-
-  const deleteImage = (response) => {
-    if (response.error) {
-      return toast({
-        description: response.error.toString(),
-        status: 'error',
-        position: 'top',
-        duration: TOAST_DURATION
-      });
-    }
-
-    const newImages = imagesRef.current.filter(
-      (image) => image !== imagesRef.current[imageIndexRef.current]
-    );
-
-    setImages(newImages);
-    imagesRef.current = newImages;
-
-    toast({
-      description: 'Image deleted successfully',
-      status: 'success',
-      position: 'top',
-      duration: TOAST_DURATION
-    });
-
-    if (newImages.length > 0) {
-      nextImage();
-    } else {
-      setImage('');
-      setEmptyMessage(true);
-    }
-  };
-
-  const getComponent = (): React.ReactNode => {
-    if (directories.length) return <DirectoryList />;
-    if (directory) return <DirectoryContent />;
-    return <ChooseDirectory />;
-  };
+  // const getComponent = (): React.ReactNode => {
+  //   if (directories.length) return
+  //   if (directory) return ;
+  //   return ;
+  // };
 
   return (
-    <AppContext.Provider
-      value={{
-        directories,
-        directory
-      }}
-    >
-      {getComponent()}
-    </AppContext.Provider>
+    <ChakraProvider>
+      <AppContext.Provider
+        value={{
+          screen,
+          setScreen,
+          directory,
+          setDirectory,
+          directories,
+          setDirectories
+        }}
+      >
+        <Flex
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          padding="2rem"
+          minHeight="100vh"
+        >
+          <ChooseDirectory />
+          <DirectoryList />
+          <DirectoryContent />
+        </Flex>
+      </AppContext.Provider>
+    </ChakraProvider>
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <ChakraProvider>
-    <App />
-  </ChakraProvider>
-);
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);

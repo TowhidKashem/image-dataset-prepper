@@ -1,7 +1,7 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 
-export function BreadCrumbs({ path }: { path: string }) {
+export function PathNav({ path }: { path: string }) {
   const segments = path.split('/');
   segments.pop();
 

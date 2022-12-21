@@ -41,6 +41,7 @@
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "framer-motion": "^7.3.5",
+    "pubsub-js": "^1.9.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
@@ -49,6 +50,7 @@
   },
   "devDependencies": {
     "@types/node": "^16.11.59",
+    "@types/pubsub-js": "^1.8.3",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.6",
     "concurrently": "^7.4.0",

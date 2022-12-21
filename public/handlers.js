@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { GET_FOLDER_CONTENTS, GET_IMAGE, DELETE_IMAGE } = require('./_config');
+const { GET_FOLDER_CONTENTS, GET_IMAGE, DELETE_IMAGE } = require('./_data');
 
 function getFolderContents(event, args) {
   try {
