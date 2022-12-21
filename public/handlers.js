@@ -2,15 +2,21 @@ const fs = require('fs');
 const { GET_FOLDER_CONTENTS, GET_IMAGE, DELETE_IMAGE } = require('./_data');
 
 function getFolderContents(event, args) {
+  const { directory } = args;
+
   try {
+    const contents = fs
+      .readdirSync(directory)
+      .map((content) => `${directory}/${content}`);
+
     event.reply(GET_FOLDER_CONTENTS, {
-      contents: fs.readdirSync(args.directory),
+      contents,
       args
     });
   } catch (error) {
     event.reply(GET_FOLDER_CONTENTS, {
       error,
-      directory: args.directory
+      directory
     });
   }
 }
@@ -49,4 +55,8 @@ function deleteImage(event, args) {
   }
 }
 
-module.exports = { getFolderContents, getImage, deleteImage };
+module.exports = {
+  getFolderContents,
+  getImage,
+  deleteImage
+};

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom/client';
 import PubSub from 'pubsub-js';
+import { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom/client';
 import { ChakraProvider, Flex } from '@chakra-ui/react';
+import { useStateCallback } from 'hooks/useStateCallback';
 import { ChooseDirectory } from './ChooseDirectory';
 import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
-import { useStateCallback } from './hooks/useStateCallback';
 import {
   ScreenT,
   AppContext,
@@ -15,27 +15,11 @@ import {
 } from './_data';
 import 'global.scss';
 
-// useEffect(() => {
-//   PubSub.subscribe(GET_IMAGE, (_, payload) => {
-//     console.warn('mma', payload);
-//   });
-// }, []);
-
-// PubSub.subscribe('MY TOPIC', mySubscriber);
-
 function App() {
   const [screen, setScreen] = useState<ScreenT>('chooseDirectory');
+  const [directoryPath, setDirectoryPath] = useState('');
   const [directories, setDirectories] = useStateCallback<string[]>([]);
-  const [directory, setDirectory] = useState('');
-
-  // const [images, setImages] = useState<string[]>([]);
-  // const [image, setImage] = useState('');
-
-  // const [emptyMessage, setEmptyMessage] = useState(false);
-
-  // const directoriesRef = useRef<string[]>([]);
-  // const imagesRef = useRef<string[]>([]);
-  // const imageIndexRef = useRef(0);
+  const [images, setImages] = useStateCallback<string[]>([]);
 
   useEffect(() => {
     window.electron.ipcRenderer.once(GET_FOLDER_CONTENTS, (response) =>
@@ -47,13 +31,7 @@ function App() {
     window.electron.ipcRenderer.on(DELETE_IMAGE, (response) =>
       PubSub.publish(DELETE_IMAGE, response)
     );
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // const getComponent = (): React.ReactNode => {
-  //   if (directories.length) return
-  //   if (directory) return ;
-  //   return ;
-  // };
+  }, []);
 
   return (
     <ChakraProvider>
@@ -61,10 +39,12 @@ function App() {
         value={{
           screen,
           setScreen,
-          directory,
-          setDirectory,
+          directoryPath,
+          setDirectoryPath,
           directories,
-          setDirectories
+          setDirectories,
+          images,
+          setImages
         }}
       >
         <Flex

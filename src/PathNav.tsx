@@ -1,11 +1,9 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from '@chakra-ui/react';
 import { ChevronRightIcon } from '@chakra-ui/icons';
+import { getPathInfo } from './_utils';
 
 export function PathNav({ path }: { path: string }) {
-  const segments = path.split('/');
-  segments.pop();
-
-  const curDir = segments[segments.length - 1];
+  const { parentPath, dirName } = getPathInfo(path);
 
   const commonProps = {
     fontSize: 'lg',
@@ -21,11 +19,11 @@ export function PathNav({ path }: { path: string }) {
       separator={<ChevronRightIcon color="gray.500" />}
     >
       <BreadcrumbItem>
-        <BreadcrumbLink {...commonProps}>{segments.join('/')}</BreadcrumbLink>
+        <BreadcrumbLink {...commonProps}>{parentPath}</BreadcrumbLink>
       </BreadcrumbItem>
 
       <BreadcrumbItem isCurrentPage>
-        <BreadcrumbLink {...commonProps}>{curDir}</BreadcrumbLink>
+        <BreadcrumbLink {...commonProps}>{dirName}</BreadcrumbLink>
       </BreadcrumbItem>
     </Breadcrumb>
   );

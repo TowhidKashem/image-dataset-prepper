@@ -3,7 +3,7 @@ import { Box, Button } from '@chakra-ui/react';
 import { AppContext, GET_FOLDER_CONTENTS } from './_data';
 
 export function ChooseDirectory() {
-  const { screen, setDirectory } = useContext(AppContext);
+  const { screen, setDirectoryPath } = useContext(AppContext);
 
   const [hover, setHover] = useState(false);
 
@@ -16,7 +16,7 @@ export function ChooseDirectory() {
     segments.pop();
     const rootDirectory = segments.join('/');
 
-    setDirectory(rootDirectory);
+    setDirectoryPath(rootDirectory);
 
     window.electron.ipcRenderer.sendMessage(GET_FOLDER_CONTENTS, {
       directory: rootDirectory,
