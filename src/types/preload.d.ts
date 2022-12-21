@@ -17,6 +17,11 @@ declare global {
           func: (...args: any) => void
         ): (() => void) | undefined;
         once(channel: string, func: (...args: any) => void): void;
+        removeListener(
+          channel: string,
+          func: (...args: unknown[]) => void
+        ): void;
+        removeAllListeners(channel: string): void;
       };
     };
   }

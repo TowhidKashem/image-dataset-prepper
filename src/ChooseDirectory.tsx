@@ -2,6 +2,8 @@ import { useState, useContext } from 'react';
 import { Box, Button } from '@chakra-ui/react';
 import { AppContext, topics } from './_data';
 
+const { GET_SUB_FOLDERS } = topics;
+
 export function ChooseDirectory() {
   const { screen, setDirectoryPath } = useContext(AppContext);
 
@@ -14,14 +16,11 @@ export function ChooseDirectory() {
     const segments = path.split('/');
     segments.pop();
     segments.pop();
-    const rootDirectory = segments.join('/');
+    const directory = segments.join('/');
 
-    setDirectoryPath(rootDirectory);
+    setDirectoryPath(directory);
 
-    window.electron.ipcRenderer.sendMessage(topics.GET_FOLDER_CONTENTS, {
-      directory: rootDirectory,
-      root: true
-    });
+    window.electron.ipcRenderer.sendMessage(GET_SUB_FOLDERS, { directory });
   };
 
   if (screen !== 'chooseDirectory') return null;

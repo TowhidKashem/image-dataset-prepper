@@ -1,5 +1,4 @@
-import PubSub from 'pubsub-js';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { ChakraProvider, Flex } from '@chakra-ui/react';
 import { useStateCallback } from 'hooks/useStateCallback';
@@ -16,18 +15,18 @@ function App() {
   const [images, setImages] = useStateCallback<string[]>([]);
 
   useEffect(() => {
-    const { GET_FOLDER_CONTENTS, GET_IMAGE, DELETE_IMAGE } = topics;
+    const { GET_SUB_FOLDERS } = topics;
 
-    window.electron.ipcRenderer.on(GET_FOLDER_CONTENTS, (response) =>
-      PubSub.publish(GET_FOLDER_CONTENTS, response)
-    );
-    window.electron.ipcRenderer.on(GET_IMAGE, (response) =>
-      PubSub.publish(GET_IMAGE, response)
-    );
-    window.electron.ipcRenderer.on(DELETE_IMAGE, (response) =>
-      PubSub.publish(DELETE_IMAGE, response)
-    );
-  }, []);
+    window.electron.ipcRenderer.on(GET_SUB_FOLDERS, ({ contents }) => {
+      alert('GET_SUB_FOLDERS - xoxo');
+      // console.log('GET_SUB_FOLDERS:', contents);
+      // setDirectories(contents, () => setScreen('directoryList'));
+    });
+
+    return () => {
+      window.electron.ipcRenderer.removeAllListeners(GET_SUB_FOLDERS);
+    };
+  });
 
   return (
     <ChakraProvider>

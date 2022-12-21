@@ -1,10 +1,11 @@
-import PubSub from 'pubsub-js';
 import { useContext, useEffect } from 'react';
 import { SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
 import { PathNav } from './PathNav';
 import { AppContext, topics } from './_data';
 import { getPathInfo } from './_utils';
+
+const { GET_SUB_FOLDERS, GET_IMAGES } = topics;
 
 export function DirectoryList() {
   const {
@@ -18,30 +19,15 @@ export function DirectoryList() {
   } = useContext(AppContext);
 
   useEffect(() => {
-    const getFolderContents = ({ contents, args }: any) => {
-      if (args.root) {
-        setDirectories(contents, () => setScreen('directoryList'));
-      } else {
-        setImages(contents, () => {
-          setDirectories(null);
-          setDirectoryPath(args.directory);
-          setScreen('directoryContent');
-        });
-      }
-    };
-
-    PubSub.subscribe(topics.GET_FOLDER_CONTENTS, (_topic, payload) => {
-      console.warn('mma', payload);
-      getFolderContents(payload);
-    });
+    // window.electron.ipcRenderer.on(GET_IMAGES, ({ contents, args }) => {
+    //   console.log('GET_IMAGES:', contents);
+    //   setImages(contents, () => {
+    //     setDirectories(null);
+    //     setDirectoryPath(args.directory);
+    //     setScreen('directoryContent');
+    //   });
+    // });
   }, []);
-
-  const handleFolderClick = (directory: string) => {
-    window.electron.ipcRenderer.sendMessage(topics.GET_FOLDER_CONTENTS, {
-      directory,
-      root: false
-    });
-  };
 
   if (screen !== 'directoryList') return null;
 
@@ -49,7 +35,13 @@ export function DirectoryList() {
     <>
       <PathNav path={directoryPath} />
 
-      <SimpleGrid spacing={2} columns={{ sm: 2, md: 10 }}>
+      <SimpleGrid
+        spacing={2}
+        columns={{
+          sm: 2,
+          md: 10
+        }}
+      >
         {directories.map((directory) => {
           const { dirName } = getPathInfo(directory);
 
@@ -65,9 +57,13 @@ export function DirectoryList() {
                 borderRadius: 5,
                 cursor: 'pointer'
               }}
-              onClick={() => handleFolderClick(directory)}
+              onClick={() => {
+                window.electron.ipcRenderer.sendMessage(GET_IMAGES, {
+                  directory
+                });
+              }}
             >
-              <Icon boxSize="4rem" marginBottom={1} as={FcOpenedFolder} />
+              <Icon as={FcOpenedFolder} boxSize="4rem" marginBottom={1} />
 
               <Heading as="h6" size="xs">
                 {dirName}

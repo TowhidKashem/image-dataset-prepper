@@ -1,19 +1,34 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
-import { Image, useToast, Flex } from '@chakra-ui/react';
-import { AppContext } from './_data';
-import { getPathInfo } from './_utils';
+import {
+  Image,
+  // useToast,
+  Flex
+} from '@chakra-ui/react';
+import { AppContext, topics } from './_data';
+// import { getPathInfo } from './_utils';
+
+const { DELETE_IMAGE } = topics;
 
 export function DirectoryContent() {
-  const toast = useToast();
-
-  const { screen, directoryPath, images } = useContext(AppContext);
-
+  // const toast = useToast();
   // export const TOAST_DURATION = 2_000;
+
+  const {
+    screen,
+    // directoryPath,
+    images
+  } = useContext(AppContext);
 
   const [imageIndex, setImageIndex] = useState(0);
   const [loopCount, setLoopCount] = useState(0);
 
-  const directory = getPathInfo(directoryPath).dirName;
+  // const directory = getPathInfo(directoryPath).dirName;
+
+  useEffect(() => {
+    window.electron.ipcRenderer.on(DELETE_IMAGE, (response) => {
+      deleteImage(response);
+    });
+  }, []);
 
   const nextImage = useCallback(() => {
     if (images.length < 0) return;
@@ -74,25 +89,25 @@ export function DirectoryContent() {
   }, []);
 
   // const extension = images.length > 0 ? getExtension(images[imageIndex]) : null;
-  const extension = '';
+  // const extension = '';
 
-  const listItems = [
-    // {
-    //   key: 'count',
-    //   show: images.length > 0,
-    //   value: `${imageIndex + 1}/${images.length} images`
-    // },
-    // {
-    //   key: 'loops',
-    //   show: directory,
-    //   value: `${loopCount} loops`
-    // },
-    // {
-    //   key: 'extension',
-    //   show: extension,
-    //   value: extension
-    // }
-  ];
+  // const listItems = [
+  //   // {
+  //   //   key: 'count',
+  //   //   show: images.length > 0,
+  //   //   value: `${imageIndex + 1}/${images.length} images`
+  //   // },
+  //   // {
+  //   //   key: 'loops',
+  //   //   show: directory,
+  //   //   value: `${loopCount} loops`
+  //   // },
+  //   // {
+  //   //   key: 'extension',
+  //   //   show: extension,
+  //   //   value: extension
+  //   // }
+  // ];
 
   // keyboard navigation
   useEffect(() => {

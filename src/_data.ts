@@ -2,8 +2,8 @@ import { createContext, SetStateAction, Dispatch } from 'react';
 import { UseStateCallbackT } from 'hooks/useStateCallback';
 
 export const topics = {
-  GET_FOLDER_CONTENTS: 'GET_FOLDER_CONTENTS',
-  GET_IMAGE: 'GET_IMAGE',
+  GET_SUB_FOLDERS: 'GET_SUB_FOLDERS',
+  GET_IMAGES: 'GET_IMAGES',
   DELETE_IMAGE: 'DELETE_IMAGE'
 } as const;
 

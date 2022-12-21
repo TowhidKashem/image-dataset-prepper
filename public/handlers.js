@@ -1,7 +1,22 @@
 const fs = require('fs');
-const { GET_FOLDER_CONTENTS, GET_IMAGE, DELETE_IMAGE } = require('./_data');
+const { GET_SUB_FOLDERS, GET_IMAGES, DELETE_IMAGE } = require('./_data');
 
-function getFolderContents(event, args) {
+function getSubfolders(event, { directory }) {
+  try {
+    const contents = fs
+      .readdirSync(directory)
+      .map((content) => `${directory}/${content}`);
+
+    event.reply(GET_SUB_FOLDERS, { contents });
+  } catch (error) {
+    event.reply(GET_SUB_FOLDERS, {
+      error,
+      directory
+    });
+  }
+}
+
+function getImages(event, args) {
   const { directory } = args;
 
   try {
@@ -9,26 +24,15 @@ function getFolderContents(event, args) {
       .readdirSync(directory)
       .map((content) => `${directory}/${content}`);
 
-    event.reply(GET_FOLDER_CONTENTS, {
+    event.reply(GET_IMAGES, {
       contents,
       args
     });
   } catch (error) {
-    event.reply(GET_FOLDER_CONTENTS, {
+    event.reply(GET_IMAGES, {
       error,
       directory
     });
-  }
-}
-
-function getImage(event, args) {
-  try {
-    const file = `${args.directory}/${args.filename}`;
-    const image = fs.readFileSync(file);
-
-    event.reply(GET_IMAGE, image.toString('base64'));
-  } catch (error) {
-    event.reply(GET_IMAGE, error);
   }
 }
 
@@ -56,7 +60,7 @@ function deleteImage(event, args) {
 }
 
 module.exports = {
-  getFolderContents,
-  getImage,
+  getSubfolders,
+  getImages,
   deleteImage
 };

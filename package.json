@@ -1,11 +1,35 @@
 {
   "name": "image-reviewer-gui",
-  "main": "./public/electron.js",
+  "main": "./public/main.js",
   "homepage": "./",
   "author": "Towhid Kashem",
   "description": "A minimal desktop app to quickly review and delete images when collecting data sets for machine learning",
   "version": "0.1.0",
   "license": "MIT",
+  "dependencies": {
+    "@chakra-ui/icons": "^2.0.14",
+    "@chakra-ui/react": "^2.3.2",
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "framer-motion": "^7.3.5",
+    "pubsub-js": "^1.9.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.4.0",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.8.3"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.59",
+    "@types/pubsub-js": "^1.8.3",
+    "@types/react": "^18.0.20",
+    "@types/react-dom": "^18.0.6",
+    "concurrently": "^7.4.0",
+    "electron": "^20.1.4",
+    "electron-builder": "^23.3.3",
+    "node-sass": "^7.0.3",
+    "wait-on": "^6.0.1"
+  },
   "scripts": {
     "start": "NODE_ENV=development BROWSER=none concurrently -k 'react-scripts start' 'wait-on tcp:3000 && electron .'",
     "build:mac": "yarn prebuild && electron-builder -m -c.extraMetadata.main=build/electron.js && yarn move-mac-build",
@@ -35,40 +59,6 @@
       "target": "deb"
     }
   },
-  "dependencies": {
-    "@chakra-ui/icons": "^2.0.14",
-    "@chakra-ui/react": "^2.3.2",
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
-    "framer-motion": "^7.3.5",
-    "pubsub-js": "^1.9.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-icons": "^4.4.0",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.8.3"
-  },
-  "devDependencies": {
-    "@types/node": "^16.11.59",
-    "@types/pubsub-js": "^1.8.3",
-    "@types/react": "^18.0.20",
-    "@types/react-dom": "^18.0.6",
-    "concurrently": "^7.4.0",
-    "electron": "^20.1.4",
-    "electron-builder": "^23.3.3",
-    "node-sass": "^7.0.3",
-    "wait-on": "^6.0.1"
-  },
-  "keywords": [
-    "image viewer",
-    "image explorer",
-    "file explorer",
-    "image explorer for machine learning data sets",
-    "machine learning image organizer",
-    "organizing machine learning data sets",
-    "organizing images for machine learning",
-    "machine learning image classification tool"
-  ],
   "browserslist": {
     "production": [
       "last 1 electron version"
