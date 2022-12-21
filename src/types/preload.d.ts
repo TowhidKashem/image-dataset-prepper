@@ -1,9 +1,11 @@
+import { TopicT } from '../_data';
+
 declare global {
   interface Window {
     electron: {
       ipcRenderer: {
         sendMessage(
-          channel: 'GET_FOLDER_CONTENTS' | 'GET_IMAGE' | 'DELETE_IMAGE',
+          channel: TopicT,
           args: {
             directory: string;
             root?: boolean;

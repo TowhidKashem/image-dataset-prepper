@@ -3,7 +3,7 @@ import { useContext, useEffect } from 'react';
 import { SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
 import { PathNav } from './PathNav';
-import { AppContext, GET_FOLDER_CONTENTS } from './_data';
+import { AppContext, topics } from './_data';
 import { getPathInfo } from './_utils';
 
 export function DirectoryList() {
@@ -20,9 +20,7 @@ export function DirectoryList() {
   useEffect(() => {
     const getFolderContents = ({ contents, args }: any) => {
       if (args.root) {
-        setDirectories(contents, () => {
-          setScreen('directoryList');
-        });
+        setDirectories(contents, () => setScreen('directoryList'));
       } else {
         setImages(contents, () => {
           setDirectories(null);
@@ -32,14 +30,14 @@ export function DirectoryList() {
       }
     };
 
-    PubSub.subscribe(GET_FOLDER_CONTENTS, (_topic, payload) => {
+    PubSub.subscribe(topics.GET_FOLDER_CONTENTS, (_topic, payload) => {
       alert('lmaooo');
       getFolderContents(payload);
     });
   }, []);
 
   const handleFolderClick = (directory: string) => {
-    window.electron.ipcRenderer.sendMessage(GET_FOLDER_CONTENTS, {
+    window.electron.ipcRenderer.sendMessage(topics.GET_FOLDER_CONTENTS, {
       directory,
       root: false
     });

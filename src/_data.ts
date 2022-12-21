@@ -3,7 +3,7 @@ import { UseStateCallbackT } from 'hooks/useStateCallback';
 
 export type ScreenT = 'chooseDirectory' | 'directoryList' | 'directoryContent';
 
-export const AppContext = createContext<{
+type AppContextT = {
   screen: ScreenT;
   setScreen: Dispatch<SetStateAction<ScreenT>>;
 
@@ -15,10 +15,14 @@ export const AppContext = createContext<{
 
   images: string[];
   setImages: UseStateCallbackT<string[]>;
-}>(null);
+};
 
-export const GET_FOLDER_CONTENTS = 'GET_FOLDER_CONTENTS';
-export const GET_IMAGE = 'GET_IMAGE';
-export const DELETE_IMAGE = 'DELETE_IMAGE';
+export const AppContext = createContext<AppContextT>(null);
 
-// export const TOAST_DURATION = 2_000;
+export const topics = {
+  GET_FOLDER_CONTENTS: 'GET_FOLDER_CONTENTS',
+  GET_IMAGE: 'GET_IMAGE',
+  DELETE_IMAGE: 'DELETE_IMAGE'
+} as const;
+
+export type TopicT = keyof typeof topics;

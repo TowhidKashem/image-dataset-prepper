@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   ChakraProvider,
@@ -22,15 +22,20 @@ import {
 } from 'react-icons/fc';
 import styled from '@emotion/styled';
 import {
-  AppContext,
+  AppContext
   // GET_FOLDER_CONTENTS,
-  GET_IMAGE
+  // GET_IMAGE
   // DELETE_IMAGE,
   // TOAST_DURATION
 } from './_data';
 
 export function DirectoryContent() {
   const { screen } = useContext(AppContext);
+
+  // on use effect:
+  // // getImage(); // get the first image
+
+  // export const TOAST_DURATION = 2_000;
 
   // const toast = useToast();
 
@@ -211,55 +216,55 @@ export function DirectoryContent() {
   );
 }
 
-const ImageReviewer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-`;
+// const ImageReviewer = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   min-height: 100vh;
+// `;
 
-const EmptyMessage = styled.section`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-`;
+// const EmptyMessage = styled.section`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   flex-direction: column;
+// `;
 
-const EmptyHeader = styled(Heading)`
-  color: #ffffff;
-  text-align: center;
-  margin-bottom: 40px;
-`;
+// const EmptyHeader = styled(Heading)`
+//   color: #ffffff;
+//   text-align: center;
+//   margin-bottom: 40px;
+// `;
 
-const PreviewImage = styled(Image)`
-  box-shadow: 0px 5px 19px -4px #090b0f;
-  max-height: 100vh;
-`;
+// const PreviewImage = styled(Image)`
+//   box-shadow: 0px 5px 19px -4px #090b0f;
+//   max-height: 100vh;
+// `;
 
-const NoImageWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-`;
+// const NoImageWrapper = styled.div`
+//   display: flex;
+//   align-items: center;
+//   flex-direction: column;
+// `;
 
-const NoImageIcon = styled.div`
-  position: relative;
-  margin-bottom: 10px;
-`;
+// const NoImageIcon = styled.div`
+//   position: relative;
+//   margin-bottom: 10px;
+// `;
 
-const WrongIcon = styled(Icon)`
-  position: absolute;
-  top: -10px;
-  left: -5px;
-`;
+// const WrongIcon = styled(Icon)`
+//   position: absolute;
+//   top: -10px;
+//   left: -5px;
+// `;
 
-const InfoList = styled.ul`
-  list-style-type: none;
-  position: fixed;
-  top: 15px;
-  right: 15px;
+// const InfoList = styled.ul`
+//   list-style-type: none;
+//   position: fixed;
+//   top: 15px;
+//   right: 15px;
 
-  li {
-    text-align: right;
-  }
-`;
+//   li {
+//     text-align: right;
+//   }
+// `;

@@ -6,13 +6,7 @@ import { useStateCallback } from 'hooks/useStateCallback';
 import { ChooseDirectory } from './ChooseDirectory';
 import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
-import {
-  ScreenT,
-  AppContext,
-  GET_FOLDER_CONTENTS,
-  GET_IMAGE,
-  DELETE_IMAGE
-} from './_data';
+import { ScreenT, AppContext, topics } from './_data';
 import 'global.scss';
 
 function App() {
@@ -22,6 +16,8 @@ function App() {
   const [images, setImages] = useStateCallback<string[]>([]);
 
   useEffect(() => {
+    const { GET_FOLDER_CONTENTS, GET_IMAGE, DELETE_IMAGE } = topics;
+
     window.electron.ipcRenderer.once(GET_FOLDER_CONTENTS, (response) =>
       PubSub.publish(GET_FOLDER_CONTENTS, response)
     );

@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Box, Button } from '@chakra-ui/react';
-import { AppContext, GET_FOLDER_CONTENTS } from './_data';
+import { AppContext, topics } from './_data';
 
 export function ChooseDirectory() {
   const { screen, setDirectoryPath } = useContext(AppContext);
@@ -18,7 +18,7 @@ export function ChooseDirectory() {
 
     setDirectoryPath(rootDirectory);
 
-    window.electron.ipcRenderer.sendMessage(GET_FOLDER_CONTENTS, {
+    window.electron.ipcRenderer.sendMessage(topics.GET_FOLDER_CONTENTS, {
       directory: rootDirectory,
       root: true
     });
