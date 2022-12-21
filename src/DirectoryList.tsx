@@ -15,7 +15,7 @@ export function DirectoryList() {
     setDirectoryPath,
     directories,
     setDirectories,
-    setImages
+    setImages,
   } = useContext(AppContext);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export function DirectoryList() {
         spacing={2}
         columns={{
           sm: 2,
-          md: 10
+          md: 10,
         }}
       >
         {directories.map((directory) => {
@@ -55,11 +55,11 @@ export function DirectoryList() {
               _hover={{
                 background: 'rgba(0, 0, 0, 0.3)',
                 borderRadius: 5,
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
               onClick={() => {
                 window.electron.ipcRenderer.sendMessage(GET_IMAGES, {
-                  directory
+                  directory,
                 });
               }}
             >

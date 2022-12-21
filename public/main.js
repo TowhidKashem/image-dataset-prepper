@@ -14,8 +14,8 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       webSecurity: false,
-      nodeIntegration: true
-    }
+      nodeIntegration: true,
+    },
   });
 
   if (!isDev) {
@@ -26,7 +26,7 @@ function createWindow() {
       url.format({
         pathname: path.join(__dirname, 'index.html'),
         protocol: 'file',
-        slashes: true
+        slashes: true,
       })
     );
   }
@@ -39,7 +39,7 @@ function setupLocalFilesNormalizerProxy() {
     (request, callback) => {
       const url = request.url.substr(8);
       callback({
-        path: path.normalize(`${__dirname}/${url}`)
+        path: path.normalize(`${__dirname}/${url}`),
       });
     },
     (error) => {

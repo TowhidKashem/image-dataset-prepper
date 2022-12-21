@@ -2,7 +2,7 @@ import { useState, useEffect, useContext, useCallback } from 'react';
 import {
   Image,
   // useToast,
-  Flex
+  Flex,
 } from '@chakra-ui/react';
 import { AppContext, topics } from './_data';
 // import { getPathInfo } from './_utils';
@@ -16,7 +16,7 @@ export function DirectoryContent() {
   const {
     screen,
     // directoryPath,
-    images
+    images,
   } = useContext(AppContext);
 
   const [imageIndex, setImageIndex] = useState(0);

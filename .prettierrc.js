@@ -13,5 +13,5 @@ module.exports = {
   singleQuote: true,
   arrowParens: 'always',
   endOfLine: 'lf',
-  htmlWhitespaceSensitivity: 'strict'
+  htmlWhitespaceSensitivity: 'strict',
 };

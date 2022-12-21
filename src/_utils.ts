@@ -9,7 +9,7 @@ export const getPathInfo = (
 
   return {
     parentPath: segments.join('/'),
-    dirName
+    dirName,
   };
 };
 

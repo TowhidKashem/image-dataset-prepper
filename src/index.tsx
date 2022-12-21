@@ -39,7 +39,7 @@ function App() {
           directories,
           setDirectories,
           images,
-          setImages
+          setImages,
         }}
       >
         <Flex

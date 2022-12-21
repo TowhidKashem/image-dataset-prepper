@@ -4,13 +4,13 @@ import { UseStateCallbackT } from 'hooks/useStateCallback';
 export const topics = {
   GET_SUB_FOLDERS: 'GET_SUB_FOLDERS',
   GET_IMAGES: 'GET_IMAGES',
-  DELETE_IMAGE: 'DELETE_IMAGE'
+  DELETE_IMAGE: 'DELETE_IMAGE',
 } as const;
 
 export const screen = {
   chooseDirectory: 'chooseDirectory',
   directoryList: 'directoryList',
-  directoryContent: 'directoryContent'
+  directoryContent: 'directoryContent',
 } as const;
 
 export type TopicT = keyof typeof topics;

@@ -11,7 +11,7 @@ function getSubfolders(event, { directory }) {
   } catch (error) {
     event.reply(GET_SUB_FOLDERS, {
       error,
-      directory
+      directory,
     });
   }
 }
@@ -26,12 +26,12 @@ function getImages(event, args) {
 
     event.reply(GET_IMAGES, {
       contents,
-      args
+      args,
     });
   } catch (error) {
     event.reply(GET_IMAGES, {
       error,
-      directory
+      directory,
     });
   }
 }
@@ -44,7 +44,7 @@ function deleteImage(event, args) {
     if (isDir) {
       fs.rmSync(file, {
         recursive: true,
-        force: true
+        force: true,
       });
     } else {
       fs.unlinkSync(file);
@@ -54,7 +54,7 @@ function deleteImage(event, args) {
   } catch (error) {
     event.reply(DELETE_IMAGE, {
       success: false,
-      error
+      error,
     });
   }
 }
@@ -62,5 +62,5 @@ function deleteImage(event, args) {
 module.exports = {
   getSubfolders,
   getImages,
-  deleteImage
+  deleteImage,
 };
