@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import { Image, useToast, Flex } from '@chakra-ui/react';
 import { AppContext } from './_data';
 import { getPathInfo } from './_utils';
@@ -15,23 +15,8 @@ export function DirectoryContent() {
 
   const directory = getPathInfo(directoryPath).dirName;
 
-  // keyboard navigation
-  useEffect(() => {
-    window.addEventListener('keyup', (e) => {
-      switch (e.key) {
-        case ' ':
-          return deleteImage(null);
-        case 'ArrowRight':
-          return nextImage();
-        case 'ArrowLeft':
-          return prevImage();
-      }
-    });
-  }, []);
-
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     if (images.length < 0) return;
-
     let newIndex = imageIndex + 1;
 
     // end reached
@@ -43,16 +28,17 @@ export function DirectoryContent() {
     }
 
     setImageIndex(newIndex);
-  };
+  }, [imageIndex, images, loopCount]);
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     if (images.length < 0) return;
     let newIndex = imageIndex - 1;
     if (newIndex < 0) newIndex = images.length - 1;
-    setImageIndex(newIndex);
-  };
 
-  const deleteImage = (response: any) => {
+    setImageIndex(newIndex);
+  }, [imageIndex, images]);
+
+  const deleteImage = useCallback((response: any) => {
     // if (response.error) {
     // if (imagesRef.current.length > 0) {
     //   window.electron.ipcRenderer.sendMessage(DELETE_IMAGE, {
@@ -60,8 +46,6 @@ export function DirectoryContent() {
     //     filename: imagesRef.current[imageIndexRef.current]
     //   });
     // }
-    //
-    //
     //
     //   return toast({
     //     description: response.error.toString(),
@@ -87,7 +71,7 @@ export function DirectoryContent() {
     //   setImage('');
     //   setEmptyMessage(true);
     // }
-  };
+  }, []);
 
   // const extension = images.length > 0 ? getExtension(images[imageIndex]) : null;
   const extension = '';
@@ -109,6 +93,22 @@ export function DirectoryContent() {
     //   value: extension
     // }
   ];
+
+  // keyboard navigation
+  useEffect(() => {
+    if (screen === 'directoryContent') {
+      window.addEventListener('keyup', (e) => {
+        switch (e.key) {
+          case ' ':
+            return deleteImage(null);
+          case 'ArrowRight':
+            return nextImage();
+          case 'ArrowLeft':
+            return prevImage();
+        }
+      });
+    }
+  }, [screen, images, nextImage, prevImage, deleteImage]);
 
   if (screen !== 'directoryContent') return null;
 
