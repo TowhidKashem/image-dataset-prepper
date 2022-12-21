@@ -33,19 +33,19 @@ export function App() {
   });
 
   return (
-    <ChakraProvider>
-      <AppContext.Provider
-        value={{
-          screen,
-          setScreen,
-          directoryPath,
-          setDirectoryPath,
-          directories,
-          setDirectories,
-          images,
-          setImages,
-        }}
-      >
+    <AppContext.Provider
+      value={{
+        screen,
+        setScreen,
+        directoryPath,
+        setDirectoryPath,
+        directories,
+        setDirectories,
+        images,
+        setImages,
+      }}
+    >
+      <ChakraProvider>
         <Flex
           flexDirection="column"
           justifyContent="center"
@@ -61,7 +61,7 @@ export function App() {
             </Routes>
           </MemoryRouter>
         </Flex>
-      </AppContext.Provider>
-    </ChakraProvider>
+      </ChakraProvider>
+    </AppContext.Provider>
   );
 }
