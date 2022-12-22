@@ -1,25 +1,19 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
-import {
-  Image,
-  // useToast,
-  Flex
-} from '@chakra-ui/react';
+import { Image, useToast, Flex } from '@chakra-ui/react';
 import { AppContext, channels } from './_data';
-// import { getPathInfo } from './_utils';
+import { getPathInfo } from './_utils';
+
+const TOAST_DURATION = 2_000;
 
 export function DirectoryContent() {
-  // const toast = useToast();
-  // export const TOAST_DURATION = 2_000;
+  const toast = useToast();
 
-  const {
-    // directoryPath,
-    images
-  } = useContext(AppContext);
+  const { directoryPath, images } = useContext(AppContext);
 
   const [imageIndex, setImageIndex] = useState(0);
   const [loopCount, setLoopCount] = useState(0);
 
-  // const directory = getPathInfo(directoryPath).dirName;
+  const directory = getPathInfo(directoryPath).dirName;
 
   useEffect(() => {
     window.electron.ipcRenderer.on(channels.DELETE_IMAGE, (response) => {
@@ -116,11 +110,15 @@ export function DirectoryContent() {
           return nextImage();
         case 'ArrowLeft':
           return prevImage();
+        default:
+          return null;
       }
     });
 
-    // remove above listener on unmount
-  }, [images, nextImage, prevImage, deleteImage]);
+    return () => {
+      window.removeEventListener('keyup', () => null);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const activeImage = images[imageIndex];
 

@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
 import { PathNav } from './PathNav';
@@ -6,6 +7,8 @@ import { AppContext, channels } from './_data';
 import { getPathInfo } from './_utils';
 
 export function DirectoryList() {
+  const navigate = useNavigate();
+
   const { directoryPath, directories } = useContext(AppContext);
 
   return (
@@ -38,6 +41,7 @@ export function DirectoryList() {
                 window.electron.ipcRenderer.sendMessage(channels.GET_IMAGES, {
                   directory
                 });
+                navigate('/dir/content', { replace: true });
               }}
             >
               <Icon as={FcOpenedFolder} boxSize="4rem" marginBottom={1} />
