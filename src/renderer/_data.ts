@@ -8,9 +8,3 @@ export const channels = {
   GET_IMAGES: 'GET_IMAGES',
   DELETE_IMAGE: 'DELETE_IMAGE'
 } as const;
-
-export const screen = {
-  chooseDirectory: 'chooseDirectory',
-  directoryList: 'directoryList',
-  directoryContent: 'directoryContent'
-} as const;

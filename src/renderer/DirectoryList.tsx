@@ -6,9 +6,7 @@ import { AppContext, channels } from './_data';
 import { getPathInfo } from './_utils';
 
 export function DirectoryList() {
-  const { screen, directoryPath, directories } = useContext(AppContext);
-
-  if (screen !== 'directoryList') return null;
+  const { directoryPath, directories } = useContext(AppContext);
 
   return (
     <>

@@ -1,21 +1,15 @@
 import { SetStateAction, Dispatch } from 'react';
-import { UseStateCallbackT } from './hooks/useStateCallback';
-import { channels, screen } from './_data';
+import { channels } from './_data';
 
 export type ChannelT = keyof typeof channels;
 
-export type ScreenT = keyof typeof screen;
-
 export type AppContextT = {
-  screen: ScreenT;
-  setScreen: Dispatch<SetStateAction<ScreenT>>;
-
   directoryPath: string;
-  setDirectoryPath: UseStateCallbackT<string>;
+  setDirectoryPath: Dispatch<SetStateAction<string>>;
 
   directories: string[];
-  setDirectories: UseStateCallbackT<string[]>;
+  setDirectories: Dispatch<SetStateAction<string[]>>;
 
   images: string[];
-  setImages: UseStateCallbackT<string[]>;
+  setImages: Dispatch<SetStateAction<string[]>>;
 };

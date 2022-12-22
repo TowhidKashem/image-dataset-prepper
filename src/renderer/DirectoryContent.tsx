@@ -12,7 +12,6 @@ export function DirectoryContent() {
   // export const TOAST_DURATION = 2_000;
 
   const {
-    screen,
     // directoryPath,
     images
   } = useContext(AppContext);
@@ -109,21 +108,19 @@ export function DirectoryContent() {
 
   // keyboard navigation
   useEffect(() => {
-    if (screen === 'directoryContent') {
-      window.addEventListener('keyup', (e) => {
-        switch (e.key) {
-          case ' ':
-            return deleteImage(null);
-          case 'ArrowRight':
-            return nextImage();
-          case 'ArrowLeft':
-            return prevImage();
-        }
-      });
-    }
-  }, [screen, images, nextImage, prevImage, deleteImage]);
+    window.addEventListener('keyup', (e) => {
+      switch (e.key) {
+        case ' ':
+          return deleteImage(null);
+        case 'ArrowRight':
+          return nextImage();
+        case 'ArrowLeft':
+          return prevImage();
+      }
+    });
 
-  if (screen !== 'directoryContent') return null;
+    // remove above listener on unmount
+  }, [images, nextImage, prevImage, deleteImage]);
 
   const activeImage = images[imageIndex];
 

@@ -1,9 +1,12 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Button } from '@chakra-ui/react';
 import { AppContext, channels } from './_data';
 
 export function ChooseDirectory() {
-  const { screen, setDirectoryPath } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  const { setDirectoryPath } = useContext(AppContext);
 
   const [hover, setHover] = useState(false);
 
@@ -26,9 +29,9 @@ export function ChooseDirectory() {
     window.electron.ipcRenderer.sendMessage(channels.GET_SUB_FOLDERS, {
       directory
     });
-  };
 
-  if (screen !== 'chooseDirectory') return null;
+    navigate('/dir', { replace: true });
+  };
 
   return (
     <Box position="relative">
