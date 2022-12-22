@@ -1,12 +1,6 @@
 import { useState, useContext } from 'react';
 import { Box, Button } from '@chakra-ui/react';
-import { AppContext, topics } from './_data';
-
-const { GET_SUB_FOLDERS } = topics;
-
-interface FileWithPath extends File {
-  path: string;
-}
+import { AppContext, channels } from './_data';
 
 export function ChooseDirectory() {
   const { screen, setDirectoryPath } = useContext(AppContext);
@@ -16,7 +10,10 @@ export function ChooseDirectory() {
   const chooseFolder = (e: React.SyntheticEvent<HTMLInputElement>): void => {
     if (!e.currentTarget.files) return;
 
-    const { path } = e.currentTarget.files[0] as FileWithPath;
+    const { path } = e.currentTarget.files[0] as File & {
+      path: string;
+    };
+
     const segments = path.split('/');
     segments.pop();
     segments.pop();
@@ -24,7 +21,11 @@ export function ChooseDirectory() {
 
     setDirectoryPath(directory);
 
-    window.electrons.ipcRenderer.sendMessage(GET_SUB_FOLDERS, [{ directory }]);
+    console.warn('[pub][GET_SUB_FOLDERS]:', { directory });
+
+    window.electron.ipcRenderer.sendMessage(channels.GET_SUB_FOLDERS, {
+      directory
+    });
   };
 
   if (screen !== 'chooseDirectory') return null;
@@ -33,19 +34,20 @@ export function ChooseDirectory() {
     <Box position="relative">
       <input
         type="file"
-        webkitdirectory=""
-        directory=""
-        multiple
-        onInput={chooseFolder}
         onChange={chooseFolder}
         onClick={({ target }) => {
           (target as HTMLInputElement).value = '';
         }}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
+        webkitdirectory=""
+        mozdirectory=""
+        directory=""
+        multiple
       />
+
       <Button size="lg" colorScheme={hover ? 'twitter' : 'blue'}>
-        Choose Root Folder
+        Choose Folder
       </Button>
     </Box>
   );

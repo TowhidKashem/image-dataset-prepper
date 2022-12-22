@@ -7,14 +7,11 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { topics } from '../renderer/_data';
-
-const { GET_SUB_FOLDERS } = topics;
 
 class AppUpdater {
   constructor() {
@@ -26,11 +23,7 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on(GET_SUB_FOLDERS, async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply(GET_SUB_FOLDERS, { a: 1 });
-});
+require('./routes');
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

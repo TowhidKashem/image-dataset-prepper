@@ -1,44 +1,26 @@
 import { useEffect, useState } from 'react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import {
-  ChakraProvider,
-  ThemeProvider,
-  theme,
-  useColorMode,
-  Flex
-} from '@chakra-ui/react';
+import { ChakraProvider, ThemeProvider, theme, Flex } from '@chakra-ui/react';
 import { useStateCallback } from './hooks/useStateCallback';
 import { ChooseDirectory } from './ChooseDirectory';
 import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
 import { ScreenT } from './_types';
-import { AppContext, topics } from './_data';
+import { AppContext, channels } from './_data';
 
 export function App() {
-  const { colorMode, toggleColorMode } = useColorMode();
-
   const [screen, setScreen] = useState<ScreenT>('chooseDirectory');
   const [directoryPath, setDirectoryPath] = useState('');
   const [directories, setDirectories] = useStateCallback<string[]>([]);
   const [images, setImages] = useStateCallback<string[]>([]);
 
+  // channel subscriptions
   useEffect(() => {
-    const { GET_SUB_FOLDERS } = topics;
-
-    // calling IPC exposed from preload script
-    // window.electron.ipcRenderer.on('ipc-example', (arg) => {
-    //   alert(arg);
-    //   console.log(arg);
-    // });
-
-    // window.electrons.ipcRenderer.sendMessage('ipc-example', ['ping']);
-
-    // window.electron.ipcRenderer.on(GET_SUB_FOLDERS, ({ contents }) => {
-    //   alert('GET_SUB_FOLDERS - xoxo');
-    //   // console.log('GET_SUB_FOLDERS:', contents);
-    //   // setDirectories(contents, () => setScreen('directoryList'));
-    // });
-  });
+    window.electron.ipcRenderer.on(channels.GET_SUB_FOLDERS, ({ contents }) => {
+      console.warn('[sub][GET_SUB_FOLDERS]:', contents);
+      setDirectories(contents, () => setScreen('directoryList'));
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <AppContext.Provider

@@ -1,8 +1,8 @@
 import { SetStateAction, Dispatch } from 'react';
 import { UseStateCallbackT } from './hooks/useStateCallback';
-import { topics, screen } from './_data';
+import { channels, screen } from './_data';
 
-export type TopicT = keyof typeof topics;
+export type ChannelT = keyof typeof channels;
 
 export type ScreenT = keyof typeof screen;
 

@@ -2,10 +2,8 @@ import { useContext, useEffect } from 'react';
 import { SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
 import { PathNav } from './PathNav';
-import { AppContext, topics } from './_data';
+import { AppContext, channels } from './_data';
 import { getPathInfo } from './_utils';
-
-const { GET_SUB_FOLDERS, GET_IMAGES } = topics;
 
 export function DirectoryList() {
   const {
@@ -58,7 +56,7 @@ export function DirectoryList() {
                 cursor: 'pointer'
               }}
               onClick={() => {
-                window.electron.ipcRenderer.sendMessage(GET_IMAGES, {
+                window.electron.ipcRenderer.sendMessage(channels.GET_IMAGES, {
                   directory
                 });
               }}

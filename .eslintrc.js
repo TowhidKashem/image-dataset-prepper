@@ -4,15 +4,18 @@ module.exports = {
     'import/no-unresolved': 2,
 
     // disable rules
+    'no-console': 0,
     'global-require': 0,
     'promise/always-return': 0,
     'import/no-cycle': 0,
+    'import/order': 0,
     'import/prefer-default-export': 0,
     'import/no-extraneous-dependencies': 0,
     'react/react-in-jsx-scope': 0,
     'react/jsx-props-no-spreading': 0,
     'typescript-eslint/no-shadow': 0,
     '@typescript-eslint/ban-ts-comment': 0,
+    '@typescript-eslint/no-use-before-define': 0,
     '@typescript-eslint/no-shadow': 0,
     'jest/no-deprecated-functions': 0
   },

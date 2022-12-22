@@ -1,5 +1,0 @@
-module.exports = {
-  GET_SUB_FOLDERS: 'GET_SUB_FOLDERS',
-  GET_IMAGES: 'GET_IMAGES',
-  DELETE_IMAGE: 'DELETE_IMAGE'
-};

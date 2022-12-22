@@ -1,15 +1,12 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-
-import { TopicT } from '../renderer/_types';
-
-export type Channels = 'ipc-example';
+import { ChannelT } from '../renderer/_types';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
-    sendMessage(channel: Channels, args: unknown[]) {
+    sendMessage(channel: ChannelT, args: unknown[]) {
       ipcRenderer.send(channel, args);
     },
-    on(channel: Channels, func: (...args: unknown[]) => void) {
+    on(channel: ChannelT, func: (...args: unknown[]) => void) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
         func(...args);
       ipcRenderer.on(channel, subscription);
@@ -18,7 +15,7 @@ contextBridge.exposeInMainWorld('electron', {
         ipcRenderer.removeListener(channel, subscription);
       };
     },
-    once(channel: Channels, func: (...args: unknown[]) => void) {
+    once(channel: ChannelT, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
     }
   }

@@ -4,10 +4,8 @@ import {
   // useToast,
   Flex
 } from '@chakra-ui/react';
-import { AppContext, topics } from './_data';
+import { AppContext, channels } from './_data';
 // import { getPathInfo } from './_utils';
-
-const { DELETE_IMAGE } = topics;
 
 export function DirectoryContent() {
   // const toast = useToast();
@@ -25,7 +23,7 @@ export function DirectoryContent() {
   // const directory = getPathInfo(directoryPath).dirName;
 
   useEffect(() => {
-    window.electron.ipcRenderer.on(DELETE_IMAGE, (response) => {
+    window.electron.ipcRenderer.on(channels.DELETE_IMAGE, (response) => {
       deleteImage(response);
     });
   }, []);
