@@ -2,6 +2,7 @@ module.exports = {
   extends: ['erb', 'prettier'],
   rules: {
     'import/no-unresolved': 2,
+
     // disable rules
     'global-require': 0,
     'promise/always-return': 0,
@@ -11,7 +12,9 @@ module.exports = {
     'react/react-in-jsx-scope': 0,
     'react/jsx-props-no-spreading': 0,
     'typescript-eslint/no-shadow': 0,
-    '@typescript-eslint/ban-ts-comment': 0
+    '@typescript-eslint/ban-ts-comment': 0,
+    '@typescript-eslint/no-shadow': 0,
+    'jest/no-deprecated-functions': 0
   },
   parserOptions: {
     ecmaVersion: 2020,
@@ -31,5 +34,14 @@ module.exports = {
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.tsx']
     }
-  }
+  },
+  ignorePatterns: ['.eslintrc.js'],
+  overrides: [
+    {
+      files: ['main/*.ts'],
+      rules: {
+        'no-console': 0
+      }
+    }
+  ]
 };
