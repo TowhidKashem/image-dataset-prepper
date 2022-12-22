@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client';
 import { App } from './App';
-import './global.scss';
+import './styles/global.scss';
 
-ReactDOM.createRoot(document.getElementById('root') as Element).render(<App />);
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);

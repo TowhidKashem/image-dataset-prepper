@@ -41,9 +41,6 @@ export function DirectoryList() {
                   directory
                 });
               }}
-              style={{
-                border: '20px solid blue'
-              }}
             >
               <Icon as={FcOpenedFolder} boxSize="4rem" marginBottom={1} />
 

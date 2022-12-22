@@ -18,7 +18,7 @@ export function App() {
   useEffect(() => {
     window.electron.ipcRenderer.on(channels.GET_SUB_FOLDERS, ({ contents }) => {
       console.warn('[sub][GET_SUB_FOLDERS]:', contents);
-      setDirectories(contents, () => setScreen('directoryList'));
+      setDirectories(contents as string[], () => setScreen('directoryList'));
     });
 
     window.electron.ipcRenderer.on(
@@ -26,7 +26,7 @@ export function App() {
       ({ contents, args }) => {
         console.warn('[sub][GET_IMAGES]:', contents);
 
-        setImages(contents, () => {
+        setImages(contents as string[], () => {
           setDirectories(null);
           setDirectoryPath(args.directory);
           setScreen('directoryContent');

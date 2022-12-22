@@ -5,7 +5,7 @@ import { channels } from '../renderer/_data';
 export function getSubfolders(
   event: IpcMainEvent,
   { directory }: { directory: string }
-) {
+): void {
   try {
     const contents = fs
       .readdirSync(directory)
@@ -23,7 +23,7 @@ export function getSubfolders(
 export function getImages(
   event: IpcMainEvent,
   { directory }: { directory: string }
-) {
+): void {
   try {
     const contents = fs
       .readdirSync(directory)
@@ -50,7 +50,7 @@ export function deleteImage(
     directory: string;
     filename: string;
   }
-) {
+): void {
   try {
     const file = `${directory}/${filename}`;
     const isDir = fs.lstatSync(file).isDirectory();
