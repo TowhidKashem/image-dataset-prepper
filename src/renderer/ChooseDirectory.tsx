@@ -24,7 +24,7 @@ export function ChooseDirectory() {
 
     setDirectoryPath(directory);
 
-    window.electron.ipcRenderer.sendMessage(GET_SUB_FOLDERS, { directory });
+    window.electrons.ipcRenderer.sendMessage(GET_SUB_FOLDERS, [{ directory }]);
   };
 
   if (screen !== 'chooseDirectory') return null;
@@ -33,7 +33,6 @@ export function ChooseDirectory() {
     <Box position="relative">
       <input
         type="file"
-        // @ts-ignore
         webkitdirectory=""
         directory=""
         multiple

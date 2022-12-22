@@ -12,6 +12,9 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { topics } from '../renderer/_data';
+
+const { GET_SUB_FOLDERS } = topics;
 
 class AppUpdater {
   constructor() {
@@ -23,10 +26,10 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
+ipcMain.on(GET_SUB_FOLDERS, async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
-  event.reply('ipc-example', { a: 1 });
+  event.reply(GET_SUB_FOLDERS, { a: 1 });
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -51,7 +54,7 @@ const installExtensions = async () => {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch(console.log);
+    .catch(console.log); // eslint-disable-line no-console
 };
 
 const createWindow = async () => {
@@ -106,8 +109,7 @@ const createWindow = async () => {
   });
 
   // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
-  new AppUpdater();
+  new AppUpdater(); // eslint-disable-line no-new
 };
 
 /**
@@ -132,4 +134,4 @@ app
       if (mainWindow === null) createWindow();
     });
   })
-  .catch(console.log);
+  .catch(console.log); // eslint-disable-line no-console

@@ -1,25 +1,20 @@
-# Logs
 logs
 *.log
 
-# Runtime data
 pids
 *.pid
 *.seed
 
-# Coverage directory used by tools like istanbul
+node_modules
 coverage
 .eslintcache
 
-# Dependency directory
-# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
-node_modules
-
-# OSX
 .DS_Store
+1
 
 release/app/dist
 release/build
+!.erb
 .erb/dll
 
 .idea
@@ -28,6 +23,4 @@ npm-debug.log.*
 *.sass.d.ts
 *.scss.d.ts
 
-# eslint ignores hidden directories by default:
-# https://github.com/eslint/eslint/issues/8429
-!.erb
+index.ejs
