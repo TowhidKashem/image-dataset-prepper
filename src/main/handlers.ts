@@ -1,9 +1,9 @@
 import fs from 'fs';
+import { IpcMainEvent } from 'electron';
 import { channels } from '../renderer/_data';
-import { ChannelT } from '../renderer/_types';
 
 export function getSubfolders(
-  event: ChannelT,
+  event: IpcMainEvent,
   { directory }: { directory: string }
 ) {
   try {
@@ -20,9 +20,10 @@ export function getSubfolders(
   }
 }
 
-export function getImages(event, args) {
-  const { directory } = args;
-
+export function getImages(
+  event: IpcMainEvent,
+  { directory }: { directory: string }
+) {
   try {
     const contents = fs
       .readdirSync(directory)
@@ -30,7 +31,7 @@ export function getImages(event, args) {
 
     event.reply(channels.GET_IMAGES, {
       contents,
-      args
+      directory
     });
   } catch (error) {
     event.reply(channels.GET_IMAGES, {
@@ -40,9 +41,18 @@ export function getImages(event, args) {
   }
 }
 
-export function deleteImage(event, args) {
+export function deleteImage(
+  event: IpcMainEvent,
+  {
+    directory,
+    filename
+  }: {
+    directory: string;
+    filename: string;
+  }
+) {
   try {
-    const file = `${args.directory}/${args.filename}`;
+    const file = `${directory}/${filename}`;
     const isDir = fs.lstatSync(file).isDirectory();
 
     if (isDir) {
@@ -54,7 +64,9 @@ export function deleteImage(event, args) {
       fs.unlinkSync(file);
     }
 
-    event.reply(channels.DELETE_IMAGE, { success: true });
+    event.reply(channels.DELETE_IMAGE, {
+      success: true
+    });
   } catch (error) {
     event.reply(channels.DELETE_IMAGE, {
       success: false,

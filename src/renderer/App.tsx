@@ -20,6 +20,19 @@ export function App() {
       console.warn('[sub][GET_SUB_FOLDERS]:', contents);
       setDirectories(contents, () => setScreen('directoryList'));
     });
+
+    window.electron.ipcRenderer.on(
+      channels.GET_IMAGES,
+      ({ contents, args }) => {
+        console.warn('[sub][GET_IMAGES]:', contents);
+
+        setImages(contents, () => {
+          setDirectories(null);
+          setDirectoryPath(args.directory);
+          setScreen('directoryContent');
+        });
+      }
+    );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

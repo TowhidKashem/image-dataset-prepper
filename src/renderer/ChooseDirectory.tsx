@@ -40,9 +40,10 @@ export function ChooseDirectory() {
         }}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
+        // @ts-ignore
         webkitdirectory=""
-        mozdirectory=""
-        directory=""
+        mozdirectory="" // eslint-disable-line react/no-unknown-property
+        directory="" // eslint-disable-line react/no-unknown-property
         multiple
       />
 

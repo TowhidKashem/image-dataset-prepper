@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
 import { PathNav } from './PathNav';
@@ -6,26 +6,7 @@ import { AppContext, channels } from './_data';
 import { getPathInfo } from './_utils';
 
 export function DirectoryList() {
-  const {
-    screen,
-    setScreen,
-    directoryPath,
-    setDirectoryPath,
-    directories,
-    setDirectories,
-    setImages
-  } = useContext(AppContext);
-
-  useEffect(() => {
-    // window.electron.ipcRenderer.on(GET_IMAGES, ({ contents, args }) => {
-    //   console.log('GET_IMAGES:', contents);
-    //   setImages(contents, () => {
-    //     setDirectories(null);
-    //     setDirectoryPath(args.directory);
-    //     setScreen('directoryContent');
-    //   });
-    // });
-  }, []);
+  const { screen, directoryPath, directories } = useContext(AppContext);
 
   if (screen !== 'directoryList') return null;
 
@@ -59,6 +40,9 @@ export function DirectoryList() {
                 window.electron.ipcRenderer.sendMessage(channels.GET_IMAGES, {
                   directory
                 });
+              }}
+              style={{
+                border: '20px solid blue'
               }}
             >
               <Icon as={FcOpenedFolder} boxSize="4rem" marginBottom={1} />
