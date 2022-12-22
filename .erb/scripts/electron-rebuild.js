@@ -15,6 +15,6 @@ if (
       : electronRebuildCmd;
   execSync(cmd, {
     cwd: webpackPaths.appPath,
-    stdio: 'inherit',
+    stdio: 'inherit'
   });
 }

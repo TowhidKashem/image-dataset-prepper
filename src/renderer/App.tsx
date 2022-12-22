@@ -5,7 +5,7 @@ import {
   ThemeProvider,
   theme,
   useColorMode,
-  Flex,
+  Flex
 } from '@chakra-ui/react';
 import { useStateCallback } from './hooks/useStateCallback';
 import { ChooseDirectory } from './ChooseDirectory';
@@ -50,7 +50,7 @@ export function App() {
         directories,
         setDirectories,
         images,
-        setImages,
+        setImages
       }}
     >
       <ChakraProvider>

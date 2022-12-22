@@ -9,8 +9,8 @@ export function PathNav({ path }: { path: string }) {
     fontSize: 'lg',
     cursor: 'default',
     _hover: {
-      textDecoration: 'none',
-    },
+      textDecoration: 'none'
+    }
   };
 
   return (

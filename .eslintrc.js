@@ -11,25 +11,25 @@ module.exports = {
     'react/react-in-jsx-scope': 0,
     'react/jsx-props-no-spreading': 0,
     'typescript-eslint/no-shadow': 0,
-    '@typescript-eslint/ban-ts-comment': 0,
+    '@typescript-eslint/ban-ts-comment': 0
   },
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
     project: './tsconfig.json',
     tsconfigRootDir: __dirname,
-    createDefaultProgram: true,
+    createDefaultProgram: true
   },
   settings: {
     'import/resolver': {
       node: {},
       webpack: {
-        config: require.resolve('./.erb/configs/webpack.config.eslint.ts'),
+        config: require.resolve('./.erb/configs/webpack.config.eslint.ts')
       },
-      typescript: {},
+      typescript: {}
     },
     'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx'],
-    },
-  },
+      '@typescript-eslint/parser': ['.ts', '.tsx']
+    }
+  }
 };
