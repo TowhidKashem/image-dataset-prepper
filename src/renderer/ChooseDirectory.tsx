@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Button } from '@chakra-ui/react';
 import { AppContext, channels } from './_data';
 
+const { ipcRenderer } = window.electron;
+
 export function ChooseDirectory() {
   const navigate = useNavigate();
 
@@ -26,7 +28,7 @@ export function ChooseDirectory() {
 
     console.warn('[pub][GET_SUB_FOLDERS]:', { directory });
 
-    window.electron.ipcRenderer.sendMessage(channels.GET_SUB_FOLDERS, {
+    ipcRenderer.sendMessage(channels.GET_SUB_FOLDERS, {
       directory
     });
 

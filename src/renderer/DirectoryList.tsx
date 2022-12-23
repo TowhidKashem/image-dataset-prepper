@@ -6,6 +6,8 @@ import { Navigation } from './Navigation';
 import { AppContext, channels } from './_data';
 import { getDirName } from './_utils';
 
+const { ipcRenderer } = window.electron;
+
 export function DirectoryList() {
   const navigate = useNavigate();
 
@@ -13,7 +15,7 @@ export function DirectoryList() {
     useContext(AppContext);
 
   const handleFolderClick = (directoryPath: string) => {
-    window.electron.ipcRenderer.sendMessage(channels.GET_IMAGES, {
+    ipcRenderer.sendMessage(channels.GET_IMAGES, {
       directory: directoryPath
     });
     navigate('/dir/content', { replace: true });

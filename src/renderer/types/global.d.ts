@@ -15,6 +15,7 @@ declare global {
           channel: ChannelT,
           func: (args: Record<string, unknown>) => void
         ): void;
+        removeAllListeners(channel: ChannelT): void;
       };
     };
   }

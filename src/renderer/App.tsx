@@ -6,6 +6,8 @@ import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
 import { AppContext, channels } from './_data';
 
+const { ipcRenderer } = window.electron;
+
 export function App() {
   const [directoryPath, setDirectoryPath] = useState('');
   const [directories, setDirectories] = useState<string[]>([]);
@@ -13,24 +15,18 @@ export function App() {
 
   // channel subscriptions
   useEffect(() => {
-    window.electron.ipcRenderer.on(
-      channels.GET_SUB_FOLDERS,
-      ({ contents, directory }) => {
-        console.warn('[sub][GET_SUB_FOLDERS]:', contents);
-        setDirectories(contents as string[]);
-        setDirectoryPath(directory as string);
-      }
-    );
+    ipcRenderer.on(channels.GET_SUB_FOLDERS, ({ contents, directory }) => {
+      console.warn('[sub][GET_SUB_FOLDERS]:', contents);
+      setDirectories(contents as string[]);
+      setDirectoryPath(directory as string);
+    });
 
-    window.electron.ipcRenderer.on(
-      channels.GET_IMAGES,
-      ({ contents, directory }) => {
-        console.warn('[sub][GET_IMAGES]:', contents);
-        setImages(contents as string[]);
-        setDirectories(null);
-        setDirectoryPath(directory as string);
-      }
-    );
+    ipcRenderer.on(channels.GET_IMAGES, ({ contents, directory }) => {
+      console.warn('[sub][GET_IMAGES]:', contents);
+      setImages(contents as string[]);
+      setDirectories(null);
+      setDirectoryPath(directory as string);
+    });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

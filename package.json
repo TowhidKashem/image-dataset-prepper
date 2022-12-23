@@ -5,6 +5,14 @@
   "description": "A minimal desktop app to quickly review and delete images when collecting data sets for training image classification models",
   "version": "0.1.0",
   "license": "MIT",
+  "browserslist": {
+    "production": [
+      "last 1 electron version"
+    ],
+    "development": [
+      "last 1 electron version"
+    ]
+  },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.14",
     "@chakra-ui/react": "^2.3.2",
@@ -105,13 +113,6 @@
     "git:undo-last-commit": "git reset --soft HEAD~1",
     "git:unstage-all-files": "git reset HEAD -- ."
   },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": "cross-env NODE_ENV=development eslint --cache",
-    "**/*.{js,ts,tsx,mts,json,yaml,yml,md}": "prettier --write",
-    "*.{css,scss}": "prettier --write",
-    "*.{html,md,yml}": "prettier --write"
-  },
-  "browserslist": [],
   "build": {
     "productName": "ElectronReact",
     "appId": "org.erb.ElectronReact",

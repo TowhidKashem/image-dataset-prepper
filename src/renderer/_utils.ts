@@ -8,7 +8,7 @@ export const getDirName = (fileName: string): string =>
   fileName.split('/').pop();
 
 export const getFileExtension = (fileName: string): string =>
-  fileName.split('.').pop();
+  fileName?.split('.').pop() ?? null;
 
 export const isImage = (extension: string): boolean =>
   ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(extension);
