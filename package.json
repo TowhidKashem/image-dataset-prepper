@@ -2,7 +2,7 @@
   "name": "image-reviewer-gui",
   "main": "./src/main/main.ts",
   "author": "Towhid Kashem",
-  "description": "A minimal desktop app to quickly review and delete images when collecting data sets for training image classification models",
+  "description": "A minimal desktop app to quickly review and delete images when collecting data sets for image classification models",
   "version": "0.1.0",
   "license": "MIT",
   "browserslist": {

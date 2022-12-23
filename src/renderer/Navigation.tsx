@@ -10,7 +10,6 @@ import {
 } from '@chakra-ui/react';
 import { IoChevronBackCircle, IoChevronForward } from 'react-icons/io5';
 import { AppContext } from './_data';
-import { removeStartEndSlash } from './_utils';
 
 const commonProps: BreadcrumbLinkProps = {
   fontSize: 'md',
@@ -31,9 +30,7 @@ export function Navigation({
 }) {
   const navigate = useNavigate();
 
-  const { dirPath } = useContext(AppContext);
-
-  const pathSegments = removeStartEndSlash(dirPath).split('/');
+  const { pathSegments } = useContext(AppContext);
 
   return (
     <Flex

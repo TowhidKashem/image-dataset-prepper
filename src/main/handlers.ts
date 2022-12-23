@@ -4,20 +4,26 @@ import { channels } from '../renderer/_data';
 
 const handleListDirectory = async (
   e: IpcMainInvokeEvent,
-  directory: string
-): Promise<string[] | unknown> => {
+  path: string
+): Promise<Res<string[]>> => {
   try {
     const contents = fs
-      .readdirSync(directory)
-      .map((content) => `${directory}/${content}`);
+      .readdirSync(path)
+      .map((dirName) => `${path}/${dirName}`); // add paths to each directory
 
-    return contents;
+    return {
+      data: contents,
+      error: null
+    };
   } catch (error) {
-    return error;
+    return {
+      data: null,
+      error: new Error(error as string)
+    };
   }
 };
 
-ipcMain.handle(channels.GET_SUB_FOLDERS, handleListDirectory);
+ipcMain.handle(channels.LIST_DIR, handleListDirectory);
 
 const handleGetImages = async (
   e: IpcMainInvokeEvent,

@@ -80,9 +80,9 @@ const createWindow = async () => {
   });
 };
 
-// event listeners...
+// event listeners
 
-// respect the OSX convention of having the application in memory even after all windows have been closed
+// respect the osx convention of having the application in memory even after all windows have been closed
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
@@ -104,7 +104,7 @@ app
   .then(() => {
     createWindow();
     app.on('activate', () => {
-      // on macOS it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open
+      // on mac it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open
       if (mainWindow === null) createWindow();
     });
   })

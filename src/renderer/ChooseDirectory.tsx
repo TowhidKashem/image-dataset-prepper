@@ -2,14 +2,14 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button } from '@chakra-ui/react';
 import { AppContext, channels } from './_data';
-import { logger } from './_utils';
+import { getRootFileDir } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
 export function ChooseDirectory() {
   const navigate = useNavigate();
 
-  const { setDirPath, setDirectories } = useContext(AppContext);
+  const { setPathSegments, setDirectories } = useContext(AppContext);
 
   const [hover, setHover] = useState(false);
 
@@ -18,31 +18,21 @@ export function ChooseDirectory() {
   ): Promise<void> => {
     if (!e.currentTarget.files) return;
 
-    const { path } = e.currentTarget.files[0] as File & {
-      path: string;
-    };
-
-    const segments = path.split('/');
-    segments.pop();
-    segments.pop();
-    const directory = segments.join('/');
-
-    setDirPath(directory);
-
-    console.warn('[pub][GET_SUB_FOLDERS]:', { directory });
+    const { segments, path } = getRootFileDir(e.currentTarget.files[0].path);
 
     try {
-      const contents = await ipcRenderer.invoke(
-        channels.GET_SUB_FOLDERS,
-        directory
+      const { data, error } = await ipcRenderer.invoke<Res<string[]>>(
+        channels.LIST_DIR,
+        path
       );
 
-      setDirectories(contents);
-      setDirPath(directory);
+      if (error) throw error;
 
-      logger('sub', channels.GET_SUB_FOLDERS, { contents, directory });
+      setPathSegments(segments);
 
-      navigate('/directoryList', { replace: true });
+      setDirectories(data, () => {
+        navigate('/directoryList', { replace: true });
+      });
     } catch (error) {
       console.error(error);
     }

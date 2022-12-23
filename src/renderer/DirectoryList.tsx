@@ -4,26 +4,29 @@ import { SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcFolder } from 'react-icons/fc';
 import { Navigation } from './Navigation';
 import { AppContext, channels } from './_data';
-import { getDirName, logger } from './_utils';
+import { getDirName } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
 export function DirectoryList() {
   const navigate = useNavigate();
 
-  const { directories, setDirectories, setImages, setDirPath } =
-    useContext(AppContext);
+  const { directories, setImages, setPathSegments } = useContext(AppContext);
 
-  const handleFolderClick = async (dirPath: string) => {
+  const handleFolderClick = async (path: string) => {
     try {
-      const images = await ipcRenderer.invoke(channels.GET_IMAGES, dirPath);
+      const { data, error } = await ipcRenderer.invoke<Res<string[]>>(
+        channels.GET_IMAGES,
+        path
+      );
 
-      setImages(images);
-      setDirectories(null);
-      setDirPath(dirPath);
-      logger('sub', channels.GET_IMAGES, { images, dirPath });
+      if (error) throw error;
 
-      navigate('/directoryContent', { replace: true });
+      setPathSegments((prevSegments) => [...prevSegments, getDirName(path)]);
+
+      setImages(data, () => {
+        navigate('/directoryContent', { replace: true });
+      });
     } catch (error) {
       console.error(error);
     }
@@ -34,9 +37,9 @@ export function DirectoryList() {
       <Navigation
         backPath="/"
         onBackClick={() => {
-          setDirectories(null);
-          setImages(null);
-          setDirPath(null);
+          // setDirectories(null);
+          // setImages(null);
+          // setDirPath(null);
         }}
       />
 
@@ -48,7 +51,7 @@ export function DirectoryList() {
           lg: 8
         }}
       >
-        {directories?.map((dirPath) => (
+        {directories.map((dirPath) => (
           <Flex
             key={dirPath}
             flexDirection="column"

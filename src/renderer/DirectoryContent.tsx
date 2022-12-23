@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useCallback } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import {
   useToast,
   Image,
@@ -11,7 +11,7 @@ import {
 import { FcOpenedFolder, FcImageFile, FcCancel } from 'react-icons/fc';
 import { Navigation } from './Navigation';
 import { AppContext, channels } from './_data';
-import { getFileExtension, getDirName, isImage, logger } from './_utils';
+import { getFileExtension, getDirName, isImage } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
@@ -20,7 +20,7 @@ const TOAST_DURATION = 2_000;
 export function DirectoryContent() {
   const toast = useToast();
 
-  const { dirPath, images, setImages } = useContext(AppContext);
+  const { path, setPath, images, setImages } = useContext(AppContext);
 
   const [imageIndex, setImageIndex] = useState(0);
   const [loopCount, setLoopCount] = useState(0);
@@ -54,32 +54,38 @@ export function DirectoryContent() {
     }
   };
 
-  const nextImage = useCallback((): void => {
+  const nextImage = (): void => {
     if (images.length < 0) return;
-    let newIndex = imageIndex + 1;
-    // end reached
-    if (newIndex > images.length - 1) {
+
+    let nextIndex = imageIndex + 1;
+
+    const isEndReached = nextIndex > images.length - 1;
+
+    if (isEndReached) {
+      nextIndex = 0;
+
+      setLoopCount((prevCount) => prevCount + 1);
+
       new Audio('../../assets/pop.mp3').play();
-      newIndex = 0;
-      const newLoopCount = loopCount + 1;
-      setLoopCount(newLoopCount);
     }
-    setImageIndex(newIndex);
-  }, [images]);
+
+    setImageIndex(nextIndex);
+  };
 
   const prevImage = (): void => {
     if (images.length < 0) return;
-    let newIndex = imageIndex - 1;
-    if (newIndex < 0) newIndex = images.length - 1;
-    setImageIndex(newIndex);
+
+    let prevIndex = imageIndex - 1;
+
+    if (prevIndex < 0) prevIndex = images.length - 1;
+
+    setImageIndex(prevIndex);
   };
 
   const handleBackClick = async (): Promise<void> => {
     const directory = dirPath.split('/').slice(0, -1).join('/');
 
-    logger('pub', channels.GET_SUB_FOLDERS, { directory });
-
-    const subDirectories = await ipcRenderer.invoke(channels.GET_SUB_FOLDERS, {
+    const subDirectories = await ipcRenderer.invoke(channels.LIST_DIR, {
       directory
     });
 

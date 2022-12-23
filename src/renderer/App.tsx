@@ -4,18 +4,19 @@ import { ChakraProvider, ThemeProvider, theme, Flex } from '@chakra-ui/react';
 import { ChooseDirectory } from './ChooseDirectory';
 import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
+import { useStateCallback } from './useStateCallback';
 import { AppContext } from './_data';
 
 export function App() {
-  const [dirPath, setDirPath] = useState('');
-  const [directories, setDirectories] = useState<string[]>([]);
-  const [images, setImages] = useState<string[]>([]);
+  const [pathSegments, setPathSegments] = useState([]);
+  const [directories, setDirectories] = useStateCallback<string[]>([]);
+  const [images, setImages] = useStateCallback<string[]>([]);
 
   return (
     <AppContext.Provider
       value={{
-        dirPath,
-        setDirPath,
+        pathSegments,
+        setPathSegments,
         directories,
         setDirectories,
         images,
