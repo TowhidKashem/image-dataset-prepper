@@ -32,7 +32,7 @@ export function ChooseDirectory() {
       directory
     });
 
-    navigate('/dir', { replace: true });
+    navigate('/directoryList', { replace: true });
   };
 
   return (

@@ -11,7 +11,7 @@ import {
 import { FcOpenedFolder, FcImageFile, FcCancel } from 'react-icons/fc';
 import { Navigation } from './Navigation';
 import { AppContext, channels } from './_data';
-import { getFileExtension, getDirName, isImage } from './_utils';
+import { getFileExtension, getDirName, isImage, logger } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
@@ -33,15 +33,13 @@ export function DirectoryContent() {
 
   useEffect(() => {
     ipcRenderer.on(channels.DELETE_IMAGE, (response) => deleteImage(response));
-
     window.addEventListener('keyup', handleKeyboardNavigation);
 
     return () => {
       ipcRenderer.removeAllListeners(channels.DELETE_IMAGE);
-
       window.removeEventListener('keyup', handleKeyboardNavigation);
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleKeyboardNavigation = (e: KeyboardEvent): void => {
     switch (e.key) {
@@ -79,7 +77,7 @@ export function DirectoryContent() {
   const handleBackClick = (): void => {
     const directory = directoryPath.split('/').slice(0, -1).join('/');
 
-    console.warn('[pub][GET_SUB_FOLDERS]:', { directory });
+    logger('pub', channels.GET_SUB_FOLDERS, { directory });
 
     ipcRenderer.sendMessage(channels.GET_SUB_FOLDERS, {
       directory

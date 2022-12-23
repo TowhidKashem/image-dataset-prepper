@@ -18,7 +18,7 @@ export function DirectoryList() {
     ipcRenderer.sendMessage(channels.GET_IMAGES, {
       directory: directoryPath
     });
-    navigate('/dir/content', { replace: true });
+    navigate('/directoryContent', { replace: true });
   };
 
   return (
@@ -33,7 +33,6 @@ export function DirectoryList() {
       />
 
       <SimpleGrid
-        background="#333"
         spacing={2}
         columns={{
           sm: 2,

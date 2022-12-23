@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 import { ChannelT } from '../renderer/types/global';
+import { channels } from '../renderer/_data';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
@@ -7,8 +8,9 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send(channel, args);
     },
     on(channel: ChannelT, func: (...args: unknown[]) => void) {
-      const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
+      const subscription = (e: IpcRendererEvent, ...args: unknown[]) =>
         func(...args);
+
       ipcRenderer.on(channel, subscription);
 
       return () => {
@@ -16,7 +18,12 @@ contextBridge.exposeInMainWorld('electron', {
       };
     },
     once(channel: ChannelT, func: (...args: unknown[]) => void) {
-      ipcRenderer.once(channel, (_event, ...args) => func(...args));
+      ipcRenderer.once(channel, (e, ...args) => func(...args));
+    },
+    removeAllListeners: (channel: ChannelT) => {
+      if (Object.values(channels).includes(channel)) {
+        ipcRenderer.removeAllListeners(channel);
+      }
     }
   }
 });

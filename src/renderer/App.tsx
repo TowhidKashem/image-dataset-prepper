@@ -5,6 +5,7 @@ import { ChooseDirectory } from './ChooseDirectory';
 import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
 import { AppContext, channels } from './_data';
+import { logger } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
@@ -16,18 +17,18 @@ export function App() {
   // channel subscriptions
   useEffect(() => {
     ipcRenderer.on(channels.GET_SUB_FOLDERS, ({ contents, directory }) => {
-      console.warn('[sub][GET_SUB_FOLDERS]:', contents);
-      setDirectories(contents as string[]);
-      setDirectoryPath(directory as string);
+      setDirectories(contents);
+      setDirectoryPath(directory);
+      logger('sub', channels.GET_SUB_FOLDERS, { contents, directory });
     });
 
     ipcRenderer.on(channels.GET_IMAGES, ({ contents, directory }) => {
-      console.warn('[sub][GET_IMAGES]:', contents);
-      setImages(contents as string[]);
+      setImages(contents);
       setDirectories(null);
-      setDirectoryPath(directory as string);
+      setDirectoryPath(directory);
+      logger('sub', channels.GET_IMAGES, { contents, directory });
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <AppContext.Provider
@@ -48,13 +49,16 @@ export function App() {
             alignItems="center"
             padding="2rem"
             minHeight="100vh"
-            background="#333"
+            background="gray.700"
           >
             <MemoryRouter>
               <Routes>
-                <Route path="/" element={<ChooseDirectory />} />
-                <Route path="/dir" element={<DirectoryList />} />
-                <Route path="/dir/content" element={<DirectoryContent />} />
+                <Route path="/chooseDirectory?" element={<ChooseDirectory />} />
+                <Route path="/directoryList" element={<DirectoryList />} />
+                <Route
+                  path="/directoryContent"
+                  element={<DirectoryContent />}
+                />
               </Routes>
             </MemoryRouter>
           </Flex>
