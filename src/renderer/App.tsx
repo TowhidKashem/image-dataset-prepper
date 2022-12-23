@@ -20,11 +20,11 @@ export function App() {
 
     window.electron.ipcRenderer.on(
       channels.GET_IMAGES,
-      ({ contents, args }) => {
+      ({ directory, contents }) => {
         console.warn('[sub][GET_IMAGES]:', contents);
         setImages(contents as string[]);
         setDirectories(null);
-        setDirectoryPath(args.directory);
+        setDirectoryPath(directory);
       }
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -48,6 +48,7 @@ export function App() {
             alignItems="center"
             padding="2rem"
             minHeight="100vh"
+            background="#333"
           >
             <MemoryRouter>
               <Routes>

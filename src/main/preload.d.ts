@@ -1,4 +1,4 @@
-import { ChannelT } from './_types';
+import { ChannelT } from '../renderer/_types';
 
 declare global {
   interface Window {

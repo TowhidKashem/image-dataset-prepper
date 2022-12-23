@@ -5,6 +5,7 @@ module.exports = {
 
     // disable rules
     'no-console': 0,
+    'no-param-reassign': 0,
     'global-require': 0,
     'promise/always-return': 0,
     'import/no-cycle': 0,
@@ -38,13 +39,5 @@ module.exports = {
       '@typescript-eslint/parser': ['.ts', '.tsx']
     }
   },
-  ignorePatterns: ['.eslintrc.js'],
-  overrides: [
-    {
-      files: ['main/*.ts'],
-      rules: {
-        'no-console': 0
-      }
-    }
-  ]
+  ignorePatterns: ['.eslintrc.js']
 };

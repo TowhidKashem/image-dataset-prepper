@@ -11,7 +11,10 @@ export function getSubfolders(
       .readdirSync(directory)
       .map((content) => `${directory}/${content}`);
 
-    event.reply(channels.GET_SUB_FOLDERS, { contents });
+    event.reply(channels.GET_SUB_FOLDERS, {
+      directory,
+      contents
+    });
   } catch (error) {
     event.reply(channels.GET_SUB_FOLDERS, {
       error,
@@ -30,8 +33,8 @@ export function getImages(
       .map((content) => `${directory}/${content}`);
 
     event.reply(channels.GET_IMAGES, {
-      contents,
-      directory
+      directory,
+      contents
     });
   } catch (error) {
     event.reply(channels.GET_IMAGES, {

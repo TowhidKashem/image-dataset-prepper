@@ -1,17 +1,11 @@
-export const getPathInfo = (
-  path: string
-): {
-  parentPath: string;
-  dirName: string;
-} => {
-  const segments = path.split('/');
-  const dirName = segments.pop();
-
-  return {
-    parentPath: segments.join('/'),
-    dirName
-  };
+export const removeStartEndSlash = (path: string): string => {
+  if (path.startsWith('/')) path = path.slice(1);
+  if (path.endsWith('/')) path = path.slice(0, -1);
+  return path;
 };
+
+export const getDirName = (fileName: string): string =>
+  fileName.split('/').pop();
 
 export const getFileExtension = (fileName: string): string =>
   fileName.split('.').pop();

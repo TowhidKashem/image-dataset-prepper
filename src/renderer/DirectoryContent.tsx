@@ -1,19 +1,20 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import { Image, useToast, Flex } from '@chakra-ui/react';
 import { AppContext, channels } from './_data';
-import { getPathInfo } from './_utils';
+import { PathNav } from './PathNav';
 
 const TOAST_DURATION = 2_000;
 
 export function DirectoryContent() {
   const toast = useToast();
 
-  const { directoryPath, images } = useContext(AppContext);
+  const { directoryPath, setDirectoryPath, setDirectories, images, setImages } =
+    useContext(AppContext);
 
   const [imageIndex, setImageIndex] = useState(0);
   const [loopCount, setLoopCount] = useState(0);
 
-  const directory = getPathInfo(directoryPath).dirName;
+  // const directory = getPathInfo(directoryPath).dirName;
 
   useEffect(() => {
     window.electron.ipcRenderer.on(channels.DELETE_IMAGE, (response) => {
@@ -123,15 +124,24 @@ export function DirectoryContent() {
   const activeImage = images[imageIndex];
 
   return (
-    <Flex
-      alignItems="center"
-      justifyContent="center"
-      padding="1rem"
-      style={{ height: '100vh' }}
-    >
-      <Image src={`file://${activeImage}`} alt="" maxHeight="100vh" />
+    <>
+      <PathNav
+        onBackClick={() => {
+          setDirectories(null);
+          setImages(null);
+          setDirectoryPath(null);
+        }}
+      />
 
-      {/*
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        padding="1rem"
+        style={{ height: '100vh' }}
+      >
+        <Image src={`file://${activeImage}`} alt="" maxHeight="100vh" />
+
+        {/*
 
       {extension && !isImage(extension) && (
         <NoImageWrapper>
@@ -169,7 +179,8 @@ export function DirectoryContent() {
           ) : null
         )}
       </InfoList> */}
-    </Flex>
+      </Flex>
+    </>
   );
 }
 
