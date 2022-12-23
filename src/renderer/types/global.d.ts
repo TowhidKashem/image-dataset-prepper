@@ -1,4 +1,6 @@
-import { ChannelT } from '../renderer/_types';
+import { channels } from '../_data';
+
+export type ChannelT = keyof typeof channels;
 
 declare global {
   interface Window {

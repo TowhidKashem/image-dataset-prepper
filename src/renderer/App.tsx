@@ -13,18 +13,22 @@ export function App() {
 
   // channel subscriptions
   useEffect(() => {
-    window.electron.ipcRenderer.on(channels.GET_SUB_FOLDERS, ({ contents }) => {
-      console.warn('[sub][GET_SUB_FOLDERS]:', contents);
-      setDirectories(contents as string[]);
-    });
+    window.electron.ipcRenderer.on(
+      channels.GET_SUB_FOLDERS,
+      ({ contents, directory }) => {
+        console.warn('[sub][GET_SUB_FOLDERS]:', contents);
+        setDirectories(contents as string[]);
+        setDirectoryPath(directory as string);
+      }
+    );
 
     window.electron.ipcRenderer.on(
       channels.GET_IMAGES,
-      ({ directory, contents }) => {
+      ({ contents, directory }) => {
         console.warn('[sub][GET_IMAGES]:', contents);
         setImages(contents as string[]);
         setDirectories(null);
-        setDirectoryPath(directory);
+        setDirectoryPath(directory as string);
       }
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

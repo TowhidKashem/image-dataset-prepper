@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { ChannelT } from '../renderer/_types';
+import { ChannelT } from '../renderer/types/global';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {

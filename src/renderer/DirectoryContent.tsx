@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import { Image, useToast, Flex } from '@chakra-ui/react';
 import { AppContext, channels } from './_data';
-import { PathNav } from './PathNav';
+import { Navigation } from './Navigation';
 
 const TOAST_DURATION = 2_000;
 
@@ -123,15 +123,21 @@ export function DirectoryContent() {
 
   const activeImage = images[imageIndex];
 
+  const handleBackClick = () => {
+    const directory = directoryPath.split('/').slice(0, -1).join('/');
+
+    console.warn('[pub][GET_SUB_FOLDERS]:', { directory });
+
+    window.electron.ipcRenderer.sendMessage(channels.GET_SUB_FOLDERS, {
+      directory
+    });
+
+    // setImages(null);
+  };
+
   return (
     <>
-      <PathNav
-        onBackClick={() => {
-          setDirectories(null);
-          setImages(null);
-          setDirectoryPath(null);
-        }}
-      />
+      <Navigation backPath="/dir" onBackClick={handleBackClick} />
 
       <Flex
         alignItems="center"

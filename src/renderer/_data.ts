@@ -1,7 +1,15 @@
-import { createContext } from 'react';
-import { AppContextT } from './_types';
+import { createContext, SetStateAction, Dispatch } from 'react';
 
-export const AppContext = createContext<AppContextT>(null);
+export const AppContext = createContext<{
+  directoryPath: string;
+  setDirectoryPath: Dispatch<SetStateAction<string>>;
+
+  directories: string[];
+  setDirectories: Dispatch<SetStateAction<string[]>>;
+
+  images: string[];
+  setImages: Dispatch<SetStateAction<string[]>>;
+}>(null);
 
 export const channels = {
   GET_SUB_FOLDERS: 'GET_SUB_FOLDERS',
