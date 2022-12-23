@@ -2,7 +2,6 @@
 1. finish directory content page
 2. implement undo delete
 2.5 implement nav arrows for file explorer
-3. cleanup main.ts commented out code
 4. make build work, put back npm scripts for all 3 platforms (?)
 5. generate icons for all sizes
 6. update read me

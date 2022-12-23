@@ -4,21 +4,29 @@ import { SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcFolder } from 'react-icons/fc';
 import { Navigation } from './Navigation';
 import { AppContext, channels } from './_data';
-import { getDirName } from './_utils';
+import { getDirName, logger } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
 export function DirectoryList() {
   const navigate = useNavigate();
 
-  const { directories, setDirectories, setImages, setDirectoryPath } =
+  const { directories, setDirectories, setImages, setDirPath } =
     useContext(AppContext);
 
-  const handleFolderClick = (directoryPath: string) => {
-    ipcRenderer.sendMessage(channels.GET_IMAGES, {
-      directory: directoryPath
-    });
-    navigate('/directoryContent', { replace: true });
+  const handleFolderClick = async (dirPath: string) => {
+    try {
+      const images = await ipcRenderer.invoke(channels.GET_IMAGES, dirPath);
+
+      setImages(images);
+      setDirectories(null);
+      setDirPath(dirPath);
+      logger('sub', channels.GET_IMAGES, { images, dirPath });
+
+      navigate('/directoryContent', { replace: true });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -28,7 +36,7 @@ export function DirectoryList() {
         onBackClick={() => {
           setDirectories(null);
           setImages(null);
-          setDirectoryPath(null);
+          setDirPath(null);
         }}
       />
 
@@ -40,9 +48,9 @@ export function DirectoryList() {
           lg: 8
         }}
       >
-        {directories?.map((directoryPath) => (
+        {directories?.map((dirPath) => (
           <Flex
-            key={directoryPath}
+            key={dirPath}
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
@@ -52,12 +60,12 @@ export function DirectoryList() {
               borderRadius: 10,
               cursor: 'pointer'
             }}
-            onClick={() => handleFolderClick(directoryPath)}
+            onClick={() => handleFolderClick(dirPath)}
           >
             <Icon as={FcFolder} fontSize="4rem" marginBottom={1} />
 
             <Heading color="gray.50" as="h6" size="xs">
-              {getDirName(directoryPath)}
+              {getDirName(dirPath)}
             </Heading>
           </Flex>
         ))}

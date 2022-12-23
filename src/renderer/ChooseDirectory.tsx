@@ -2,17 +2,20 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button } from '@chakra-ui/react';
 import { AppContext, channels } from './_data';
+import { logger } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
 export function ChooseDirectory() {
   const navigate = useNavigate();
 
-  const { setDirectoryPath } = useContext(AppContext);
+  const { setDirPath, setDirectories } = useContext(AppContext);
 
   const [hover, setHover] = useState(false);
 
-  const chooseFolder = (e: React.SyntheticEvent<HTMLInputElement>): void => {
+  const chooseFolder = async (
+    e: React.SyntheticEvent<HTMLInputElement>
+  ): Promise<void> => {
     if (!e.currentTarget.files) return;
 
     const { path } = e.currentTarget.files[0] as File & {
@@ -24,15 +27,25 @@ export function ChooseDirectory() {
     segments.pop();
     const directory = segments.join('/');
 
-    setDirectoryPath(directory);
+    setDirPath(directory);
 
     console.warn('[pub][GET_SUB_FOLDERS]:', { directory });
 
-    ipcRenderer.sendMessage(channels.GET_SUB_FOLDERS, {
-      directory
-    });
+    try {
+      const contents = await ipcRenderer.invoke(
+        channels.GET_SUB_FOLDERS,
+        directory
+      );
 
-    navigate('/directoryList', { replace: true });
+      setDirectories(contents);
+      setDirPath(directory);
+
+      logger('sub', channels.GET_SUB_FOLDERS, { contents, directory });
+
+      navigate('/directoryList', { replace: true });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

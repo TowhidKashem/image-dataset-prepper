@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import {
   useToast,
   Image,
@@ -20,7 +20,7 @@ const TOAST_DURATION = 2_000;
 export function DirectoryContent() {
   const toast = useToast();
 
-  const { directoryPath, images, setImages } = useContext(AppContext);
+  const { dirPath, images, setImages } = useContext(AppContext);
 
   const [imageIndex, setImageIndex] = useState(0);
   const [loopCount, setLoopCount] = useState(0);
@@ -32,11 +32,11 @@ export function DirectoryContent() {
   const extension = getFileExtension(activeImage);
 
   useEffect(() => {
-    ipcRenderer.on(channels.DELETE_IMAGE, (response) => deleteImage(response));
+    // ipcRenderer.on(channels.DELETE_IMAGE, (response) => deleteImage(response));
     window.addEventListener('keyup', handleKeyboardNavigation);
 
     return () => {
-      ipcRenderer.removeAllListeners(channels.DELETE_IMAGE);
+      // ipcRenderer.removeAllListeners(channels.DELETE_IMAGE);
       window.removeEventListener('keyup', handleKeyboardNavigation);
     };
   }, []);
@@ -54,7 +54,7 @@ export function DirectoryContent() {
     }
   };
 
-  const nextImage = (): void => {
+  const nextImage = useCallback((): void => {
     if (images.length < 0) return;
     let newIndex = imageIndex + 1;
     // end reached
@@ -65,7 +65,7 @@ export function DirectoryContent() {
       setLoopCount(newLoopCount);
     }
     setImageIndex(newIndex);
-  };
+  }, [images]);
 
   const prevImage = (): void => {
     if (images.length < 0) return;
@@ -74,21 +74,23 @@ export function DirectoryContent() {
     setImageIndex(newIndex);
   };
 
-  const handleBackClick = (): void => {
-    const directory = directoryPath.split('/').slice(0, -1).join('/');
+  const handleBackClick = async (): Promise<void> => {
+    const directory = dirPath.split('/').slice(0, -1).join('/');
 
     logger('pub', channels.GET_SUB_FOLDERS, { directory });
 
-    ipcRenderer.sendMessage(channels.GET_SUB_FOLDERS, {
+    const subDirectories = await ipcRenderer.invoke(channels.GET_SUB_FOLDERS, {
       directory
     });
+
+    console.warn('lmaooooo', subDirectories);
   };
 
   const deleteImage = ({ error }: { error: boolean }): void => {
     if (error) {
       if (images.length > 0) {
-        ipcRenderer.sendMessage(channels.DELETE_IMAGE, {
-          directory: directoryPath,
+        ipcRenderer.invoke(channels.DELETE_IMAGE, {
+          dirPath,
           filename: activeImage
         });
       }
@@ -130,7 +132,7 @@ export function DirectoryContent() {
     },
     {
       key: 'loops',
-      show: getDirName(directoryPath),
+      show: getDirName(dirPath),
       value: `${loopCount} loops`
     },
     {
@@ -150,7 +152,9 @@ export function DirectoryContent() {
         padding="1rem"
         style={{ height: '100vh' }}
       >
-        <Image src={`file://${activeImage}`} alt="" maxHeight="100vh" />
+        {activeImage && (
+          <Image src={`file://${activeImage}`} alt="" maxHeight="100vh" />
+        )}
 
         {extension && !isImage(extension) && (
           <div>

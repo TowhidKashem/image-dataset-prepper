@@ -1,8 +1,8 @@
 import { createContext, SetStateAction, Dispatch } from 'react';
 
 export const AppContext = createContext<{
-  directoryPath: string;
-  setDirectoryPath: Dispatch<SetStateAction<string>>;
+  dirPath: string;
+  setDirPath: Dispatch<SetStateAction<string>>;
 
   directories: string[];
   setDirectories: Dispatch<SetStateAction<string[]>>;

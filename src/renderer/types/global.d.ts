@@ -6,15 +6,7 @@ declare global {
   interface Window {
     electron: {
       ipcRenderer: {
-        sendMessage(channel: ChannelT, args: Record<string, unknown>): void;
-        on(
-          channel: ChannelT,
-          func: (args: Record<string, unknown>) => void
-        ): (() => void) | undefined;
-        once(
-          channel: ChannelT,
-          func: (args: Record<string, unknown>) => void
-        ): void;
+        invoke(channel: ChannelT, args: unknown[]): Promise<any>;
         removeAllListeners(channel: ChannelT): void;
       };
     };

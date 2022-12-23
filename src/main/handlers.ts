@@ -1,79 +1,55 @@
 import fs from 'fs';
-import { IpcMainEvent } from 'electron';
+import { ipcMain, IpcMainInvokeEvent } from 'electron';
 import { channels } from '../renderer/_data';
 
-export function getSubfolders(
-  event: IpcMainEvent,
-  { directory }: { directory: string }
-): void {
+const handleListDirectory = async (
+  e: IpcMainInvokeEvent,
+  directory: string
+): Promise<string[] | unknown> => {
   try {
     const contents = fs
       .readdirSync(directory)
       .map((content) => `${directory}/${content}`);
 
-    event.reply(channels.GET_SUB_FOLDERS, {
-      directory,
-      contents
-    });
+    return contents;
   } catch (error) {
-    event.reply(channels.GET_SUB_FOLDERS, {
-      error,
-      directory
-    });
+    return error;
   }
-}
+};
 
-export function getImages(
-  event: IpcMainEvent,
-  { directory }: { directory: string }
-): void {
+ipcMain.handle(channels.GET_SUB_FOLDERS, handleListDirectory);
+
+const handleGetImages = async (
+  e: IpcMainInvokeEvent,
+  directory: string
+): Promise<string[] | unknown> => {
   try {
     const contents = fs
       .readdirSync(directory)
       .map((content) => `${directory}/${content}`);
 
-    event.reply(channels.GET_IMAGES, {
-      directory,
-      contents
-    });
+    return contents;
   } catch (error) {
-    event.reply(channels.GET_IMAGES, {
-      error,
-      directory
-    });
+    return error;
   }
-}
+};
 
-export function deleteImage(
-  event: IpcMainEvent,
-  {
-    directory,
-    filename
-  }: {
+ipcMain.handle(channels.GET_IMAGES, handleGetImages);
+
+const handleDeleteImage = async (
+  e: IpcMainInvokeEvent,
+  args: {
     directory: string;
     filename: string;
   }
-): void {
+): Promise<void | unknown> => {
   try {
-    const file = `${directory}/${filename}`;
-    const isDir = fs.lstatSync(file).isDirectory();
+    const file = `${args.directory}/${args.filename}`;
 
-    if (isDir) {
-      fs.rmSync(file, {
-        recursive: true,
-        force: true
-      });
-    } else {
-      fs.unlinkSync(file);
-    }
-
-    event.reply(channels.DELETE_IMAGE, {
-      success: true
-    });
+    fs.unlinkSync(file);
   } catch (error) {
-    event.reply(channels.DELETE_IMAGE, {
-      success: false,
-      error
-    });
+    return error;
   }
-}
+};
+
+ipcMain.handle(channels.DELETE_IMAGE, handleDeleteImage);

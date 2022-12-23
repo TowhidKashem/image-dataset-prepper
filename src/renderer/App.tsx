@@ -1,40 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ChakraProvider, ThemeProvider, theme, Flex } from '@chakra-ui/react';
 import { ChooseDirectory } from './ChooseDirectory';
 import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
-import { AppContext, channels } from './_data';
-import { logger } from './_utils';
-
-const { ipcRenderer } = window.electron;
+import { AppContext } from './_data';
 
 export function App() {
-  const [directoryPath, setDirectoryPath] = useState('');
+  const [dirPath, setDirPath] = useState('');
   const [directories, setDirectories] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>([]);
-
-  // channel subscriptions
-  useEffect(() => {
-    ipcRenderer.on(channels.GET_SUB_FOLDERS, ({ contents, directory }) => {
-      setDirectories(contents);
-      setDirectoryPath(directory);
-      logger('sub', channels.GET_SUB_FOLDERS, { contents, directory });
-    });
-
-    ipcRenderer.on(channels.GET_IMAGES, ({ contents, directory }) => {
-      setImages(contents);
-      setDirectories(null);
-      setDirectoryPath(directory);
-      logger('sub', channels.GET_IMAGES, { contents, directory });
-    });
-  }, []);
 
   return (
     <AppContext.Provider
       value={{
-        directoryPath,
-        setDirectoryPath,
+        dirPath,
+        setDirPath,
         directories,
         setDirectories,
         images,

@@ -31,9 +31,9 @@ export function Navigation({
 }) {
   const navigate = useNavigate();
 
-  const { directoryPath } = useContext(AppContext);
+  const { dirPath } = useContext(AppContext);
 
-  const pathSegments = removeStartEndSlash(directoryPath).split('/');
+  const pathSegments = removeStartEndSlash(dirPath).split('/');
 
   return (
     <Flex

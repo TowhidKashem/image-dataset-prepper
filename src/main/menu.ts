@@ -84,6 +84,7 @@ export default class MenuBuilder {
         }
       ]
     };
+
     const subMenuEdit: DarwinMenuItemConstructorOptions = {
       label: 'Edit',
       submenu: [
@@ -100,6 +101,7 @@ export default class MenuBuilder {
         }
       ]
     };
+
     const subMenuViewDev: MenuItemConstructorOptions = {
       label: 'View',
       submenu: [
@@ -126,6 +128,7 @@ export default class MenuBuilder {
         }
       ]
     };
+
     const subMenuViewProd: MenuItemConstructorOptions = {
       label: 'View',
       submenu: [
@@ -138,6 +141,7 @@ export default class MenuBuilder {
         }
       ]
     };
+
     const subMenuWindow: DarwinMenuItemConstructorOptions = {
       label: 'Window',
       submenu: [
@@ -151,6 +155,7 @@ export default class MenuBuilder {
         { label: 'Bring All to Front', selector: 'arrangeInFront:' }
       ]
     };
+
     const subMenuHelp: MenuItemConstructorOptions = {
       label: 'Help',
       submenu: [
