@@ -23,10 +23,9 @@ export function DirectoryList() {
     name: string
   ): Promise<void> => {
     try {
-      const { data, error } = await ipcRenderer.invoke<ResponseT<string[]>>(
-        channels.LIST_DIR,
-        path
-      );
+      const { data, error } = await ipcRenderer.invoke<
+        ResponseT<DirContentT[]>
+      >(channels.LIST_DIR, path);
 
       if (error) throw error;
 
@@ -49,7 +48,6 @@ export function DirectoryList() {
     const newViewedDirs = [...viewedDirs, visitedDir];
 
     setViewedDirs(newViewedDirs);
-
     localStorage.setItem('viewedDirs', JSON.stringify(newViewedDirs));
   };
 

@@ -20,7 +20,7 @@ export const AppContext = createContext<{
   directories: DirContentT[];
   setDirectories: UseStateCallbackT<DirContentT[]>;
 
-  images: MutableRefObject<string[]>;
+  images: MutableRefObject<DirContentT[]>;
 }>(null);
 
 export const channels = {

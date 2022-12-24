@@ -20,6 +20,3 @@ export const getRootFileDir = (
     path: segments.join('/')
   };
 };
-
-export const getFileExtension = (filePath: string): string =>
-  filePath?.split('.').pop() ?? null;

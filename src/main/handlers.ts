@@ -13,21 +13,25 @@ const handleGetAppData = async (): Promise<ResponseT<AppDataT>> => ({
 
 const handleListDirectory = async (
   _e: IpcMainInvokeEvent,
-  path: string
+  filePath: string
 ): Promise<ResponseT<DirContentT[]>> => {
   const BLACKLIST = ['.DS_Store', '1'];
 
   try {
     const contents = fs
-      .readdirSync(path)
-      .filter((dirName) => !BLACKLIST.includes(dirName))
+      .readdirSync(filePath)
+      .filter(
+        (dirName) => !BLACKLIST.includes(dirName) && !dirName.startsWith('.')
+      )
       .map((dirName) => {
-        const filePath = `${path}/${dirName}`;
+        const newFilePath = `${filePath}/${dirName}`;
+        const isDir = fs.statSync(newFilePath).isDirectory();
 
         return {
           name: dirName,
-          path: filePath,
-          isDir: fs.statSync(filePath).isDirectory()
+          path: newFilePath,
+          extension: !isDir ? path.extname(newFilePath) : null,
+          isDir
         };
       });
 
@@ -43,10 +47,10 @@ const handleListDirectory = async (
 
 const handleDeleteFile = async (
   _e: IpcMainInvokeEvent,
-  path: string
+  filePath: string
 ): Promise<ResponseT<void>> => {
   try {
-    const pathSegments = path.split('/');
+    const pathSegments = filePath.split('/');
 
     const fileToDelete = pathSegments.pop();
 
@@ -56,7 +60,7 @@ const handleDeleteFile = async (
 
     if (!fs.existsSync(trashDir)) fs.mkdirSync(trashDir);
 
-    fs.renameSync(path, `${trashDir}/${fileToDelete}`);
+    fs.renameSync(filePath, `${trashDir}/${fileToDelete}`);
   } catch (error) {
     return {
       error: new Error(error as string)
@@ -66,10 +70,10 @@ const handleDeleteFile = async (
 
 const handleUndoDeleteFile = async (
   _e: IpcMainInvokeEvent,
-  path: string
+  filePath: string
 ): Promise<ResponseT<void>> => {
   try {
-    const pathSegments = path.split('/');
+    const pathSegments = filePath.split('/');
 
     const fileToDelete = pathSegments.pop();
 
@@ -77,7 +81,7 @@ const handleUndoDeleteFile = async (
 
     const trashDir = `${parentDir}/trash.tmp`;
 
-    fs.renameSync(`${trashDir}/${fileToDelete}`, path);
+    fs.renameSync(`${trashDir}/${fileToDelete}`, filePath);
   } catch (error) {
     return {
       error: new Error(error as string)
@@ -87,10 +91,10 @@ const handleUndoDeleteFile = async (
 
 const handleEmptyTrash = async (
   _e: IpcMainInvokeEvent,
-  path: string
+  filePath: string
 ): Promise<ResponseT<void>> => {
   try {
-    fs.rmSync(`${path}/trash.tmp`, {
+    fs.rmSync(`${filePath}/trash.tmp`, {
       recursive: true,
       force: true
     });

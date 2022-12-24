@@ -13,7 +13,6 @@ import { FcOpenedFolder } from 'react-icons/fc';
 import { FaHashtag, FaUndo, FaRegImage } from 'react-icons/fa';
 import { Navigation } from './Navigation';
 import { AppContext, channels, toastConfig } from './_data';
-import { getFileExtension } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
@@ -97,19 +96,19 @@ export function DirectoryContent() {
   };
 
   const deleteImage = async (): Promise<void> => {
-    const imgToDelete = images.current[imageIndex.current];
+    const { path } = images.current[imageIndex.current];
 
     try {
       const { error } = await ipcRenderer.invoke<ResponseT<void>>(
         channels.DELETE_FILE,
-        imgToDelete
+        path
       );
 
       if (error) throw error;
 
-      images.current = images.current.filter((image) => image !== imgToDelete);
+      images.current = images.current.filter((image) => image.path !== path);
 
-      deleteHistory.current.push(imgToDelete);
+      deleteHistory.current.push(path);
 
       if (images.current.length > 0) {
         nextImage();
@@ -175,8 +174,7 @@ export function DirectoryContent() {
     }
   };
 
-  const activeImage = images.current[imageIndex.current];
-  const extension = getFileExtension(activeImage);
+  const { path, extension } = images.current[imageIndex.current];
   const totalImages = images.current.length;
   const imageDetails = [
     {
@@ -193,7 +191,7 @@ export function DirectoryContent() {
     },
     {
       key: 'extension',
-      isVisible: extension,
+      isVisible: !!extension,
       icon: FaRegImage,
       value: extension
     }
@@ -210,9 +208,9 @@ export function DirectoryContent() {
         height="calc(100vh - 95px)" // 95px = nav height + vertical margins
         paddingBottom="2rem"
       >
-        {activeImage && (
+        {path && (
           <Image
-            src={`file://${activeImage}`}
+            src={`file://${path}`}
             alt=""
             maxWidth="100%"
             maxHeight="100%"

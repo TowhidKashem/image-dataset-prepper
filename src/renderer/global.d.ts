@@ -11,6 +11,7 @@ declare global {
   interface DirContentT {
     name: string;
     path: string;
+    extension: string;
     isDir: boolean;
   }
 

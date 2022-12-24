@@ -23,10 +23,9 @@ export function ChooseDirectory() {
     const { segments, path } = getRootFileDir(e.currentTarget.files[0].path);
 
     try {
-      const { data, error } = await ipcRenderer.invoke<ResponseT<string[]>>(
-        channels.LIST_DIR,
-        path
-      );
+      const { data, error } = await ipcRenderer.invoke<
+        ResponseT<DirContentT[]>
+      >(channels.LIST_DIR, path);
 
       if (error) throw error;
 
