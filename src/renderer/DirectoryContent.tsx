@@ -5,10 +5,12 @@ import {
   Icon,
   Flex,
   Heading,
-  Text,
-  Badge
+  List,
+  ListItem,
+  ListIcon
 } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
+import { FaHashtag, FaUndo, FaRegImage } from 'react-icons/fa';
 import { Navigation } from './Navigation';
 import { AppContext, channels } from './_data';
 import { getFileExtension } from './_utils';
@@ -120,16 +122,19 @@ export function DirectoryContent() {
     {
       key: 'count',
       isVisible: totalImages > 0,
-      value: `${imageIndex + 1}/${totalImages} images`
+      icon: FaHashtag,
+      value: `${imageIndex + 1} / ${totalImages} images`
     },
     {
       key: 'loops',
       isVisible: true,
+      icon: FaUndo,
       value: `${loopCount} loops`
     },
     {
       key: 'extension',
       isVisible: extension,
+      icon: FaRegImage,
       value: extension
     }
   ];
@@ -141,10 +146,16 @@ export function DirectoryContent() {
       <Flex
         alignItems="center"
         justifyContent="center"
-        padding="1rem"
-        height="100vh"
+        height="calc(100vh - 95px)" // 95px = nav height + vertical margins
+        paddingBottom="2rem"
       >
-        <Image src={`file://${activeImage}`} alt="" maxHeight="100vh" />
+        <Image
+          src={`file://${activeImage}`}
+          alt=""
+          maxWidth="100%"
+          maxHeight="100%"
+          boxShadow="md"
+        />
 
         {isDirEmpty && (
           <div>
@@ -156,19 +167,25 @@ export function DirectoryContent() {
           </div>
         )}
 
-        <ul>
-          {imageDetails.map(({ key, isVisible, value }) =>
+        <List
+          spacing={3}
+          position="fixed"
+          top={0}
+          right={0}
+          padding={5}
+          background="rgba(0, 0, 0, 0.4)"
+          borderBottomLeftRadius={10}
+          width={200}
+        >
+          {imageDetails.map(({ key, isVisible, value, icon }) =>
             isVisible ? (
-              <li key={key}>
-                <Badge>
-                  <Text fontSize="md" paddingX="2.5" paddingY="0.5">
-                    {value}
-                  </Text>
-                </Badge>
-              </li>
+              <ListItem key={key} color="whiteAlpha.800" fontSize={18}>
+                <ListIcon as={icon} />
+                {value}
+              </ListItem>
             ) : null
           )}
-        </ul>
+        </List>
       </Flex>
     </>
   );

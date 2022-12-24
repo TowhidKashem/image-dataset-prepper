@@ -43,6 +43,7 @@ export function DirectoryList() {
           md: 5,
           lg: 8
         }}
+        paddingBottom="2rem"
       >
         {directories.map((dirPath) => (
           <Flex
@@ -51,10 +52,10 @@ export function DirectoryList() {
             alignItems="center"
             justifyContent="center"
             padding={3}
+            cursor="pointer"
+            borderRadius={10}
             _hover={{
-              background: 'rgba(0, 0, 0, 0.3)',
-              borderRadius: 10,
-              cursor: 'pointer'
+              background: 'rgba(0, 0, 0, 0.3)'
             }}
             onClick={() => handleFolderClick(dirPath)}
           >

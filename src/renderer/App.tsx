@@ -44,7 +44,6 @@ export function App() {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            padding="2rem"
             minHeight="100vh"
             background="gray.700"
           >
