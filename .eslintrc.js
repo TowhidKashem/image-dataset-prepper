@@ -21,6 +21,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 0,
     'react-hooks/exhaustive-deps': 0,
     'react/require-default-props': 0,
+    'react/no-unescaped-entities': 0,
 
     '@typescript-eslint/ban-ts-comment': 0,
     '@typescript-eslint/ban-types': 0,

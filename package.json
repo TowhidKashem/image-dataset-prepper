@@ -107,7 +107,8 @@
     "git:commit-skip-hooks": "git status && git add . && git commit -m 'work' --no-verify && git push --no-verify",
     "git:reset": "git clean --force && git reset --hard",
     "git:undo-last-commit": "git reset --soft HEAD~1",
-    "git:unstage-all-files": "git reset HEAD -- ."
+    "git:unstage-all-files": "git reset HEAD -- .",
+    "move-mac-build": "cp -r ./release/build/mac/ImageReviewer.app ./ImageReviewer.app"
   },
   "build": {
     "productName": "ImageReviewer",

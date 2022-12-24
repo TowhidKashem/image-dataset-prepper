@@ -107,7 +107,8 @@ export function Navigation({
             </AlertDialogHeader>
 
             <AlertDialogBody fontSize="md">
-              Are you really sure?
+              Are you sure? Folders you've visited will no longer have a lower
+              opacity.
             </AlertDialogBody>
 
             <AlertDialogFooter>
