@@ -21,7 +21,7 @@ export function ChooseDirectory() {
     const { segments, path } = getRootFileDir(e.currentTarget.files[0].path);
 
     try {
-      const { data, error } = await ipcRenderer.invoke<Res<string[]>>(
+      const { data, error } = await ipcRenderer.invoke<ResponseT<string[]>>(
         channels.LIST_DIR,
         path
       );

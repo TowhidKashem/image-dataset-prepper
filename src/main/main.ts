@@ -1,5 +1,5 @@
 import path from 'path';
-import { app, BrowserWindow, shell } from 'electron';
+import { app, shell, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './_utils';
 
@@ -42,7 +42,6 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    // fullscreen: true,
     width: 1024,
     height: 728,
     icon: getAssetPath('icon.png'),
@@ -103,6 +102,7 @@ app
   .whenReady()
   .then(() => {
     createWindow();
+
     app.on('activate', () => {
       // on mac it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open
       if (mainWindow === null) createWindow();

@@ -6,6 +6,7 @@ module.exports = {
     // disable rules
     'no-console': 0,
     'no-param-reassign': 0,
+    'no-empty': 0,
     'global-require': 0,
     'consistent-return': 0,
     'promise/always-return': 0,
@@ -20,13 +21,12 @@ module.exports = {
     'react-hooks/exhaustive-deps': 0,
     'react/require-default-props': 0,
 
-    'typescript-eslint/no-shadow': 0,
-    'typescript-eslint/no-explicit-any': 0,
-
     '@typescript-eslint/ban-ts-comment': 0,
     '@typescript-eslint/ban-types': 0,
     '@typescript-eslint/no-use-before-define': 0,
     '@typescript-eslint/no-unused-expressions': 0,
+    '@typescript-eslint/no-non-null-assertion': 0,
+    '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-shadow': 0,
 
     'jest/no-deprecated-functions': 0

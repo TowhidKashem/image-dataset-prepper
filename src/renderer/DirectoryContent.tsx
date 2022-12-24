@@ -12,8 +12,6 @@ import { FcOpenedFolder } from 'react-icons/fc';
 import { Navigation } from './Navigation';
 import { AppContext, channels } from './_data';
 import { getFileExtension } from './_utils';
-// @ts-ignore
-// import popSound from '../../assets/pop.mp3';
 
 const { ipcRenderer } = window.electron;
 
@@ -22,7 +20,7 @@ const TOAST_DURATION = 2_000;
 export function DirectoryContent() {
   const toast = useToast();
 
-  const { images, setImages } = useContext(AppContext);
+  const { envVars, images, setImages } = useContext(AppContext);
 
   const [imageIndex, setImageIndex] = useState(0);
   const [loopCount, setLoopCount] = useState(0);
@@ -63,7 +61,8 @@ export function DirectoryContent() {
 
         setLoopCount((prevCount) => prevCount + 1);
 
-        // new Audio(popSound).play();
+        const popSound = `file://${envVars.PROJECT_ROOT}/assets/pop.mp3`;
+        new Audio(popSound).play();
       }
 
       return nextIndex;
@@ -86,7 +85,7 @@ export function DirectoryContent() {
     if (totalImages === 0) return;
 
     try {
-      await ipcRenderer.invoke(channels.DELETE_IMAGE, activeImage);
+      await ipcRenderer.invoke(channels.DELETE_FILE, activeImage);
 
       const newImages = images.filter((image) => image !== activeImage);
 

@@ -11,12 +11,11 @@ const { ipcRenderer } = window.electron;
 export function DirectoryList() {
   const navigate = useNavigate();
 
-  const { directories, setDirectories, setImages, setPathSegments } =
-    useContext(AppContext);
+  const { directories, setImages, setPathSegments } = useContext(AppContext);
 
   const handleFolderClick = async (path: string) => {
     try {
-      const { data, error } = await ipcRenderer.invoke<Res<string[]>>(
+      const { data, error } = await ipcRenderer.invoke<ResponseT<string[]>>(
         channels.LIST_DIR,
         path
       );

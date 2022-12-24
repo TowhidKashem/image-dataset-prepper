@@ -1,20 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ChakraProvider, ThemeProvider, theme, Flex } from '@chakra-ui/react';
 import { ChooseDirectory } from './ChooseDirectory';
 import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
 import { useStateCallback } from './useStateCallback';
-import { AppContext } from './_data';
+import { AppContext, EnvVarsT, channels } from './_data';
+
+const { ipcRenderer } = window.electron;
 
 export function App() {
-  const [pathSegments, setPathSegments] = useState([]);
+  const [envVars, setEnvVars] = useState<EnvVarsT>(null);
+  const [pathSegments, setPathSegments] = useState<string[]>([]);
   const [directories, setDirectories] = useStateCallback<string[]>([]);
   const [images, setImages] = useStateCallback<string[]>([]);
+
+  useEffect(() => {
+    const getEnvVars = async (): Promise<void> => {
+      const { data } = await ipcRenderer.invoke<ResponseT<EnvVarsT>>(
+        channels.GET_ENV_VARS,
+        undefined
+      );
+      setEnvVars(data);
+    };
+    getEnvVars();
+  }, []);
 
   return (
     <AppContext.Provider
       value={{
+        envVars,
         pathSegments,
         setPathSegments,
         directories,

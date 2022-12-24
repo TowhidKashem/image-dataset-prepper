@@ -1,11 +1,20 @@
 import fs from 'fs';
+import path from 'path';
 import { ipcMain, IpcMainInvokeEvent } from 'electron';
-import { channels } from '../renderer/_data';
+import { channels, EnvVarsT } from '../renderer/_data';
+
+const handleGetEnvVars = async (): Promise<ResponseT<EnvVarsT>> => ({
+  data: {
+    PROJECT_ROOT: path.resolve(__dirname, '../../')
+  }
+});
+
+ipcMain.handle(channels.GET_ENV_VARS, handleGetEnvVars);
 
 const handleListDirectory = async (
-  e: IpcMainInvokeEvent,
+  _e: IpcMainInvokeEvent,
   path: string
-): Promise<Res<string[]>> => {
+): Promise<ResponseT<string[]>> => {
   try {
     const contents = fs
       .readdirSync(path)
@@ -26,19 +35,14 @@ const handleListDirectory = async (
 ipcMain.handle(channels.LIST_DIR, handleListDirectory);
 
 const handleDeleteImage = async (
-  e: IpcMainInvokeEvent,
-  args: {
-    directory: string;
-    filename: string;
-  }
-): Promise<void | unknown> => {
+  _e: IpcMainInvokeEvent,
+  path: string
+): Promise<ResponseT<void>> => {
   try {
-    const file = `${args.directory}/${args.filename}`;
-
-    fs.unlinkSync(file);
+    fs.unlinkSync(path);
   } catch (error) {
     return error;
   }
 };
 
-ipcMain.handle(channels.DELETE_IMAGE, handleDeleteImage);
+ipcMain.handle(channels.DELETE_FILE, handleDeleteImage);
