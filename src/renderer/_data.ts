@@ -7,22 +7,24 @@ import {
 import { UseToastOptions } from '@chakra-ui/react';
 import { UseStateCallbackT } from './useStateCallback';
 
-export type EnvVarsT = Record<string, string | number | boolean>;
+export type AppDataT = {
+  envVars: Record<string, string>;
+};
 
 export const AppContext = createContext<{
-  envVars: EnvVarsT;
+  appData: AppDataT;
 
   pathSegments: string[];
   setPathSegments: Dispatch<SetStateAction<string[]>>;
 
-  directories: string[];
-  setDirectories: UseStateCallbackT<string[]>;
+  directories: DirContentT[];
+  setDirectories: UseStateCallbackT<DirContentT[]>;
 
   images: MutableRefObject<string[]>;
 }>(null);
 
 export const channels = {
-  GET_ENV_VARS: 'GET_ENV_VARS',
+  GET_APP_DATA: 'GET_APP_DATA',
   LIST_DIR: 'LIST_DIR',
   DELETE_FILE: 'DELETE_FILE',
   UNDO_DELETE: 'UNDO_DELETE',

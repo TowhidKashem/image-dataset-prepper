@@ -5,32 +5,32 @@ import { ChooseDirectory } from './ChooseDirectory';
 import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
 import { useStateCallback } from './useStateCallback';
-import { AppContext, EnvVarsT, channels } from './_data';
+import { AppContext, AppDataT, channels } from './_data';
 
 const { ipcRenderer } = window.electron;
 
 export function App() {
-  const [envVars, setEnvVars] = useState<EnvVarsT>(null);
+  const [appData, setAppData] = useState<AppDataT>(null);
   const [pathSegments, setPathSegments] = useState<string[]>([]);
-  const [directories, setDirectories] = useStateCallback<string[]>([]);
+  const [directories, setDirectories] = useStateCallback<DirContentT[]>([]);
 
   const images = useRef<string[]>([]);
 
   useEffect(() => {
-    const getEnvVars = async (): Promise<void> => {
-      const { data } = await ipcRenderer.invoke<ResponseT<EnvVarsT>>(
-        channels.GET_ENV_VARS,
+    const getAppData = async (): Promise<void> => {
+      const { data } = await ipcRenderer.invoke<ResponseT<AppDataT>>(
+        channels.GET_APP_DATA,
         undefined
       );
-      setEnvVars(data);
+      setAppData(data);
     };
-    getEnvVars();
+    getAppData();
   }, []);
 
   return (
     <AppContext.Provider
       value={{
-        envVars,
+        appData,
         pathSegments,
         setPathSegments,
         directories,

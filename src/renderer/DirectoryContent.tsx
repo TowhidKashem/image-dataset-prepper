@@ -20,10 +20,15 @@ const { ipcRenderer } = window.electron;
 export function DirectoryContent() {
   const toast = useToast(toastConfig);
 
-  const { envVars, pathSegments, images } = useContext(AppContext);
+  const {
+    appData: { envVars },
+    pathSegments,
+    images
+  } = useContext(AppContext);
 
   const imageIndex = useRef(0);
   const deleteHistory = useRef<string[]>([]);
+  const isDeleteTouched = useRef(false);
 
   // since we use refs to store images and the active image index, updating them won't trigger a re-render
   // so use this flag to force re-renders. And the reason for using refs instead of state is due to stale values
@@ -38,7 +43,7 @@ export function DirectoryContent() {
     window.addEventListener('keyup', handleKeyboardNav);
 
     return () => {
-      emptyTrash();
+      if (isDeleteTouched.current) emptyTrash();
 
       window.removeEventListener('keyup', handleKeyboardNav);
     };
@@ -123,6 +128,8 @@ export function DirectoryContent() {
         description: error.toString(),
         status: 'error'
       });
+    } finally {
+      isDeleteTouched.current = true;
     }
   };
 

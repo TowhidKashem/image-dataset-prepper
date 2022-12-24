@@ -1,10 +1,9 @@
-import { useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
-import { FcFolder } from 'react-icons/fc';
+import { FcFolder, FcQuestions } from 'react-icons/fc';
 import { Navigation } from './Navigation';
 import { AppContext, channels, toastConfig } from './_data';
-import { getDirName } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
@@ -15,7 +14,14 @@ export function DirectoryList() {
 
   const { directories, images, setPathSegments } = useContext(AppContext);
 
-  const handleFolderClick = async (path: string) => {
+  const [viewedDirs, setViewedDirs] = useState<string[]>(
+    JSON.parse(localStorage.getItem('viewedDirs')) ?? []
+  );
+
+  const handleFolderClick = async (
+    path: string,
+    name: string
+  ): Promise<void> => {
     try {
       const { data, error } = await ipcRenderer.invoke<ResponseT<string[]>>(
         channels.LIST_DIR,
@@ -24,7 +30,9 @@ export function DirectoryList() {
 
       if (error) throw error;
 
-      setPathSegments((prevSegments) => [...prevSegments, getDirName(path)]);
+      setPathSegments((prevSegments) => [...prevSegments, name]);
+
+      updateHistory(path);
 
       images.current = data;
 
@@ -35,6 +43,14 @@ export function DirectoryList() {
         status: 'error'
       });
     }
+  };
+
+  const updateHistory = (visitedDir: string): void => {
+    const newViewedDirs = [...viewedDirs, visitedDir];
+
+    setViewedDirs(newViewedDirs);
+
+    localStorage.setItem('viewedDirs', JSON.stringify(newViewedDirs));
   };
 
   return (
@@ -51,24 +67,29 @@ export function DirectoryList() {
         }}
         paddingBottom="2rem"
       >
-        {directories.map((dirPath) => (
+        {directories.map(({ name, path, isDir }) => (
           <Flex
-            key={dirPath}
+            key={path}
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
             padding={3}
-            cursor="pointer"
+            cursor={isDir ? 'pointer' : 'not-allowed'}
             borderRadius={10}
+            opacity={viewedDirs.includes(path) ? 0.5 : 1}
             _hover={{
               background: 'rgba(0, 0, 0, 0.3)'
             }}
-            onClick={() => handleFolderClick(dirPath)}
+            onClick={() => isDir && handleFolderClick(path, name)}
           >
-            <Icon as={FcFolder} fontSize="4rem" marginBottom={1} />
+            <Icon
+              as={isDir ? FcFolder : FcQuestions}
+              fontSize="4rem"
+              marginBottom={1}
+            />
 
             <Heading color="gray.50" as="h6" size="xs">
-              {getDirName(dirPath)}
+              {name}
             </Heading>
           </Flex>
         ))}

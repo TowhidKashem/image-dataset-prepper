@@ -8,6 +8,12 @@ declare global {
     error?: Error;
   }
 
+  interface DirContentT {
+    name: string;
+    path: string;
+    isDir: boolean;
+  }
+
   interface Window {
     electron: {
       ipcRenderer: {

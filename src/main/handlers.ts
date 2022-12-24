@@ -1,25 +1,35 @@
 import fs from 'fs';
 import path from 'path';
 import { ipcMain, IpcMainInvokeEvent } from 'electron';
-import { channels, EnvVarsT } from '../renderer/_data';
+import { channels, AppDataT } from '../renderer/_data';
 
-const handleGetEnvVars = async (): Promise<ResponseT<EnvVarsT>> => ({
+const handleGetAppData = async (): Promise<ResponseT<AppDataT>> => ({
   data: {
-    PROJECT_ROOT: path.resolve(__dirname, '../../')
+    envVars: {
+      PROJECT_ROOT: path.resolve(__dirname, '../../')
+    }
   }
 });
 
 const handleListDirectory = async (
   _e: IpcMainInvokeEvent,
   path: string
-): Promise<ResponseT<string[]>> => {
+): Promise<ResponseT<DirContentT[]>> => {
   const BLACKLIST = ['.DS_Store', '1'];
 
   try {
     const contents = fs
       .readdirSync(path)
       .filter((dirName) => !BLACKLIST.includes(dirName))
-      .map((dirName) => `${path}/${dirName}`);
+      .map((dirName) => {
+        const filePath = `${path}/${dirName}`;
+
+        return {
+          name: dirName,
+          path: filePath,
+          isDir: fs.statSync(filePath).isDirectory()
+        };
+      });
 
     return {
       data: contents
@@ -92,7 +102,7 @@ const handleEmptyTrash = async (
 };
 
 // endpoints
-ipcMain.handle(channels.GET_ENV_VARS, handleGetEnvVars);
+ipcMain.handle(channels.GET_APP_DATA, handleGetAppData);
 ipcMain.handle(channels.LIST_DIR, handleListDirectory);
 ipcMain.handle(channels.DELETE_FILE, handleDeleteFile);
 ipcMain.handle(channels.UNDO_DELETE, handleUndoDeleteFile);
