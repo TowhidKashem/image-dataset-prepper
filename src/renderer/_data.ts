@@ -24,7 +24,8 @@ export const AppContext = createContext<{
 export const channels = {
   GET_ENV_VARS: 'GET_ENV_VARS',
   LIST_DIR: 'LIST_DIR',
-  DELETE_FILE: 'DELETE_FILE'
+  DELETE_FILE: 'DELETE_FILE',
+  EMPTY_TRASH: 'EMPTY_TRASH'
 } as const;
 
 export const toastConfig: Partial<UseToastOptions> = {

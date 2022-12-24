@@ -15,9 +15,12 @@ const handleListDirectory = async (
   _e: IpcMainInvokeEvent,
   path: string
 ): Promise<ResponseT<string[]>> => {
+  const BLACKLIST = ['.DS_Store', '1'];
+
   try {
     const contents = fs
       .readdirSync(path)
+      .filter((dirName) => !BLACKLIST.includes(dirName))
       .map((dirName) => `${path}/${dirName}`);
 
     return {
@@ -39,10 +42,38 @@ const handleDeleteFile = async (
   path: string
 ): Promise<ResponseT<void>> => {
   try {
-    fs.unlinkSync(path);
+    const pathSegments = path.split('/');
+
+    const fileToDelete = pathSegments.pop();
+
+    const parentDir = pathSegments.join('/');
+
+    const trashDir = `${parentDir}/trash.tmp`;
+
+    if (!fs.existsSync(trashDir)) fs.mkdirSync(trashDir);
+
+    fs.renameSync(path, `${trashDir}/${fileToDelete}`);
+  } catch (error) {
+    return {
+      error: new Error(error as string)
+    };
+  }
+};
+
+ipcMain.handle(channels.DELETE_FILE, handleDeleteFile);
+
+const handleEmptyTrash = async (
+  _e: IpcMainInvokeEvent,
+  path: string
+): Promise<ResponseT<void>> => {
+  try {
+    fs.rmSync(`${path}/trash.tmp`, {
+      recursive: true,
+      force: true
+    });
   } catch (error) {
     return error;
   }
 };
 
-ipcMain.handle(channels.DELETE_FILE, handleDeleteFile);
+ipcMain.handle(channels.EMPTY_TRASH, handleEmptyTrash);

@@ -20,7 +20,7 @@ const { ipcRenderer } = window.electron;
 export function DirectoryContent() {
   const toast = useToast(toastConfig);
 
-  const { envVars, images } = useContext(AppContext);
+  const { envVars, pathSegments, images } = useContext(AppContext);
 
   const imageIndex = useRef(0);
 
@@ -37,6 +37,8 @@ export function DirectoryContent() {
     window.addEventListener('keyup', handleKeyboardNav);
 
     return () => {
+      emptyTrash();
+
       window.removeEventListener('keyup', handleKeyboardNav);
     };
   }, []);
@@ -110,6 +112,18 @@ export function DirectoryContent() {
       });
     } catch (error) {
       toast({
+        description: error.toString(),
+        status: 'error'
+      });
+    }
+  };
+
+  const emptyTrash = (): void => {
+    try {
+      ipcRenderer.invoke(channels.EMPTY_TRASH, pathSegments.join('/'));
+    } catch (error) {
+      toast({
+        title: 'Trash not Emptied!',
         description: error.toString(),
         status: 'error'
       });
