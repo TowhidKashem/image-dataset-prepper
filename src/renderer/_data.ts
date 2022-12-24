@@ -4,6 +4,7 @@ import {
   Dispatch,
   MutableRefObject
 } from 'react';
+import { UseToastOptions } from '@chakra-ui/react';
 import { UseStateCallbackT } from './useStateCallback';
 
 export type EnvVarsT = Record<string, string | number | boolean>;
@@ -25,3 +26,8 @@ export const channels = {
   LIST_DIR: 'LIST_DIR',
   DELETE_FILE: 'DELETE_FILE'
 } as const;
+
+export const commonToastOptions: Partial<UseToastOptions> = {
+  position: 'top',
+  duration: 2_000
+};

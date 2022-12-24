@@ -28,6 +28,7 @@ module.exports = {
     '@typescript-eslint/no-non-null-assertion': 0,
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-shadow': 0,
+    '@typescript-eslint/naming-convention': 0,
 
     'jest/no-deprecated-functions': 0
   },

@@ -25,4 +25,4 @@ export const getDirName = (filePath: string): string =>
   filePath.split('/').pop();
 
 export const getFileExtension = (filePath: string): string =>
-  filePath.split('.').pop();
+  filePath?.split('.').pop() ?? null;

@@ -12,12 +12,10 @@ import {
 import { FcOpenedFolder } from 'react-icons/fc';
 import { FaHashtag, FaUndo, FaRegImage } from 'react-icons/fa';
 import { Navigation } from './Navigation';
-import { AppContext, channels } from './_data';
+import { AppContext, channels, commonToastOptions } from './_data';
 import { getFileExtension } from './_utils';
 
 const { ipcRenderer } = window.electron;
-
-const TOAST_DURATION = 2_000;
 
 export function DirectoryContent() {
   const toast = useToast();
@@ -25,9 +23,12 @@ export function DirectoryContent() {
   const { envVars, images } = useContext(AppContext);
 
   const imageIndex = useRef(0);
-  const [currentImage, setCurrentImage] = useState(
-    images.current[imageIndex.current]
-  );
+
+  // since we use refs to store images and the active image index, updating them won't trigger a re-render
+  // so use this flag to force re-renders. And the reason for using refs instead of state is due to stale values
+  // being cached inside event handlers - https://reactjs.org/docs/hooks-faq.html#why-am-i-seeing-stale-props-or-state-inside-my-function
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, setTriggerRender] = useState(false);
 
   const [loopCount, setLoopCount] = useState(0);
   const [isDirEmpty, setIsDirEmpty] = useState(false);
@@ -71,7 +72,7 @@ export function DirectoryContent() {
 
     imageIndex.current = nextIndex;
 
-    setCurrentImage(images.current[imageIndex.current]); // trigger re-render
+    setTriggerRender((prev) => !prev);
   };
 
   const prevImage = (): void => {
@@ -83,7 +84,7 @@ export function DirectoryContent() {
 
     imageIndex.current = prevIndex;
 
-    setCurrentImage(images.current[imageIndex.current]); // trigger re-render
+    setTriggerRender((prev) => !prev);
   };
 
   const deleteImage = async (): Promise<void> => {
@@ -105,20 +106,19 @@ export function DirectoryContent() {
       toast({
         description: 'Image deleted!',
         status: 'success',
-        position: 'top',
-        duration: TOAST_DURATION
+        ...commonToastOptions
       });
     } catch (error) {
       toast({
         description: error.toString(),
         status: 'error',
-        position: 'top',
-        duration: TOAST_DURATION
+        ...commonToastOptions
       });
     }
   };
 
-  const extension = getFileExtension(currentImage);
+  const activeImage = images.current[imageIndex.current];
+  const extension = getFileExtension(activeImage);
   const totalImages = images.current.length;
   const imageDetails = [
     {
@@ -152,13 +152,15 @@ export function DirectoryContent() {
         height="calc(100vh - 95px)" // 95px = nav height + vertical margins
         paddingBottom="2rem"
       >
-        <Image
-          src={`file://${currentImage}`}
-          alt=""
-          maxWidth="100%"
-          maxHeight="100%"
-          boxShadow="md"
-        />
+        {activeImage && (
+          <Image
+            src={`file://${activeImage}`}
+            alt=""
+            maxWidth="100%"
+            maxHeight="100%"
+            boxShadow="md"
+          />
+        )}
 
         {isDirEmpty ? (
           <Flex flexDirection="column" alignItems="center">
