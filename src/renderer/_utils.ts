@@ -12,7 +12,8 @@ export const getRootFileDir = (
 } => {
   const segments = path.split('/');
 
-  segments.pop();
+  // when a folder is selected through a file input field the first file in the folder
+  // is automatically selected, so remove it to get the folder path
   segments.pop();
 
   return {

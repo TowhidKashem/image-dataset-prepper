@@ -62,6 +62,7 @@ export function Navigation({
   return (
     <Flex
       alignItems="center"
+      maxWidth="100%"
       height={55}
       marginY="20px"
       paddingX={1}
@@ -72,6 +73,8 @@ export function Navigation({
       <Icon as={IoChevronBackCircle} onClick={handleBackClick} {...iconProps} />
 
       <Breadcrumb
+        maxWidth="100%"
+        overflowX="scroll"
         marginRight={3}
         separator={
           <Icon as={IoChevronForward} fontSize={18} color="gray.500" />
@@ -80,6 +83,7 @@ export function Navigation({
         {pathSegments.map((segment, index) => (
           <BreadcrumbItem key={segment + index.toString()}>
             <BreadcrumbLink
+              noOfLines={1}
               fontSize="md"
               fontWeight="500"
               color="gray.50"
@@ -107,8 +111,7 @@ export function Navigation({
             </AlertDialogHeader>
 
             <AlertDialogBody fontSize="md">
-              Are you sure? Folders you've visited will no longer have a lower
-              opacity.
+              Folders you've visited will no longer have a lower opacity.
             </AlertDialogBody>
 
             <AlertDialogFooter>

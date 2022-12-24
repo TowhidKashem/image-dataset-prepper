@@ -16,7 +16,7 @@ const handleListDirectory = async (
   _e: IpcMainInvokeEvent,
   filePath: string
 ): Promise<ResponseT<DirContentT[]>> => {
-  const BLACKLIST = ['.DS_Store', '1'];
+  const BLACKLIST = ['1', '.DS_Store', 'trash.tmp'];
 
   try {
     const contents = fs

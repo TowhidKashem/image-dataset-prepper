@@ -44,6 +44,7 @@ export function App() {
           justifyContent="center"
           alignItems="center"
           minHeight="100vh"
+          paddingX={3}
           background="gray.700"
         >
           <MemoryRouter>

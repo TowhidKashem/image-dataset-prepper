@@ -8,25 +8,29 @@ Also included are some notebooks/python scripts to automate deleting duplicates 
 
 ## Installation
 
-```
-> yarn install | npm install
-```
-
-## Build
+First install the dependencies:
 
 ```
-> yarn package | npm run package
+> yarn install or npm install
 ```
 
-The resultant executable can be found in the `release/build/` folder e.g. on mac it's `release/build/mac/ImageReviewer.app`. You can move this anywhere like to your desktop and run it as a standalone app going forward.
+then build the executable:
+
+```
+> yarn package or npm run package
+```
+
+The resultant launch file can be found in the `release/build/*` folder e.g. on a mac it's `release/build/mac/ImageReviewer.app`. You can move this anywhere like to your desktop and run it as a standalone app going forward.
 
 ## Development
 
-To run the dev server:
+To run the app without building or to add more features (PRs welcome!), after installing dependecies run:
 
 ```
-> yarn start
+> yarn start or npm start
 ```
+
+This will start the dev server and automatically open the app and will auto reload on file changes.
 
 ## Files
 
@@ -41,12 +45,14 @@ To run the dev server:
 - <kbd>CMD</kbd> + <kbd>z</kbd> (mac) or <kbd>CTRL</kbd> + <kbd>z</kbd> (windows) undo delete
 - &#x21bb; - click the reload icon on the top right of the screen to clear history (by default visited folders appear in a lower opacity to help track progress)
 
-## Jupyter Notebooks
+## Jupyter notebook
 
-- `notebooks/delete_duplicates.ipynb` - displays exact and possible duplicate images found by the awesome [difPy library](https://github.com/elisemercury/Duplicate-Image-Finder) and allows you to delete them after manual confirmation
-- `notebooks/delete_corrupt.ipynb` - deletes files that are corrupt and can't be opened
+- `notebook.ipynb`
 
-These scripts assume that your folder structure is a single root folder with subfolders for each "class". For example:
+  - displays exact and possible duplicate images found by the awesome [difPy](https://github.com/elisemercury/Duplicate-Image-Finder) library and allows you to delete them after manual confirmation
+  - deletes files that are corrupt and can't be opened
+
+  These scripts assume that your folder structure is a single root folder with subfolders for each _class_ e.g.:
 
 ```
 dog-images/
@@ -62,4 +68,9 @@ dog-images/
 - etc...
 ```
 
-If your folder structure differs you'll need to modify the scripts to suit your needs.
+If your folder structure differs you'll need to modify the scripts accordingly.
+
+Python dependencies (install with `pip` or `anaconda` if you get errors running the notebook):
+
+- difPy
+- ...

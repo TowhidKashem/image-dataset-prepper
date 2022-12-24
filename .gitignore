@@ -13,7 +13,7 @@ coverage
 1
 
 __pycache__
-python_scripts
+scripts
 
 release/app/dist
 release/build

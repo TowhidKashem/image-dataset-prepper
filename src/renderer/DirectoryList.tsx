@@ -78,7 +78,7 @@ export function DirectoryList() {
             padding={3}
             cursor={isDir ? 'pointer' : 'not-allowed'}
             borderRadius={10}
-            opacity={viewedDirs.includes(path) ? 0.5 : 1}
+            opacity={viewedDirs.includes(path) ? 0.3 : 1}
             _hover={{
               background: 'rgba(0, 0, 0, 0.3)'
             }}
