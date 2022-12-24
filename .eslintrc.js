@@ -7,6 +7,7 @@ module.exports = {
     'no-console': 0,
     'no-param-reassign': 0,
     'no-empty': 0,
+    'default-case': 0,
     'global-require': 0,
     'consistent-return': 0,
     'promise/always-return': 0,

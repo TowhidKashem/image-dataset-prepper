@@ -1,7 +1,6 @@
 
-2. implement undo delete
 mark visited folders and be able to clear
-
+must detect z + cmd
 
 4. make build work, put back npm scripts for all 3 platforms (?)
 5. generate icons for all sizes

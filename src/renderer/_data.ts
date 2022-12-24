@@ -25,6 +25,7 @@ export const channels = {
   GET_ENV_VARS: 'GET_ENV_VARS',
   LIST_DIR: 'LIST_DIR',
   DELETE_FILE: 'DELETE_FILE',
+  UNDO_DELETE: 'UNDO_DELETE',
   EMPTY_TRASH: 'EMPTY_TRASH'
 } as const;
 

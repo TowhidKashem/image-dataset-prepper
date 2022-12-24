@@ -4,7 +4,7 @@ import { channels } from '../renderer/_data';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
-    invoke<T>(channel: ChannelT, args: T): Promise<any> {
+    invoke<T>(channel: ChannelT, args: unknown): Promise<T> {
       return ipcRenderer.invoke(channel, args);
     },
     removeAllListeners: (channel: ChannelT): void => {

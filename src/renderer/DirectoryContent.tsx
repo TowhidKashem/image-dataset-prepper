@@ -23,6 +23,7 @@ export function DirectoryContent() {
   const { envVars, pathSegments, images } = useContext(AppContext);
 
   const imageIndex = useRef(0);
+  const deleteHistory = useRef<string[]>([]);
 
   // since we use refs to store images and the active image index, updating them won't trigger a re-render
   // so use this flag to force re-renders. And the reason for using refs instead of state is due to stale values
@@ -51,8 +52,8 @@ export function DirectoryContent() {
         return nextImage();
       case 'ArrowLeft':
         return prevImage();
-      default:
-        return null;
+      case 'Meta':
+        return undoDelete();
     }
   };
 
@@ -94,9 +95,16 @@ export function DirectoryContent() {
     const imgToDelete = images.current[imageIndex.current];
 
     try {
-      await ipcRenderer.invoke(channels.DELETE_FILE, imgToDelete);
+      const { error } = await ipcRenderer.invoke<ResponseT<void>>(
+        channels.DELETE_FILE,
+        imgToDelete
+      );
+
+      if (error) throw error;
 
       images.current = images.current.filter((image) => image !== imgToDelete);
+
+      deleteHistory.current.push(imgToDelete);
 
       if (images.current.length > 0) {
         nextImage();
@@ -118,9 +126,39 @@ export function DirectoryContent() {
     }
   };
 
-  const emptyTrash = (): void => {
+  const undoDelete = async (): Promise<void> => {
+    if (deleteHistory.current.length === 0) return;
+
     try {
-      ipcRenderer.invoke(channels.EMPTY_TRASH, pathSegments.join('/'));
+      const lastDeleted = deleteHistory.current.pop();
+
+      const { error } = await ipcRenderer.invoke<ResponseT<void>>(
+        channels.UNDO_DELETE,
+        lastDeleted
+      );
+
+      if (error) throw error;
+
+      toast({
+        description: 'Restored Image!',
+        status: 'success'
+      });
+    } catch (error) {
+      toast({
+        description: error.toString(),
+        status: 'error'
+      });
+    }
+  };
+
+  const emptyTrash = async (): Promise<void> => {
+    try {
+      const { error } = await ipcRenderer.invoke<ResponseT<void>>(
+        channels.EMPTY_TRASH,
+        pathSegments.join('/')
+      );
+
+      if (error) throw error;
     } catch (error) {
       toast({
         title: 'Trash not Emptied!',

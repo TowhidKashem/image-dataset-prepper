@@ -9,8 +9,6 @@ const handleGetEnvVars = async (): Promise<ResponseT<EnvVarsT>> => ({
   }
 });
 
-ipcMain.handle(channels.GET_ENV_VARS, handleGetEnvVars);
-
 const handleListDirectory = async (
   _e: IpcMainInvokeEvent,
   path: string
@@ -24,18 +22,14 @@ const handleListDirectory = async (
       .map((dirName) => `${path}/${dirName}`);
 
     return {
-      data: contents,
-      error: null
+      data: contents
     };
   } catch (error) {
     return {
-      data: null,
       error: new Error(error as string)
     };
   }
 };
-
-ipcMain.handle(channels.LIST_DIR, handleListDirectory);
 
 const handleDeleteFile = async (
   _e: IpcMainInvokeEvent,
@@ -60,7 +54,26 @@ const handleDeleteFile = async (
   }
 };
 
-ipcMain.handle(channels.DELETE_FILE, handleDeleteFile);
+const handleUndoDeleteFile = async (
+  _e: IpcMainInvokeEvent,
+  path: string
+): Promise<ResponseT<void>> => {
+  try {
+    const pathSegments = path.split('/');
+
+    const fileToDelete = pathSegments.pop();
+
+    const parentDir = pathSegments.join('/');
+
+    const trashDir = `${parentDir}/trash.tmp`;
+
+    fs.renameSync(`${trashDir}/${fileToDelete}`, path);
+  } catch (error) {
+    return {
+      error: new Error(error as string)
+    };
+  }
+};
 
 const handleEmptyTrash = async (
   _e: IpcMainInvokeEvent,
@@ -72,8 +85,15 @@ const handleEmptyTrash = async (
       force: true
     });
   } catch (error) {
-    return error;
+    return {
+      error: new Error(error as string)
+    };
   }
 };
 
+// endpoints
+ipcMain.handle(channels.GET_ENV_VARS, handleGetEnvVars);
+ipcMain.handle(channels.LIST_DIR, handleListDirectory);
+ipcMain.handle(channels.DELETE_FILE, handleDeleteFile);
+ipcMain.handle(channels.UNDO_DELETE, handleUndoDeleteFile);
 ipcMain.handle(channels.EMPTY_TRASH, handleEmptyTrash);
