@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ChakraProvider, ThemeProvider, theme, Flex } from '@chakra-ui/react';
 import { ChooseDirectory } from './ChooseDirectory';
@@ -13,7 +13,7 @@ export function App() {
   const [envVars, setEnvVars] = useState<EnvVarsT>(null);
   const [pathSegments, setPathSegments] = useState<string[]>([]);
   const [directories, setDirectories] = useStateCallback<string[]>([]);
-  const [images, setImages] = useStateCallback<string[]>([]);
+  const images = useRef<string[]>([]);
 
   useEffect(() => {
     const getEnvVars = async (): Promise<void> => {
@@ -34,8 +34,7 @@ export function App() {
         setPathSegments,
         directories,
         setDirectories,
-        images,
-        setImages
+        images
       }}
     >
       <ChakraProvider>

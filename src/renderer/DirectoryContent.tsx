@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import {
   useToast,
   Image,
@@ -22,9 +22,13 @@ const TOAST_DURATION = 2_000;
 export function DirectoryContent() {
   const toast = useToast();
 
-  const { envVars, images, setImages } = useContext(AppContext);
+  const { envVars, images } = useContext(AppContext);
 
-  const [imageIndex, setImageIndex] = useState(0);
+  const imageIndex = useRef(0);
+  const [currentImage, setCurrentImage] = useState(
+    images.current[imageIndex.current]
+  );
+
   const [loopCount, setLoopCount] = useState(0);
   const [isDirEmpty, setIsDirEmpty] = useState(false);
 
@@ -50,90 +54,78 @@ export function DirectoryContent() {
   };
 
   const nextImage = (): void => {
-    if (totalImages < 0) return;
+    if (images.current.length < 0) return;
 
-    setImageIndex((curImgIndex) => {
-      let nextIndex = curImgIndex + 1;
+    let nextIndex = imageIndex.current + 1;
 
-      const isEndReached = nextIndex > totalImages - 1;
+    const isEndReached = nextIndex > images.current.length - 1;
 
-      if (isEndReached) {
-        nextIndex = 0;
+    if (isEndReached) {
+      nextIndex = 0;
 
-        setLoopCount((prevCount) => prevCount + 1);
+      setLoopCount((prevCount) => prevCount + 1);
 
-        const popSound = `file://${envVars.PROJECT_ROOT}/assets/pop.mp3`;
-        new Audio(popSound).play();
-      }
+      const popSound = `file://${envVars.PROJECT_ROOT}/assets/pop.mp3`;
+      new Audio(popSound).play();
+    }
 
-      return nextIndex;
-    });
+    imageIndex.current = nextIndex;
+
+    setCurrentImage(images.current[imageIndex.current]); // trigger re-render
   };
 
   const prevImage = (): void => {
-    if (totalImages < 0) return;
+    if (images.current.length < 0) return;
 
-    setImageIndex((curImgIndex) => {
-      let prevIndex = curImgIndex - 1;
+    let prevIndex = imageIndex.current - 1;
 
-      if (prevIndex < 0) prevIndex = totalImages - 1;
+    if (prevIndex < 0) prevIndex = images.current.length - 1;
 
-      return prevIndex;
-    });
+    imageIndex.current = prevIndex;
+
+    setCurrentImage(images.current[imageIndex.current]); // trigger re-render
   };
 
   const deleteImage = async (): Promise<void> => {
-    // wrap everything in this set state to get the updated value of `imageIndex`
-    // otherwise the stale value remains cached within event listeners
-    // we return the same value at the end to avoid updating the state
-    setImageIndex((imageIndex) => {
-      const deleteImgPath = images[imageIndex];
+    const imgToDelete = images.current[imageIndex.current];
 
-      try {
-        (async () => {
-          await ipcRenderer.invoke(channels.DELETE_FILE, deleteImgPath);
+    try {
+      await ipcRenderer.invoke(channels.DELETE_FILE, imgToDelete);
 
-          const newImages = images.filter((image) => image !== deleteImgPath);
+      images.current = images.current.filter((image) => image !== imgToDelete);
 
-          setImages(newImages, () => {
-            if (newImages.length > 0) {
-              nextImage();
-            } else {
-              setIsDirEmpty(true);
+      if (images.current.length > 0) {
+        nextImage();
+      } else {
+        setIsDirEmpty(true);
 
-              window.removeEventListener('keyup', handleKeyboardNav);
-            }
-          });
-
-          toast({
-            description: 'Image deleted!',
-            status: 'success',
-            position: 'top',
-            duration: TOAST_DURATION
-          });
-        })();
-      } catch (error) {
-        toast({
-          description: error.toString(),
-          status: 'error',
-          position: 'top',
-          duration: TOAST_DURATION
-        });
+        window.removeEventListener('keyup', handleKeyboardNav);
       }
 
-      return imageIndex;
-    });
+      toast({
+        description: 'Image deleted!',
+        status: 'success',
+        position: 'top',
+        duration: TOAST_DURATION
+      });
+    } catch (error) {
+      toast({
+        description: error.toString(),
+        status: 'error',
+        position: 'top',
+        duration: TOAST_DURATION
+      });
+    }
   };
 
-  const activeImage = images[imageIndex];
-  const extension = getFileExtension(activeImage);
-  const totalImages = images.length;
+  const extension = getFileExtension(currentImage);
+  const totalImages = images.current.length;
   const imageDetails = [
     {
       key: 'count',
       isVisible: totalImages > 0,
       icon: FaHashtag,
-      value: `${imageIndex + 1} / ${totalImages} images`
+      value: `${imageIndex.current + 1} / ${totalImages} images`
     },
     {
       key: 'loops',
@@ -161,7 +153,7 @@ export function DirectoryContent() {
         paddingBottom="2rem"
       >
         <Image
-          src={`file://${activeImage}`}
+          src={`file://${currentImage}`}
           alt=""
           maxWidth="100%"
           maxHeight="100%"

@@ -1,4 +1,9 @@
-import { createContext, SetStateAction, Dispatch } from 'react';
+import {
+  createContext,
+  SetStateAction,
+  Dispatch,
+  MutableRefObject
+} from 'react';
 import { UseStateCallbackT } from './useStateCallback';
 
 export type EnvVarsT = Record<string, string | number | boolean>;
@@ -12,8 +17,7 @@ export const AppContext = createContext<{
   directories: string[];
   setDirectories: UseStateCallbackT<string[]>;
 
-  images: string[];
-  setImages: UseStateCallbackT<string[]>;
+  images: MutableRefObject<string[]>;
 }>(null);
 
 export const channels = {

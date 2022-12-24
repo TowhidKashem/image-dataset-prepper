@@ -11,7 +11,7 @@ const { ipcRenderer } = window.electron;
 export function DirectoryList() {
   const navigate = useNavigate();
 
-  const { directories, setImages, setPathSegments } = useContext(AppContext);
+  const { directories, images, setPathSegments } = useContext(AppContext);
 
   const handleFolderClick = async (path: string) => {
     try {
@@ -24,9 +24,9 @@ export function DirectoryList() {
 
       setPathSegments((prevSegments) => [...prevSegments, getDirName(path)]);
 
-      setImages(data, () => {
-        navigate('/directoryContent', { replace: true });
-      });
+      images.current = data;
+
+      navigate('/directoryContent', { replace: true });
     } catch (error) {
       console.error(error);
     }
