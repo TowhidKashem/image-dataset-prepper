@@ -4,6 +4,7 @@ import { useToast, SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcFolder, FcQuestions } from 'react-icons/fc';
 import { Navigation } from './Navigation';
 import { AppContext, channels, toastConfig } from './_data';
+import { sortImages } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
@@ -33,7 +34,7 @@ export function DirectoryList() {
 
       updateHistory(path);
 
-      images.current = data;
+      images.current = sortImages(data);
 
       navigate('/directoryContent', { replace: true });
     } catch (error) {
@@ -53,7 +54,10 @@ export function DirectoryList() {
 
   return (
     <>
-      <Navigation backPath="/chooseDirectory" />
+      <Navigation
+        backPath="/chooseDirectory"
+        onClearHistory={() => setViewedDirs([])}
+      />
 
       <SimpleGrid
         flex={1}

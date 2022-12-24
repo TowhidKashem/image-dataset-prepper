@@ -1,11 +1,19 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
+  useDisclosure,
   Flex,
   Icon,
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink
+  BreadcrumbLink,
+  Button,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogBody
 } from '@chakra-ui/react';
 import {
   IoChevronBackCircle,
@@ -14,8 +22,16 @@ import {
 } from 'react-icons/io5';
 import { AppContext } from './_data';
 
-export function Navigation({ backPath }: { backPath: string }) {
+export function Navigation({
+  backPath,
+  onClearHistory
+}: {
+  backPath: string;
+  onClearHistory?: () => void;
+}) {
   const navigate = useNavigate();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { pathSegments, setPathSegments } = useContext(AppContext);
 
@@ -27,6 +43,12 @@ export function Navigation({ backPath }: { backPath: string }) {
     });
 
     navigate(backPath, { replace: true });
+  };
+
+  const handleClearHistory = (): void => {
+    localStorage.removeItem('viewedDirs');
+    onClearHistory && onClearHistory();
+    onClose();
   };
 
   const iconProps = {
@@ -70,7 +92,37 @@ export function Navigation({ backPath }: { backPath: string }) {
         ))}
       </Breadcrumb>
 
-      <Icon as={IoRefreshCircle} {...iconProps} />
+      <Icon as={IoRefreshCircle} onClick={onOpen} {...iconProps} />
+
+      <AlertDialog
+        leastDestructiveRef={null}
+        isOpen={isOpen}
+        onClose={onClose}
+        size="sm"
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Browsing History
+            </AlertDialogHeader>
+
+            <AlertDialogBody fontSize="md">
+              Are you really sure?
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button onClick={onClose}>Cancel</Button>
+              <Button
+                colorScheme="red"
+                marginLeft={3}
+                onClick={handleClearHistory}
+              >
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Flex>
   );
 }

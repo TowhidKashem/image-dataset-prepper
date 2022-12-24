@@ -5,7 +5,7 @@ export type ChannelT = keyof typeof channels;
 declare global {
   interface ResponseT<T> {
     data?: T;
-    error?: Error;
+    error: Error;
   }
 
   interface DirContentT {

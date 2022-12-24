@@ -14,7 +14,7 @@ export function App() {
   const [pathSegments, setPathSegments] = useState<string[]>([]);
   const [directories, setDirectories] = useStateCallback<DirContentT[]>([]);
 
-  const images = useRef<string[]>([]);
+  const images = useRef<DirContentT[]>([]);
 
   useEffect(() => {
     const getAppData = async (): Promise<void> => {

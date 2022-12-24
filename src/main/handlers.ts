@@ -8,7 +8,8 @@ const handleGetAppData = async (): Promise<ResponseT<AppDataT>> => ({
     envVars: {
       PROJECT_ROOT: path.resolve(__dirname, '../../')
     }
-  }
+  },
+  error: null
 });
 
 const handleListDirectory = async (
@@ -36,7 +37,8 @@ const handleListDirectory = async (
       });
 
     return {
-      data: contents
+      data: contents,
+      error: null
     };
   } catch (error) {
     return {
@@ -61,6 +63,8 @@ const handleDeleteFile = async (
     if (!fs.existsSync(trashDir)) fs.mkdirSync(trashDir);
 
     fs.renameSync(filePath, `${trashDir}/${fileToDelete}`);
+
+    return { error: null };
   } catch (error) {
     return {
       error: new Error(error as string)
@@ -82,6 +86,8 @@ const handleUndoDeleteFile = async (
     const trashDir = `${parentDir}/trash.tmp`;
 
     fs.renameSync(`${trashDir}/${fileToDelete}`, filePath);
+
+    return { error: null };
   } catch (error) {
     return {
       error: new Error(error as string)
@@ -98,6 +104,8 @@ const handleEmptyTrash = async (
       recursive: true,
       force: true
     });
+
+    return { error: null };
   } catch (error) {
     return {
       error: new Error(error as string)

@@ -1,8 +1,4 @@
 
-mark visited folders and be able to clear
-must detect z + cmd
-
-
 3. fix or delete github workflows
 4. make build work, put back npm scripts for all 3 platforms (?)
     - rename app name

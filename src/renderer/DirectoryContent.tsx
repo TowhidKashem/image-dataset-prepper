@@ -13,6 +13,7 @@ import { FcOpenedFolder } from 'react-icons/fc';
 import { FaHashtag, FaUndo, FaRegImage } from 'react-icons/fa';
 import { Navigation } from './Navigation';
 import { AppContext, channels, toastConfig } from './_data';
+import { sortImages } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
@@ -26,7 +27,7 @@ export function DirectoryContent() {
   } = useContext(AppContext);
 
   const imageIndex = useRef(0);
-  const deleteHistory = useRef<string[]>([]);
+  const deleteHistory = useRef<DirContentT[]>([]);
   const isDeleteTouched = useRef(false);
 
   // since we use refs to store images and the active image index, updating them won't trigger a re-render
@@ -39,16 +40,19 @@ export function DirectoryContent() {
   const [isDirEmpty, setIsDirEmpty] = useState(false);
 
   useEffect(() => {
-    window.addEventListener('keyup', handleKeyboardNav);
+    window.addEventListener('keydown', handleKeyboardNav);
 
     return () => {
       if (isDeleteTouched.current) emptyTrash();
 
-      window.removeEventListener('keyup', handleKeyboardNav);
+      window.removeEventListener('keydown', handleKeyboardNav);
     };
   }, []);
 
   const handleKeyboardNav = (e: KeyboardEvent): void | Promise<void> => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z')
+      return undoDelete();
+
     switch (e.key) {
       case ' ':
         return deleteImage();
@@ -56,8 +60,6 @@ export function DirectoryContent() {
         return nextImage();
       case 'ArrowLeft':
         return prevImage();
-      case 'Meta':
-        return undoDelete();
     }
   };
 
@@ -96,23 +98,25 @@ export function DirectoryContent() {
   };
 
   const deleteImage = async (): Promise<void> => {
-    const { path } = images.current[imageIndex.current];
+    const imageToDelete = images.current[imageIndex.current];
 
     try {
       const { error } = await ipcRenderer.invoke<ResponseT<void>>(
         channels.DELETE_FILE,
-        path
+        imageToDelete.path
       );
 
       if (error) throw error;
 
-      images.current = images.current.filter((image) => image.path !== path);
+      deleteHistory.current.push(imageToDelete);
 
-      deleteHistory.current.push(path);
+      images.current = sortImages(
+        images.current.filter(({ path }) => path !== imageToDelete.path)
+      );
 
-      if (images.current.length > 0) {
-        nextImage();
-      } else {
+      setTriggerRender((prev) => !prev);
+
+      if (images.current.length === 0) {
         setIsDirEmpty(true);
 
         window.removeEventListener('keyup', handleKeyboardNav);
@@ -140,10 +144,16 @@ export function DirectoryContent() {
 
       const { error } = await ipcRenderer.invoke<ResponseT<void>>(
         channels.UNDO_DELETE,
-        lastDeleted
+        lastDeleted.path
       );
 
       if (error) throw error;
+
+      // put it back in the images array and sort again
+      // and don't forget to re-render after...
+      images.current.push(lastDeleted);
+      sortImages(images.current);
+      setTriggerRender((prev) => !prev);
 
       toast({
         description: 'Restored Image!',
