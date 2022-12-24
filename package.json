@@ -103,11 +103,6 @@
     "pretty": "prettier --write '**/*.{js,ts,tsx,mts,json,yaml,yml,md}'",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "type-check": "tsc",
-    "build:mac": "yarn prebuild && electron-builder -m -c.extraMetadata.main=build/electron.js && yarn move-mac-build",
-    "build:windows": "yarn prebuild && electron-builder -w -c.extraMetadata.main=build/electron.js",
-    "build:linux": "yarn prebuild && electron-builder -l -c.extraMetadata.main=build/electron.js",
-    "prebuild": "rm -rf build dist && react-scripts build",
-    "move-mac-build": "cp -r dist/mac/ImageReviewer.app ./ImageReviewer.app",
     "git:commit": "git status && git add . && git commit -m 'work' && git push",
     "git:commit-skip-hooks": "git status && git add . && git commit -m 'work' --no-verify && git push --no-verify",
     "git:reset": "git clean --force && git reset --hard",
@@ -115,8 +110,8 @@
     "git:unstage-all-files": "git reset HEAD -- ."
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "ImageReviewer",
+    "appId": "com.imageReviewer.app",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [

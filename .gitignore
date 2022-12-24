@@ -12,8 +12,9 @@ coverage
 .DS_Store
 1
 
-release
-dist
+__pycache__
+python_scripts
+
 release/app/dist
 release/build
 .erb/dll
