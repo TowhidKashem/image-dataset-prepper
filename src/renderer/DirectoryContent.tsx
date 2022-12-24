@@ -26,7 +26,6 @@ export function DirectoryContent() {
 
   const [imageIndex, setImageIndex] = useState(0);
   const [loopCount, setLoopCount] = useState(0);
-
   const [isDirEmpty, setIsDirEmpty] = useState(false);
 
   useEffect(() => {
@@ -84,35 +83,46 @@ export function DirectoryContent() {
   };
 
   const deleteImage = async (): Promise<void> => {
-    if (totalImages === 0) return;
+    // wrap everything in this set state to get the updated value of `imageIndex`
+    // otherwise the stale value remains cached within event listeners
+    // we return the same value at the end to avoid updating the state
+    setImageIndex((imageIndex) => {
+      const deleteImgPath = images[imageIndex];
 
-    try {
-      await ipcRenderer.invoke(channels.DELETE_FILE, activeImage);
+      try {
+        (async () => {
+          await ipcRenderer.invoke(channels.DELETE_FILE, deleteImgPath);
 
-      const newImages = images.filter((image) => image !== activeImage);
+          const newImages = images.filter((image) => image !== deleteImgPath);
 
-      setImages(newImages, () => {
-        if (totalImages > 0) {
-          nextImage();
-        } else {
-          setIsDirEmpty(true);
-        }
-      });
+          setImages(newImages, () => {
+            if (newImages.length > 0) {
+              nextImage();
+            } else {
+              setIsDirEmpty(true);
 
-      toast({
-        description: 'Image deleted!',
-        status: 'success',
-        position: 'top',
-        duration: TOAST_DURATION
-      });
-    } catch (error) {
-      toast({
-        description: error.toString(),
-        status: 'error',
-        position: 'top',
-        duration: TOAST_DURATION
-      });
-    }
+              window.removeEventListener('keyup', handleKeyboardNav);
+            }
+          });
+
+          toast({
+            description: 'Image deleted!',
+            status: 'success',
+            position: 'top',
+            duration: TOAST_DURATION
+          });
+        })();
+      } catch (error) {
+        toast({
+          description: error.toString(),
+          status: 'error',
+          position: 'top',
+          duration: TOAST_DURATION
+        });
+      }
+
+      return imageIndex;
+    });
   };
 
   const activeImage = images[imageIndex];
@@ -146,6 +156,7 @@ export function DirectoryContent() {
       <Flex
         alignItems="center"
         justifyContent="center"
+        width="100%"
         height="calc(100vh - 95px)" // 95px = nav height + vertical margins
         paddingBottom="2rem"
       >
@@ -157,35 +168,41 @@ export function DirectoryContent() {
           boxShadow="md"
         />
 
-        {isDirEmpty && (
-          <div>
-            <Heading as="h2" size="xl" className="msg">
+        {isDirEmpty ? (
+          <Flex flexDirection="column" alignItems="center">
+            <Icon boxSize="4.5rem" as={FcOpenedFolder} display="block" />
+
+            <Heading
+              as="h2"
+              size="xl"
+              marginTop={5}
+              color="whiteAlpha.800"
+              textShadow="0.1rem 0.1rem black.500"
+            >
               All images deleted in this folder
             </Heading>
-
-            <Icon boxSize="4.5rem" as={FcOpenedFolder} />
-          </div>
+          </Flex>
+        ) : (
+          <List
+            position="fixed"
+            top={0}
+            right={0}
+            spacing={3}
+            padding={5}
+            background="rgba(0, 0, 0, 0.4)"
+            borderBottomLeftRadius={10}
+            width={200}
+          >
+            {imageDetails.map(({ key, isVisible, value, icon }) =>
+              isVisible ? (
+                <ListItem key={key} color="whiteAlpha.800" fontSize={18}>
+                  <ListIcon as={icon} />
+                  {value}
+                </ListItem>
+              ) : null
+            )}
+          </List>
         )}
-
-        <List
-          spacing={3}
-          position="fixed"
-          top={0}
-          right={0}
-          padding={5}
-          background="rgba(0, 0, 0, 0.4)"
-          borderBottomLeftRadius={10}
-          width={200}
-        >
-          {imageDetails.map(({ key, isVisible, value, icon }) =>
-            isVisible ? (
-              <ListItem key={key} color="whiteAlpha.800" fontSize={18}>
-                <ListIcon as={icon} />
-                {value}
-              </ListItem>
-            ) : null
-          )}
-        </List>
       </Flex>
     </>
   );

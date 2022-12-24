@@ -37,6 +37,7 @@ export function DirectoryList() {
       <Navigation backPath="/chooseDirectory" />
 
       <SimpleGrid
+        flex={1}
         spacing={2}
         columns={{
           sm: 2,

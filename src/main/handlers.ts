@@ -34,15 +34,15 @@ const handleListDirectory = async (
 
 ipcMain.handle(channels.LIST_DIR, handleListDirectory);
 
-const handleDeleteImage = async (
+const handleDeleteFile = async (
   _e: IpcMainInvokeEvent,
   path: string
 ): Promise<ResponseT<void>> => {
   try {
-    fs.unlinkSync(path);
+    // fs.unlinkSync(path);
   } catch (error) {
     return error;
   }
 };
 
-ipcMain.handle(channels.DELETE_FILE, handleDeleteImage);
+ipcMain.handle(channels.DELETE_FILE, handleDeleteFile);
