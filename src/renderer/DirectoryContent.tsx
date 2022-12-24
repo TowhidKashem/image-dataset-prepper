@@ -11,7 +11,7 @@ import {
 import { FcOpenedFolder } from 'react-icons/fc';
 import { Navigation } from './Navigation';
 import { AppContext, channels } from './_data';
-import { getFileExtension, getDirName } from './_utils';
+import { getFileExtension } from './_utils';
 // @ts-ignore
 // import popSound from '../../assets/pop.mp3';
 
@@ -30,14 +30,14 @@ export function DirectoryContent() {
   const [isDirEmpty, setIsDirEmpty] = useState(false);
 
   useEffect(() => {
-    window.addEventListener('keyup', handleKeyboardNavigation);
+    window.addEventListener('keyup', handleKeyboardNav);
 
     return () => {
-      window.removeEventListener('keyup', handleKeyboardNavigation);
+      window.removeEventListener('keyup', handleKeyboardNav);
     };
   }, []);
 
-  const handleKeyboardNavigation = (e: KeyboardEvent): void | Promise<void> => {
+  const handleKeyboardNav = (e: KeyboardEvent): void | Promise<void> => {
     switch (e.key) {
       case ' ':
         return deleteImage();
@@ -51,12 +51,12 @@ export function DirectoryContent() {
   };
 
   const nextImage = (): void => {
-    if (images.length < 0) return;
+    if (totalImages < 0) return;
 
     setImageIndex((curImgIndex) => {
       let nextIndex = curImgIndex + 1;
 
-      const isEndReached = nextIndex > images.length - 1;
+      const isEndReached = nextIndex > totalImages - 1;
 
       if (isEndReached) {
         nextIndex = 0;
@@ -71,19 +71,19 @@ export function DirectoryContent() {
   };
 
   const prevImage = (): void => {
-    if (images.length < 0) return;
+    if (totalImages < 0) return;
 
     setImageIndex((curImgIndex) => {
       let prevIndex = curImgIndex - 1;
 
-      if (prevIndex < 0) prevIndex = images.length - 1;
+      if (prevIndex < 0) prevIndex = totalImages - 1;
 
       return prevIndex;
     });
   };
 
   const deleteImage = async (): Promise<void> => {
-    if (!images.length) return;
+    if (totalImages === 0) return;
 
     try {
       await ipcRenderer.invoke(channels.DELETE_IMAGE, activeImage);
@@ -91,7 +91,7 @@ export function DirectoryContent() {
       const newImages = images.filter((image) => image !== activeImage);
 
       setImages(newImages, () => {
-        if (newImages.length > 0) {
+        if (totalImages > 0) {
           nextImage();
         } else {
           setIsDirEmpty(true);
@@ -116,21 +116,21 @@ export function DirectoryContent() {
 
   const activeImage = images[imageIndex];
   const extension = getFileExtension(activeImage);
-
-  const listItems = [
+  const totalImages = images.length;
+  const imageDetails = [
     {
       key: 'count',
-      show: images.length > 0,
-      value: `${imageIndex + 1}/${images.length} images`
+      isVisible: totalImages > 0,
+      value: `${imageIndex + 1}/${totalImages} images`
     },
     {
       key: 'loops',
-      show: 'getDirName(dirPath)',
+      isVisible: true,
       value: `${loopCount} loops`
     },
     {
       key: 'extension',
-      show: extension,
+      isVisible: extension,
       value: extension
     }
   ];
@@ -143,11 +143,9 @@ export function DirectoryContent() {
         alignItems="center"
         justifyContent="center"
         padding="1rem"
-        style={{ height: '100vh' }}
+        height="100vh"
       >
-        {activeImage && (
-          <Image src={`file://${activeImage}`} alt="" maxHeight="100vh" />
-        )}
+        <Image src={`file://${activeImage}`} alt="" maxHeight="100vh" />
 
         {isDirEmpty && (
           <div>
@@ -160,8 +158,8 @@ export function DirectoryContent() {
         )}
 
         <ul>
-          {listItems.map(({ key, show, value }) =>
-            show ? (
+          {imageDetails.map(({ key, isVisible, value }) =>
+            isVisible ? (
               <li key={key}>
                 <Badge>
                   <Text fontSize="md" paddingX="2.5" paddingY="0.5">

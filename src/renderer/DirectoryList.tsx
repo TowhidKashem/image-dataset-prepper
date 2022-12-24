@@ -35,14 +35,7 @@ export function DirectoryList() {
 
   return (
     <>
-      <Navigation
-        backPath="/"
-        onBackClick={() => {
-          setDirectories(null);
-          setImages(null);
-          setPathSegments(null);
-        }}
-      />
+      <Navigation backPath="/chooseDirectory" />
 
       <SimpleGrid
         spacing={2}

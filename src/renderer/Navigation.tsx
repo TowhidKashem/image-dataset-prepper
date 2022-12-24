@@ -21,16 +21,20 @@ const commonProps: BreadcrumbLinkProps = {
   }
 };
 
-export function Navigation({
-  backPath,
-  onBackClick
-}: {
-  backPath: string;
-  onBackClick?: () => void;
-}) {
+export function Navigation({ backPath }: { backPath: string }) {
   const navigate = useNavigate();
 
   const { pathSegments, setPathSegments } = useContext(AppContext);
+
+  const handleBackClick = () => {
+    setPathSegments((prevSegments) => {
+      const newSegments = [...prevSegments];
+      newSegments.pop();
+      return newSegments;
+    });
+
+    navigate(backPath, { replace: true });
+  };
 
   return (
     <Flex
@@ -46,17 +50,7 @@ export function Navigation({
         color="white"
         cursor="pointer"
         _hover={{ opacity: 0.5 }}
-        onClick={() => {
-          onBackClick && onBackClick();
-
-          setPathSegments((prevSegments) => {
-            const newSegments = [...prevSegments];
-            newSegments.pop();
-            return newSegments;
-          });
-
-          navigate(backPath, { replace: true });
-        }}
+        onClick={handleBackClick}
       />
 
       <Breadcrumb
