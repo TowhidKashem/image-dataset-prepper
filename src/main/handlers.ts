@@ -9,7 +9,7 @@ const handleListDirectory = async (
   try {
     const contents = fs
       .readdirSync(path)
-      .map((dirName) => `${path}/${dirName}`); // add paths to each directory
+      .map((dirName) => `${path}/${dirName}`);
 
     return {
       data: contents,
@@ -24,23 +24,6 @@ const handleListDirectory = async (
 };
 
 ipcMain.handle(channels.LIST_DIR, handleListDirectory);
-
-const handleGetImages = async (
-  e: IpcMainInvokeEvent,
-  directory: string
-): Promise<string[] | unknown> => {
-  try {
-    const contents = fs
-      .readdirSync(directory)
-      .map((content) => `${directory}/${content}`);
-
-    return contents;
-  } catch (error) {
-    return error;
-  }
-};
-
-ipcMain.handle(channels.GET_IMAGES, handleGetImages);
 
 const handleDeleteImage = async (
   e: IpcMainInvokeEvent,

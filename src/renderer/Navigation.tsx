@@ -26,11 +26,11 @@ export function Navigation({
   onBackClick
 }: {
   backPath: string;
-  onBackClick: () => void;
+  onBackClick?: () => void;
 }) {
   const navigate = useNavigate();
 
-  const { pathSegments } = useContext(AppContext);
+  const { pathSegments, setPathSegments } = useContext(AppContext);
 
   return (
     <Flex
@@ -47,7 +47,14 @@ export function Navigation({
         cursor="pointer"
         _hover={{ opacity: 0.5 }}
         onClick={() => {
-          onBackClick();
+          onBackClick && onBackClick();
+
+          setPathSegments((prevSegments) => {
+            const newSegments = [...prevSegments];
+            newSegments.pop();
+            return newSegments;
+          });
+
           navigate(backPath, { replace: true });
         }}
       />

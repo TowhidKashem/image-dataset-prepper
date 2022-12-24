@@ -14,6 +14,5 @@ export const AppContext = createContext<{
 
 export const channels = {
   LIST_DIR: 'LIST_DIR',
-  GET_IMAGES: 'GET_IMAGES',
   DELETE_IMAGE: 'DELETE_IMAGE'
 } as const;

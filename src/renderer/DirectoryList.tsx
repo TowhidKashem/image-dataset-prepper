@@ -11,12 +11,13 @@ const { ipcRenderer } = window.electron;
 export function DirectoryList() {
   const navigate = useNavigate();
 
-  const { directories, setImages, setPathSegments } = useContext(AppContext);
+  const { directories, setDirectories, setImages, setPathSegments } =
+    useContext(AppContext);
 
   const handleFolderClick = async (path: string) => {
     try {
       const { data, error } = await ipcRenderer.invoke<Res<string[]>>(
-        channels.GET_IMAGES,
+        channels.LIST_DIR,
         path
       );
 
@@ -37,9 +38,9 @@ export function DirectoryList() {
       <Navigation
         backPath="/"
         onBackClick={() => {
-          // setDirectories(null);
-          // setImages(null);
-          // setDirPath(null);
+          setDirectories(null);
+          setImages(null);
+          setPathSegments(null);
         }}
       />
 

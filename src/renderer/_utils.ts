@@ -21,11 +21,8 @@ export const getRootFileDir = (
   };
 };
 
-export const getDirName = (fileName: string): string =>
-  fileName.split('/').pop();
+export const getDirName = (filePath: string): string =>
+  filePath.split('/').pop();
 
-export const getFileExtension = (fileName: string): string =>
-  fileName?.split('.').pop() ?? null;
-
-export const isImage = (extension: string): boolean =>
-  ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp'].includes(extension);
+export const getFileExtension = (filePath: string): string =>
+  filePath.split('.').pop();

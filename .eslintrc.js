@@ -18,6 +18,7 @@ module.exports = {
     'react/react-in-jsx-scope': 0,
     'react/jsx-props-no-spreading': 0,
     'react-hooks/exhaustive-deps': 0,
+    'react/require-default-props': 0,
 
     'typescript-eslint/no-shadow': 0,
     'typescript-eslint/no-explicit-any': 0,
@@ -25,6 +26,7 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': 0,
     '@typescript-eslint/ban-types': 0,
     '@typescript-eslint/no-use-before-define': 0,
+    '@typescript-eslint/no-unused-expressions': 0,
     '@typescript-eslint/no-shadow': 0,
 
     'jest/no-deprecated-functions': 0
