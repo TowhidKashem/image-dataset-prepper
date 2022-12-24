@@ -12,13 +12,13 @@ import {
 import { FcOpenedFolder } from 'react-icons/fc';
 import { FaHashtag, FaUndo, FaRegImage } from 'react-icons/fa';
 import { Navigation } from './Navigation';
-import { AppContext, channels, commonToastOptions } from './_data';
+import { AppContext, channels, toastConfig } from './_data';
 import { getFileExtension } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
 export function DirectoryContent() {
-  const toast = useToast();
+  const toast = useToast(toastConfig);
 
   const { envVars, images } = useContext(AppContext);
 
@@ -64,10 +64,11 @@ export function DirectoryContent() {
     if (isEndReached) {
       nextIndex = 0;
 
-      setLoopCount((prevCount) => prevCount + 1);
+      if (images.current.length !== 1) {
+        setLoopCount((prevCount) => prevCount + 1);
 
-      const popSound = `file://${envVars.PROJECT_ROOT}/assets/pop.mp3`;
-      new Audio(popSound).play();
+        new Audio(`file://${envVars.PROJECT_ROOT}/assets/pop.mp3`).play();
+      }
     }
 
     imageIndex.current = nextIndex;
@@ -105,14 +106,12 @@ export function DirectoryContent() {
 
       toast({
         description: 'Image deleted!',
-        status: 'success',
-        ...commonToastOptions
+        status: 'success'
       });
     } catch (error) {
       toast({
         description: error.toString(),
-        status: 'error',
-        ...commonToastOptions
+        status: 'error'
       });
     }
   };

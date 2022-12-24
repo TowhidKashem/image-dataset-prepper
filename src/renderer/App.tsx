@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { ChakraProvider, ThemeProvider, theme, Flex } from '@chakra-ui/react';
+import { ChakraProvider, Flex } from '@chakra-ui/react';
 import { ChooseDirectory } from './ChooseDirectory';
 import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
@@ -13,6 +13,7 @@ export function App() {
   const [envVars, setEnvVars] = useState<EnvVarsT>(null);
   const [pathSegments, setPathSegments] = useState<string[]>([]);
   const [directories, setDirectories] = useStateCallback<string[]>([]);
+
   const images = useRef<string[]>([]);
 
   useEffect(() => {
@@ -38,26 +39,21 @@ export function App() {
       }}
     >
       <ChakraProvider>
-        <ThemeProvider theme={theme}>
-          <Flex
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-            minHeight="100vh"
-            background="gray.700"
-          >
-            <MemoryRouter>
-              <Routes>
-                <Route path="/chooseDirectory?" element={<ChooseDirectory />} />
-                <Route path="/directoryList" element={<DirectoryList />} />
-                <Route
-                  path="/directoryContent"
-                  element={<DirectoryContent />}
-                />
-              </Routes>
-            </MemoryRouter>
-          </Flex>
-        </ThemeProvider>
+        <Flex
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="100vh"
+          background="gray.700"
+        >
+          <MemoryRouter>
+            <Routes>
+              <Route path="/chooseDirectory?" element={<ChooseDirectory />} />
+              <Route path="/directoryList" element={<DirectoryList />} />
+              <Route path="/directoryContent" element={<DirectoryContent />} />
+            </Routes>
+          </MemoryRouter>
+        </Flex>
       </ChakraProvider>
     </AppContext.Provider>
   );

@@ -39,7 +39,7 @@ const handleDeleteFile = async (
   path: string
 ): Promise<ResponseT<void>> => {
   try {
-    // fs.unlinkSync(path);
+    fs.unlinkSync(path);
   } catch (error) {
     return error;
   }

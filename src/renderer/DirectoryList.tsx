@@ -1,15 +1,17 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
+import { useToast, SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcFolder } from 'react-icons/fc';
 import { Navigation } from './Navigation';
-import { AppContext, channels } from './_data';
+import { AppContext, channels, toastConfig } from './_data';
 import { getDirName } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
 export function DirectoryList() {
   const navigate = useNavigate();
+
+  const toast = useToast(toastConfig);
 
   const { directories, images, setPathSegments } = useContext(AppContext);
 
@@ -28,7 +30,10 @@ export function DirectoryList() {
 
       navigate('/directoryContent', { replace: true });
     } catch (error) {
-      console.error(error);
+      toast({
+        description: error.toString(),
+        status: 'error'
+      });
     }
   };
 

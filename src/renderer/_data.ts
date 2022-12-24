@@ -27,7 +27,10 @@ export const channels = {
   DELETE_FILE: 'DELETE_FILE'
 } as const;
 
-export const commonToastOptions: Partial<UseToastOptions> = {
+export const toastConfig: Partial<UseToastOptions> = {
   position: 'top',
-  duration: 2_000
+  duration: 2_000,
+  containerStyle: {
+    fontSize: 'md'
+  }
 };

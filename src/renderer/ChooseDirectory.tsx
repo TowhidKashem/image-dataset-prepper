@@ -1,13 +1,15 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button } from '@chakra-ui/react';
-import { AppContext, channels } from './_data';
+import { useToast, Box, Input, Button } from '@chakra-ui/react';
+import { AppContext, channels, toastConfig } from './_data';
 import { getRootFileDir } from './_utils';
 
 const { ipcRenderer } = window.electron;
 
 export function ChooseDirectory() {
   const navigate = useNavigate();
+
+  const toast = useToast(toastConfig);
 
   const { setPathSegments, setDirectories } = useContext(AppContext);
 
@@ -34,13 +36,16 @@ export function ChooseDirectory() {
         navigate('/directoryList', { replace: true });
       });
     } catch (error) {
-      console.error(error);
+      toast({
+        description: error.toString(),
+        status: 'error'
+      });
     }
   };
 
   return (
     <Box position="relative">
-      <input
+      <Input
         type="file"
         onChange={chooseFolder}
         onClick={({ target }) => {
@@ -53,6 +58,13 @@ export function ChooseDirectory() {
         mozdirectory="" // eslint-disable-line react/no-unknown-property
         directory="" // eslint-disable-line react/no-unknown-property
         multiple
+        position="absolute"
+        top={0}
+        left={0}
+        width="100%"
+        height="100%"
+        opacity={0}
+        zIndex={1}
       />
 
       <Button size="lg" colorScheme={hover ? 'twitter' : 'blue'}>

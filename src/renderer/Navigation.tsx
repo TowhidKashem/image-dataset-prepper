@@ -42,6 +42,8 @@ export function Navigation({ backPath }: { backPath: string }) {
       alignItems="center"
       height={55}
       marginY="20px"
+      paddingX={2}
+      paddingY={2}
       borderRadius={100}
       background="rgba(0, 0, 0, 0.4)"
     >
