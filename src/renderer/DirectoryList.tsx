@@ -49,6 +49,7 @@ export function DirectoryList() {
     const newViewedDirs = [...viewedDirs, visitedDir];
 
     setViewedDirs(newViewedDirs);
+
     localStorage.setItem('viewedDirs', JSON.stringify(newViewedDirs));
   };
 
@@ -60,7 +61,6 @@ export function DirectoryList() {
       />
 
       <SimpleGrid
-        flex={1}
         spacing={2}
         columns={{
           sm: 2,
@@ -90,7 +90,13 @@ export function DirectoryList() {
               marginBottom={1}
             />
 
-            <Heading color="gray.50" as="h6" size="xs">
+            <Heading
+              as="h6"
+              size="xs"
+              noOfLines={1}
+              color="gray.50"
+              maxWidth="100%"
+            >
               {name}
             </Heading>
           </Flex>

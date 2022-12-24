@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToast, Box, Input, Button } from '@chakra-ui/react';
+import { useToast, Flex, Box, Input, Button } from '@chakra-ui/react';
 import { AppContext, channels, toastConfig } from './_data';
 import { getRootFileDir } from './_utils';
 
@@ -43,32 +43,34 @@ export function ChooseDirectory() {
   };
 
   return (
-    <Box position="relative">
-      <Input
-        type="file"
-        onChange={chooseFolder}
-        onClick={({ target }) => {
-          (target as HTMLInputElement).value = '';
-        }}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        // @ts-ignore
-        webkitdirectory=""
-        mozdirectory="" // eslint-disable-line react/no-unknown-property
-        directory="" // eslint-disable-line react/no-unknown-property
-        multiple
-        position="absolute"
-        top={0}
-        left={0}
-        width="100%"
-        height="100%"
-        opacity={0}
-        zIndex={1}
-      />
+    <Flex width="100%" flex={1} alignItems="center" justifyContent="center">
+      <Box position="relative">
+        <Input
+          type="file"
+          onChange={chooseFolder}
+          onClick={({ target }) => {
+            (target as HTMLInputElement).value = '';
+          }}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          // @ts-ignore
+          webkitdirectory=""
+          mozdirectory="" // eslint-disable-line react/no-unknown-property
+          directory="" // eslint-disable-line react/no-unknown-property
+          multiple
+          position="absolute"
+          top={0}
+          left={0}
+          width="100%"
+          height="100%"
+          opacity={0}
+          zIndex={1}
+        />
 
-      <Button size="lg" colorScheme={hover ? 'twitter' : 'blue'}>
-        Choose Folder
-      </Button>
-    </Box>
+        <Button size="lg" colorScheme={hover ? 'twitter' : 'blue'}>
+          Choose Folder
+        </Button>
+      </Box>
+    </Flex>
   );
 }

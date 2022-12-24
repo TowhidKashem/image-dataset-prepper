@@ -10,7 +10,7 @@ import {
   ListIcon
 } from '@chakra-ui/react';
 import { FcOpenedFolder } from 'react-icons/fc';
-import { FaHashtag, FaUndo, FaRegImage } from 'react-icons/fa';
+import { IoLocation, IoArrowRedo, IoImage } from 'react-icons/io5';
 import { Navigation } from './Navigation';
 import { AppContext, channels, toastConfig } from './_data';
 import { sortImages } from './_utils';
@@ -190,22 +190,24 @@ export function DirectoryContent() {
     {
       key: 'count',
       isVisible: totalImages > 0,
-      icon: FaHashtag,
+      icon: IoLocation,
       value: `${imageIndex.current + 1} / ${totalImages} images`
     },
     {
       key: 'loops',
       isVisible: true,
-      icon: FaUndo,
+      icon: IoArrowRedo,
       value: `${loopCount} loops`
     },
     {
       key: 'extension',
       isVisible: !!extension,
-      icon: FaRegImage,
+      icon: IoImage,
       value: extension
     }
   ];
+
+  const NAV_BAR_HEIGHT = '105px'; // nav height (55px) + vertical margins (25px * 2)
 
   return (
     <>
@@ -215,7 +217,7 @@ export function DirectoryContent() {
         alignItems="center"
         justifyContent="center"
         width="100%"
-        height="calc(100vh - 95px)" // 95px = nav height + vertical margins
+        height={`calc(100vh - ${NAV_BAR_HEIGHT})`}
         paddingBottom="2rem"
       >
         {path && (
@@ -245,12 +247,14 @@ export function DirectoryContent() {
         ) : (
           <List
             position="fixed"
-            top={0}
+            top={NAV_BAR_HEIGHT}
             right={0}
             spacing={3}
             padding={5}
             background="rgba(0, 0, 0, 0.4)"
-            borderBottomLeftRadius={10}
+            backdropFilter="blur(1rem)"
+            borderTopLeftRadius={8}
+            borderBottomLeftRadius={8}
             width={200}
           >
             {imageDetails.map(({ key, isVisible, value, icon }) =>

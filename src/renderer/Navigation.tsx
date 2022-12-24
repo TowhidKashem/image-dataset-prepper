@@ -64,7 +64,7 @@ export function Navigation({
       alignItems="center"
       maxWidth="100%"
       height={55}
-      marginY="20px"
+      marginY="25px"
       paddingX={1}
       paddingY={2}
       borderRadius={100}

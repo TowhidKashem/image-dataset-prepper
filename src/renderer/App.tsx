@@ -41,7 +41,6 @@ export function App() {
       <ChakraProvider>
         <Flex
           flexDirection="column"
-          justifyContent="center"
           alignItems="center"
           minHeight="100vh"
           paddingX={3}

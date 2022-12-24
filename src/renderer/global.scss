@@ -27,3 +27,12 @@ input[type='file'] {
     cursor: pointer;
   }
 }
+
+// hide scrollbars but allow scrolling
+* {
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
