@@ -4,8 +4,6 @@
 
 When collecting data sets for training image classification models it's a real pain to manually sift through thousands of images to weed out the inaccurate, duplicate and broken ones. This app aims to make the process a lttle more tolerable by allowing you to use keyboard shortcuts to quicky cycle through all the images in a folder and delete the ones you don't want.
 
-Also included are some notebooks/python scripts to automate deleting duplicates and corrupt files which leads to less overall images that need to be manually reviewed.
-
 ## Installation
 
 First install the dependencies:
@@ -45,14 +43,9 @@ This will start the dev server and automatically open the app and will auto relo
 - <kbd>CMD</kbd> + <kbd>z</kbd> (mac) or <kbd>CTRL</kbd> + <kbd>z</kbd> (windows) undo delete
 - &#x21bb; - click the reload icon on the top right of the screen to clear history (by default visited folders appear in a lower opacity to help track progress)
 
-## Jupyter notebook
+## Folder structure assumptions
 
-- `notebook.ipynb`
-
-  - displays exact and possible duplicate images found by the awesome [difPy](https://github.com/elisemercury/Duplicate-Image-Finder) library and allows you to delete them after manual confirmation
-  - deletes files that are corrupt and can't be opened
-
-  These scripts assume that your folder structure is a single root folder with subfolders for each _class_ e.g.:
+These scripts assume that your folder structure is a single root folder with subfolders for each _class_ e.g.:
 
 ```
 dog-images/
@@ -69,8 +62,3 @@ dog-images/
 ```
 
 If your folder structure differs you'll need to modify the scripts accordingly.
-
-Python dependencies (install with `pip` or `anaconda` if you get errors running the notebook):
-
-- difPy
-- ...

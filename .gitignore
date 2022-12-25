@@ -12,9 +12,6 @@ coverage
 .DS_Store
 1
 
-__pycache__
-scripts
-
 release/app/dist
 release/build
 .erb/dll
