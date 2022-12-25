@@ -1,5 +1,5 @@
 {
-  "name": "image-reviewer-gui",
+  "name": "image-classification-dataset-prepper",
   "version": "0.1.0",
   "description": "A minimal desktop app to quickly review and delete images when collecting data sets for image classification models",
   "license": "MIT",

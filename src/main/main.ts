@@ -87,7 +87,7 @@ app.on('window-all-closed', () => {
 });
 
 // restrict navigation to known domains for better security
-const NAV_ALLOW_LIST = ['https://image-reviewer-gui.com'];
+const NAV_ALLOW_LIST = ['https://image-classification-dataset-prepper.com'];
 app.on('web-contents-created', (_, contents) => {
   contents.on('will-navigate', (e, navigationUrl) => {
     const parsedUrl = new URL(navigationUrl);
