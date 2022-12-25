@@ -24,21 +24,13 @@ export const channels = {
   EMPTY_TRASH: 'EMPTY_TRASH'
 } as const;
 
+const SUCCESS_DURATION = 1_500;
+export const ERROR_DURATION = 10_000;
+
 export const toastConfig: Partial<UseToastOptions> = {
   position: 'top',
-  duration: 2_000,
+  duration: SUCCESS_DURATION,
   containerStyle: {
     fontSize: 'md'
   }
 };
-
-export const uploadButtonThemes = {
-  blue: {
-    bgColor: 'blue',
-    bgHover: 'twitter'
-  },
-  green: {
-    bgColor: 'green',
-    bgHover: 'whatsapp'
-  }
-} as const;

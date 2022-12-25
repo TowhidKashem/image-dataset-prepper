@@ -8,10 +8,9 @@ import { useStateCallback } from './useStateCallback';
 import { AppContext } from './_data';
 
 export function App() {
+  const images = useRef<DirContentT[]>([]);
   const [pathSegments, setPathSegments] = useState<string[]>([]);
   const [directories, setDirectories] = useStateCallback<DirContentT[]>([]);
-
-  const images = useRef<DirContentT[]>([]);
 
   return (
     <AppContext.Provider

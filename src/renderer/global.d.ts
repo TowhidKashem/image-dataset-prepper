@@ -22,6 +22,7 @@ declare global {
         removeAllListeners(channel: ChannelT): void;
       };
     };
+    showDirectoryPicker: () => Promise<FileSystemDirectoryHandle>;
   }
 }
 

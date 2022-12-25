@@ -1,5 +1,5 @@
 import path from 'path';
-import { app, shell, BrowserWindow } from 'electron';
+import { app, shell, protocol, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './_utils';
 
@@ -46,7 +46,6 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
-      webSecurity: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js')
@@ -87,7 +86,7 @@ app.on('window-all-closed', () => {
 });
 
 // restrict navigation to known domains for better security
-const NAV_ALLOW_LIST = ['https://image-classification-dataset-prepper.com'];
+const NAV_ALLOW_LIST = ['https://image-reviewer.com'];
 app.on('web-contents-created', (_, contents) => {
   contents.on('will-navigate', (e, navigationUrl) => {
     const parsedUrl = new URL(navigationUrl);
@@ -106,6 +105,18 @@ app
     app.on('activate', () => {
       // on mac it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open
       if (mainWindow === null) createWindow();
+    });
+
+    // custom protocol to display local images without disabling web security
+    protocol.registerFileProtocol('img', (request, callback) => {
+      const url = request.url.replace('img://', '');
+
+      try {
+        return callback(url);
+      } catch (error) {
+        console.error(error);
+        return callback({ error: 404 });
+      }
     });
   })
   .catch(console.log);

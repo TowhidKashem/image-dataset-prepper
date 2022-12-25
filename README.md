@@ -8,7 +8,7 @@
   Image Classification Dataset Prepper
 </h1>
 
-https://user-images.githubusercontent.com/1139927/209462763-17b58b7d-3e14-424d-b431-7ba33a2a0df6.mp4
+https://user-images.githubusercontent.com/1139927/209484470-7ca2c62c-bf67-4cfa-be6f-5a9e014e33dd.mp4
 
 <br />
 
@@ -55,27 +55,26 @@ This will spin up a dev server which auto-reloads on file changes.
 
 ## Folder structure
 
-<img src="./assets/buttons.png" alt="" width="35%" />
-
-1. Click the first button if your folder structure looks like this:
+This is a common folder structure for image classification datasets:
 
 ```
-dog-images/
+dog-breeds/
 - doberman/
   - a.jpg
   - b.png
 - german-shepherd/
   - c.jpg
   - d.webp
-- minature-poodle/
+- miniature-poodle/
   - e.png
   - f.jpg
-- etc..
 ```
 
-In other words if you have a root folder with subfolders for each _class_, and inside those folders are your images.
+In other words you have a root folder with sub-folders for each _class_, and inside those sub-folders are the images.
 
-2. Click the second button if you just want to browse a single folder full of images
+You can browse such a root folder using this app, same for individual folders with images.
+
+Just make sure that the selected folder contains either **only images** or **only sub-folders**. This app isn't a full fledged file explorer and can't handle anything else at the moment.
 
 ## Roadmap
 
@@ -86,4 +85,4 @@ In other words if you have a root folder with subfolders for each _class_, and i
 
 - [IOS Camera Icon](https://iconscout.com/icon/photos-30) by Giulio Smedile
 - [Electron React Boilterplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate)
-- [Chakra UI component library](https://chakra-ui.com)
+- [Chakra UI component library](https://github.com/chakra-ui/chakra-ui)
