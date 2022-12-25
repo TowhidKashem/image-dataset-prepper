@@ -8,7 +8,7 @@
   Image Classification Dataset Prepper
 </h1>
 
-https://user-images.githubusercontent.com/1139927/209462763-17b58b7d-3e14-424d-b431-7ba33a2a0df6.mp4
+https://user-images.githubusercontent.com/1139927/209483361-07815ebc-6448-47b3-9482-991f43574b90.mp4
 
 <br />
 
@@ -85,7 +85,7 @@ If you ever see anything like the following it means that you clicked on the wro
 
 <img src="./assets/screenshot-error.png" alt="" width="50%" />
 
-Refresh the app (CMD/CTRL + R) and try selecting the same folder with the blue button.
+Refresh the app (CMD/CTRL + R) and try selecting the same folder but with the blue button.
 
 ## Roadmap
 
