@@ -21,7 +21,7 @@ const { ipcRenderer } = window.electron;
 export function DirectoryContent() {
   const toast = useToast(toastConfig);
 
-  const { pathSegments, images } = useContext(AppContext);
+  const { pathSegments, directories, images } = useContext(AppContext);
 
   const imageIndex = useRef(0);
   const deleteHistory = useRef<DirContentT[]>([]);
@@ -30,6 +30,7 @@ export function DirectoryContent() {
   // since we use refs to store images and the active image index, updating them won't trigger a re-render
   // so use this flag to force re-renders. And the reason for using refs instead of state is due to stale values
   // being cached inside event handlers - https://reactjs.org/docs/hooks-faq.html#why-am-i-seeing-stale-props-or-state-inside-my-function
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setTriggerRender] = useState(false);
 
@@ -208,7 +209,9 @@ export function DirectoryContent() {
 
   return (
     <>
-      <Navigation backPath="/directoryList" />
+      <Navigation
+        backPath={directories.length ? '/directoryList' : '/chooseDirectory'}
+      />
 
       <Flex
         alignItems="center"
@@ -252,7 +255,7 @@ export function DirectoryContent() {
             backdropFilter="blur(1rem)"
             borderTopLeftRadius={8}
             borderBottomLeftRadius={8}
-            width={200}
+            width={240}
           >
             {imageDetails.map(({ key, isVisible, value, icon }) =>
               isVisible ? (

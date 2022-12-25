@@ -4,6 +4,7 @@ import { useToast, Flex } from '@chakra-ui/react';
 import { UploadButton } from './UploadButton';
 import { AppContext, channels, toastConfig } from './_data';
 import { getRootFileDir } from './_utils';
+import { Logo } from './Logo';
 
 const { ipcRenderer } = window.electron;
 
@@ -14,11 +15,19 @@ export function ChooseDirectory() {
 
   const { setPathSegments, setDirectories, images } = useContext(AppContext);
 
+  const resetHistory = (): void => {
+    setPathSegments([]);
+    setDirectories([]);
+    images.current = [];
+  };
+
   const chooseFolder = async (
     e: React.SyntheticEvent<HTMLInputElement>,
     isRoot = true
   ): Promise<void> => {
     if (!e.currentTarget.files) return;
+
+    resetHistory();
 
     const { segments, path } = getRootFileDir(e.currentTarget.files[0].path);
 
@@ -39,7 +48,7 @@ export function ChooseDirectory() {
 
       images.current = data;
 
-      navigate('/directoryList', { replace: true });
+      navigate('/directoryContent', { replace: true });
     } catch (error) {
       toast({
         description: error.toString(),
@@ -55,8 +64,18 @@ export function ChooseDirectory() {
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      rowGap={8}
+      rowGap={6}
     >
+      <Flex
+        justifyContent="center"
+        alignItems="center"
+        textAlign="center"
+        boxShadow="lg"
+        marginBottom={5}
+      >
+        <Logo />
+      </Flex>
+
       <UploadButton buttonTheme="green" onChange={chooseFolder}>
         Choose Root Folder
       </UploadButton>
