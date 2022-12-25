@@ -12,7 +12,7 @@ https://user-images.githubusercontent.com/1139927/209462763-17b58b7d-3e14-424d-b
 
 <br />
 
-<p>When preparing datasets for training image classification models it's a real pain to manually sift through thousands of images to weed out the inaccurate, duplicate and broken ones. This app aims to make the process a little more tolerable by allowing you to use keyboard shortcuts to quickly cycle through all the images in a folder and delete the ones you don't want.</p>
+<p>When preparing datasets for training image classification models it's a real pain to manually sift through thousands of images to weed out the inaccurate, duplicate and broken ones. This cross-platform app aims to make the process a little more tolerable by allowing you to use keyboard shortcuts to quickly cycle through all the images in a folder and delete the ones you don't want.</p>
 
 ## Installation
 
@@ -77,7 +77,13 @@ In other words if you have a root folder with subfolders for each _class_, and i
 
 2. Click the second button if you just want to browse a single folder full of images
 
+## Roadmap
+
+- Automate deleting duplicate images
+- Automate deleting broken images
+
 ## Credits
 
 - [IOS Camera Icon](https://iconscout.com/icon/photos-30) by Giulio Smedile
 - [Electron React Boilterplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate)
+- [Chakra UI component library](https://chakra-ui.com)

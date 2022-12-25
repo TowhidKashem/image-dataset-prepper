@@ -10,6 +10,7 @@ import { AppContext } from './_data';
 export function App() {
   const [pathSegments, setPathSegments] = useState<string[]>([]);
   const [directories, setDirectories] = useStateCallback<DirContentT[]>([]);
+
   const images = useRef<DirContentT[]>([]);
 
   return (
