@@ -28,3 +28,16 @@ export const sortImages = (images: DirContentT[]): DirContentT[] =>
     if (a.name > b.name) return 1;
     return 0;
   });
+
+export const isImage = ({
+  path,
+  extension
+}: {
+  path?: string;
+  extension?: string;
+}): boolean => {
+  const VALID_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'];
+  const fileExtension = extension || path.split('.').pop();
+
+  return VALID_EXTENSIONS.includes(fileExtension.toLocaleLowerCase());
+};

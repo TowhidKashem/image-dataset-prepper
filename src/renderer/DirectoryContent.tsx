@@ -4,16 +4,18 @@ import {
   Image,
   Icon,
   Flex,
+  Box,
+  Badge,
   Heading,
   List,
   ListItem,
   ListIcon
 } from '@chakra-ui/react';
-import { FcOpenedFolder } from 'react-icons/fc';
+import { FcOpenedFolder, FcDocument } from 'react-icons/fc';
 import { IoLocation, IoArrowRedo, IoImage } from 'react-icons/io5';
 import { Navigation } from './Navigation';
 import { AppContext, channels, toastConfig } from './_data';
-import { sortImages } from './_utils';
+import { sortImages, isImage } from './_utils';
 import popSound from '../../assets/pop.mp3';
 
 const { ipcRenderer } = window.electron;
@@ -182,8 +184,10 @@ export function DirectoryContent() {
     }
   };
 
-  const { path, extension } = images.current[imageIndex.current];
+  const { path, name, extension } = images.current[imageIndex.current];
+
   const totalImages = images.current.length;
+
   const imageDetails = [
     {
       key: 'count',
@@ -205,6 +209,8 @@ export function DirectoryContent() {
     }
   ];
 
+  const isImageFile = isImage({ extension: extension.slice(1) });
+
   const NAV_BAR_HEIGHT = '105px'; // nav height (55px) + vertical margins (25px * 2)
 
   return (
@@ -220,7 +226,7 @@ export function DirectoryContent() {
         height={`calc(100vh - ${NAV_BAR_HEIGHT})`}
         paddingBottom="2rem"
       >
-        {path && (
+        {isImageFile ? (
           <Image
             src={`file://${path}`}
             alt=""
@@ -228,6 +234,23 @@ export function DirectoryContent() {
             maxHeight="100%"
             boxShadow="md"
           />
+        ) : (
+          <Box position="relative" paddingBottom={8}>
+            <Icon as={FcDocument} fontSize="18rem" />
+
+            <Badge
+              position="absolute"
+              left="50%"
+              bottom={2}
+              transform="translateX(-50%)"
+              fontSize={18}
+              boxShadow="lg"
+              maxWidth={300}
+              isTruncated
+            >
+              {name}
+            </Badge>
+          </Box>
         )}
 
         {isDirEmpty ? (

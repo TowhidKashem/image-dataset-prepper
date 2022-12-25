@@ -41,9 +41,9 @@ export function ChooseDirectory() {
       setPathSegments(segments);
 
       if (isRoot) {
-        return setDirectories(data, () =>
-          navigate('/directoryList', { replace: true })
-        );
+        return setDirectories(data, () => {
+          navigate('/directoryList', { replace: true });
+        });
       }
 
       images.current = data;

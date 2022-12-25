@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
-import { FcFolder, FcQuestions } from 'react-icons/fc';
+import { FcFolder, FcFile } from 'react-icons/fc';
 import { Navigation } from './Navigation';
 import { AppContext, channels, toastConfig } from './_data';
 import { sortImages } from './_utils';
@@ -85,7 +85,7 @@ export function DirectoryList() {
             onClick={() => isDir && handleFolderClick(path, name)}
           >
             <Icon
-              as={isDir ? FcFolder : FcQuestions}
+              as={isDir ? FcFolder : FcFile}
               fontSize="4rem"
               marginBottom={1}
             />
