@@ -1,6 +1,7 @@
-import { useState, useContext } from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToast, Flex, Box, Input, Button } from '@chakra-ui/react';
+import { useToast, Flex } from '@chakra-ui/react';
+import { UploadButton } from './UploadButton';
 import { AppContext, channels, toastConfig } from './_data';
 import { getRootFileDir } from './_utils';
 
@@ -11,12 +12,11 @@ export function ChooseDirectory() {
 
   const toast = useToast(toastConfig);
 
-  const { setPathSegments, setDirectories } = useContext(AppContext);
-
-  const [hover, setHover] = useState(false);
+  const { setPathSegments, setDirectories, images } = useContext(AppContext);
 
   const chooseFolder = async (
-    e: React.SyntheticEvent<HTMLInputElement>
+    e: React.SyntheticEvent<HTMLInputElement>,
+    isRoot = true
   ): Promise<void> => {
     if (!e.currentTarget.files) return;
 
@@ -31,9 +31,15 @@ export function ChooseDirectory() {
 
       setPathSegments(segments);
 
-      setDirectories(data, () => {
-        navigate('/directoryList', { replace: true });
-      });
+      if (isRoot) {
+        return setDirectories(data, () =>
+          navigate('/directoryList', { replace: true })
+        );
+      }
+
+      images.current = data;
+
+      navigate('/directoryList', { replace: true });
     } catch (error) {
       toast({
         description: error.toString(),
@@ -43,34 +49,21 @@ export function ChooseDirectory() {
   };
 
   return (
-    <Flex width="100%" flex={1} alignItems="center" justifyContent="center">
-      <Box position="relative">
-        <Input
-          type="file"
-          onChange={chooseFolder}
-          onClick={({ target }) => {
-            (target as HTMLInputElement).value = '';
-          }}
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-          // @ts-ignore
-          webkitdirectory=""
-          mozdirectory="" // eslint-disable-line react/no-unknown-property
-          directory="" // eslint-disable-line react/no-unknown-property
-          multiple
-          position="absolute"
-          top={0}
-          left={0}
-          width="100%"
-          height="100%"
-          opacity={0}
-          zIndex={1}
-        />
+    <Flex
+      width="100%"
+      flex={1}
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      rowGap={8}
+    >
+      <UploadButton buttonTheme="green" onChange={chooseFolder}>
+        Choose Root Folder
+      </UploadButton>
 
-        <Button size="lg" colorScheme={hover ? 'twitter' : 'blue'}>
-          Choose Folder
-        </Button>
-      </Box>
+      <UploadButton buttonTheme="blue" onChange={(e) => chooseFolder(e, false)}>
+        Choose Single Folder
+      </UploadButton>
     </Flex>
   );
 }

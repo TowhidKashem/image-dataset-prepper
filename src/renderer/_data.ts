@@ -31,3 +31,14 @@ export const toastConfig: Partial<UseToastOptions> = {
     fontSize: 'md'
   }
 };
+
+export const uploadButtonThemes = {
+  blue: {
+    bgColor: 'blue',
+    bgHover: 'twitter'
+  },
+  green: {
+    bgColor: 'green',
+    bgHover: 'whatsapp'
+  }
+} as const;
