@@ -24,7 +24,7 @@ export const channels = {
   EMPTY_TRASH: 'EMPTY_TRASH'
 } as const;
 
-const SUCCESS_DURATION = 3_000;
+const SUCCESS_DURATION = 1_500;
 export const ERROR_DURATION = 10_000;
 
 export const toastConfig: Partial<UseToastOptions> = {
