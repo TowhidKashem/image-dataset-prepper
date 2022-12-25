@@ -1,16 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { ipcMain, IpcMainInvokeEvent } from 'electron';
-import { channels, AppDataT } from '../renderer/_data';
-
-const handleGetAppData = async (): Promise<ResponseT<AppDataT>> => ({
-  data: {
-    envVars: {
-      PROJECT_ROOT: path.resolve(__dirname, '../../')
-    }
-  },
-  error: null
-});
+import { channels } from '../renderer/_data';
 
 const handleListDirectory = async (
   _e: IpcMainInvokeEvent,
@@ -114,7 +105,6 @@ const handleEmptyTrash = async (
 };
 
 // endpoints
-ipcMain.handle(channels.GET_APP_DATA, handleGetAppData);
 ipcMain.handle(channels.LIST_DIR, handleListDirectory);
 ipcMain.handle(channels.DELETE_FILE, handleDeleteFile);
 ipcMain.handle(channels.UNDO_DELETE, handleUndoDeleteFile);

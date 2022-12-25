@@ -7,13 +7,7 @@ import {
 import { UseToastOptions } from '@chakra-ui/react';
 import { UseStateCallbackT } from './useStateCallback';
 
-export type AppDataT = {
-  envVars: Record<string, string>;
-};
-
 export const AppContext = createContext<{
-  appData: AppDataT;
-
   pathSegments: string[];
   setPathSegments: Dispatch<SetStateAction<string[]>>;
 
@@ -24,7 +18,6 @@ export const AppContext = createContext<{
 }>(null);
 
 export const channels = {
-  GET_APP_DATA: 'GET_APP_DATA',
   LIST_DIR: 'LIST_DIR',
   DELETE_FILE: 'DELETE_FILE',
   UNDO_DELETE: 'UNDO_DELETE',

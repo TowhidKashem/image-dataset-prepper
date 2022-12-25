@@ -14,17 +14,14 @@ import { IoLocation, IoArrowRedo, IoImage } from 'react-icons/io5';
 import { Navigation } from './Navigation';
 import { AppContext, channels, toastConfig } from './_data';
 import { sortImages } from './_utils';
+import popSound from '../../assets/pop.mp3';
 
 const { ipcRenderer } = window.electron;
 
 export function DirectoryContent() {
   const toast = useToast(toastConfig);
 
-  const {
-    appData: { envVars },
-    pathSegments,
-    images
-  } = useContext(AppContext);
+  const { pathSegments, images } = useContext(AppContext);
 
   const imageIndex = useRef(0);
   const deleteHistory = useRef<DirContentT[]>([]);
@@ -76,7 +73,7 @@ export function DirectoryContent() {
       if (images.current.length !== 1) {
         setLoopCount((prevCount) => prevCount + 1);
 
-        new Audio(`file://${envVars.PROJECT_ROOT}/assets/pop.mp3`).play();
+        new Audio(popSound).play();
       }
     }
 
@@ -156,8 +153,8 @@ export function DirectoryContent() {
       setTriggerRender((prev) => !prev);
 
       toast({
-        description: 'Restored Image!',
-        status: 'success'
+        description: 'Restored!',
+        status: 'info'
       });
     } catch (error) {
       toast({

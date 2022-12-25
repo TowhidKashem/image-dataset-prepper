@@ -83,6 +83,11 @@ const configuration: webpack.Configuration = {
         use: ['style-loader', 'css-loader', 'sass-loader'],
         exclude: /\.module\.s?(c|a)ss$/
       },
+      // Audio
+      {
+        test: /\.mp3$/i,
+        type: 'asset/resource'
+      },
       // Fonts
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,

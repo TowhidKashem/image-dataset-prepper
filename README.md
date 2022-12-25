@@ -40,7 +40,7 @@ This will start the dev server and automatically open the app and will auto relo
 - <kbd>→</kbd> next image
 - <kbd>←</kbd> prev image
 - <kbd>Space</kbd> delete image
-- <kbd>CMD</kbd> + <kbd>z</kbd> (mac) or <kbd>CTRL</kbd> + <kbd>z</kbd> (windows) undo delete
+- <kbd>CMD</kbd> + <kbd>Z</kbd> (mac) or <kbd>CTRL</kbd> + <kbd>Z</kbd> (windows) undo delete
 - &#x21bb; - click the reload icon on the top right of the screen to clear history (by default visited folders appear in a lower opacity to help track progress)
 
 ## Folder structure assumptions

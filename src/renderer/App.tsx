@@ -1,36 +1,20 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ChakraProvider, Flex } from '@chakra-ui/react';
 import { ChooseDirectory } from './ChooseDirectory';
 import { DirectoryList } from './DirectoryList';
 import { DirectoryContent } from './DirectoryContent';
 import { useStateCallback } from './useStateCallback';
-import { AppContext, AppDataT, channels } from './_data';
-
-const { ipcRenderer } = window.electron;
+import { AppContext } from './_data';
 
 export function App() {
-  const [appData, setAppData] = useState<AppDataT>(null);
   const [pathSegments, setPathSegments] = useState<string[]>([]);
   const [directories, setDirectories] = useStateCallback<DirContentT[]>([]);
-
   const images = useRef<DirContentT[]>([]);
-
-  useEffect(() => {
-    const getAppData = async (): Promise<void> => {
-      const { data } = await ipcRenderer.invoke<ResponseT<AppDataT>>(
-        channels.GET_APP_DATA,
-        undefined
-      );
-      setAppData(data);
-    };
-    getAppData();
-  }, []);
 
   return (
     <AppContext.Provider
       value={{
-        appData,
         pathSegments,
         setPathSegments,
         directories,
