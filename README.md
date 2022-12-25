@@ -1,12 +1,12 @@
 <h1 align="center">Image Classification Dataset Prepper</h1>
 
 <div align="center">
-  <img src="./assets/icon.svg" alt="Preview" />
+  <img src="./assets/icon.svg" alt="" />
 </div>
 
 https://user-images.githubusercontent.com/1139927/209462763-17b58b7d-3e14-424d-b431-7ba33a2a0df6.mp4
 
-When prepping data sets for training image classification models it's a real pain to manually sift through thousands of images to weed out the inaccurate, duplicate and broken ones. This app aims to make the process a lttle more tolerable by allowing you to use keyboard shortcuts to quicky cycle through all the images in a folder and delete the ones you don't want.
+When preparing datasets for training image classification models it's a real pain to manually sift through thousands of images to weed out the inaccurate, duplicate and broken ones. This app aims to make the process a little more tolerable by allowing you to use keyboard shortcuts to quickly cycle through all the images in a folder and delete the ones you don't want.
 
 ## Installation
 
@@ -45,12 +45,12 @@ This will spin up a dev server which auto-reloads on file changes.
 - <kbd>CMD</kbd> / <kbd>CTRL</kbd> + <kbd>Z</kbd> - undo delete
 - <kbd>CMD</kbd> / <kbd>CTRL</kbd> + <kbd>R</kbd> - refresh the app
 - click the "&#x21bb;" icon on the top right of the screen to reset history (visited folders appear at a lower opacity for tracking purposes)
-- &#9835; pop noise sounds each time a full loop occurs when cycling a directory
+- &#9835; pop noise sounds each time a full loop completes when cycling through a directory
 
 ## Folder structure
 
 <div align="center">
-  <img src="./assets/screenshot.png" alt="" width="50%" />
+  <img src="./assets/buttons.png" alt="" />
 </div>
 
 1. Click the first button if your folder structure looks like this:
