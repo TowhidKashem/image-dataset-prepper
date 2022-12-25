@@ -1,12 +1,18 @@
-<h1 align="center">Image Classification Dataset Prepper</h1>
-
-<div align="center">
-  <img src="./assets/icon.svg" alt="" />
-</div>
+<h1 align="center">
+  <img
+    src="./assets/icon.svg"
+    alt=""
+    width="27"
+    style="margin-right: 8px"
+  />
+  Image Classification Dataset Prepper
+</h1>
 
 https://user-images.githubusercontent.com/1139927/209462763-17b58b7d-3e14-424d-b431-7ba33a2a0df6.mp4
 
-When preparing datasets for training image classification models it's a real pain to manually sift through thousands of images to weed out the inaccurate, duplicate and broken ones. This app aims to make the process a little more tolerable by allowing you to use keyboard shortcuts to quickly cycle through all the images in a folder and delete the ones you don't want.
+<br />
+
+<p>When preparing datasets for training image classification models it's a real pain to manually sift through thousands of images to weed out the inaccurate, duplicate and broken ones. This app aims to make the process a little more tolerable by allowing you to use keyboard shortcuts to quickly cycle through all the images in a folder and delete the ones you don't want.</p>
 
 ## Installation
 
@@ -49,9 +55,7 @@ This will spin up a dev server which auto-reloads on file changes.
 
 ## Folder structure
 
-<div align="center">
-  <img src="./assets/buttons.png" alt="" />
-</div>
+<img src="./assets/buttons.png" alt="" width="35%" />
 
 1. Click the first button if your folder structure looks like this:
 
@@ -66,7 +70,7 @@ dog-images/
 - minature-poodle/
   - e.png
   - f.jpg
-- etc...
+- etc..
 ```
 
 In other words if you have a root folder with subfolders for each _class_, and inside those folders are your images.
