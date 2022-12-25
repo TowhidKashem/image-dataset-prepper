@@ -55,7 +55,7 @@ This will spin up a dev server which auto-reloads on file changes.
 
 ## Folder structure
 
-<img src="./assets/buttons.png" alt="" width="35%" />
+<img src="./assets/screenshot-buttons.png" alt="" width="50%" />
 
 1. Click the first button if your folder structure looks like this:
 
@@ -76,6 +76,16 @@ dog-images/
 In other words if you have a root folder with subfolders for each _class_, and inside those folders are your images.
 
 2. Click the second button if you just want to browse a single folder full of images
+
+## Limitations
+
+This app assumes that the selected folder contains either only images or only sub-folders. It's not a full fledged file explorer and can't handle anything else at the moment.
+
+If you ever see anything like the following it means that you clicked on the wrong button:
+
+<img src="./assets/screenshot-error.png" alt="" width="50%" />
+
+Refresh the app (CMD/CTRL + R) and try selecting the same folder with the blue button.
 
 ## Roadmap
 

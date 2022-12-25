@@ -10,7 +10,9 @@ module.exports = {
     'default-case': 0,
     'global-require': 0,
     'consistent-return': 0,
+
     'promise/always-return': 0,
+    'promise/no-callback-in-promise': 0,
 
     'import/no-cycle': 0,
     'import/order': 0,
@@ -19,9 +21,10 @@ module.exports = {
 
     'react/react-in-jsx-scope': 0,
     'react/jsx-props-no-spreading': 0,
-    'react-hooks/exhaustive-deps': 0,
     'react/require-default-props': 0,
     'react/no-unescaped-entities': 0,
+
+    'react-hooks/exhaustive-deps': 0,
 
     '@typescript-eslint/ban-ts-comment': 0,
     '@typescript-eslint/ban-types': 0,

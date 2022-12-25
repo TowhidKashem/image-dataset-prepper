@@ -231,7 +231,7 @@ export function DirectoryContent() {
       >
         {isImageFile ? (
           <Image
-            src={`file://${path}`}
+            src={`img://${path}`}
             alt=""
             maxWidth="100%"
             maxHeight="100%"

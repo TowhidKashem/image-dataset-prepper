@@ -157,12 +157,17 @@ export function ChooseDirectory() {
             </AlertDialogHeader>
 
             <AlertDialogBody fontSize="md">
-              Ugh this is kinda annoying but due to some file system
-              limitations, you'll need to pick the same folder twice!
+              This is kinda annoying but due to some file system limitations
+              you'll need to pick the same folder twice!
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button colorScheme="whatsapp" onClick={chooseAgain}>
+              <Button
+                colorScheme={
+                  dirSelection.current.type === 'root' ? 'green' : 'blue'
+                }
+                onClick={chooseAgain}
+              >
                 Choose Again
               </Button>
             </AlertDialogFooter>
