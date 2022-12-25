@@ -75,7 +75,7 @@ export function Navigation({
       <Breadcrumb
         maxWidth="100%"
         overflowX="scroll"
-        marginRight={3}
+        marginX={3}
         separator={
           <Icon as={IoChevronForward} fontSize={18} color="gray.500" />
         }

@@ -1,24 +1,28 @@
-export const removeStartEndSlash = (path: string): string => {
+const removeStartEndSlash = (path: string): string => {
   if (path.startsWith('/')) path = path.slice(1);
   if (path.endsWith('/')) path = path.slice(0, -1);
   return path;
 };
 
-export const getRootFileDir = (
-  path: string
+// using the `webkitdirectory` attribute on the file input field lets us choose a folder
+// but the actual contents accessible are still the files inside the folder
+// and if the folder has several levels of nesting it's not possible to figure out the intended parent that the user wants to see
+// so we ask them to select the same folder again but this time using the directory picker window
+// the `showDirectoryPicker` API returns the proper directory name but not the absolute path (for security reasons)
+// this function glues together the info received from both sources to figure out the absolute path of the intended directory
+export const getRootDir = (
+  path: string,
+  dirName: string
 ): {
   segments: string[];
   path: string;
 } => {
-  const segments = path.split('/');
-
-  // when a folder is selected through a file input field the first file in the folder
-  // is automatically selected, so remove it to get the folder path
-  segments.pop();
+  const [rootPath] = path.split(dirName);
+  path = rootPath + dirName;
 
   return {
-    segments,
-    path: segments.join('/')
+    segments: removeStartEndSlash(path).split('/'),
+    path
   };
 };
 

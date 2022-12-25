@@ -14,7 +14,7 @@ import {
 import { FcOpenedFolder, FcDocument } from 'react-icons/fc';
 import { IoLocation, IoArrowRedo, IoImage } from 'react-icons/io5';
 import { Navigation } from './Navigation';
-import { AppContext, channels, toastConfig } from './_data';
+import { AppContext, channels, toastConfig, ERROR_DURATION } from './_data';
 import { sortImages, isImage } from './_utils';
 import popSound from '../../assets/pop.mp3';
 
@@ -129,7 +129,8 @@ export function DirectoryContent() {
     } catch (error) {
       toast({
         description: error.toString(),
-        status: 'error'
+        status: 'error',
+        duration: ERROR_DURATION
       });
     } finally {
       isDeleteTouched.current = true;
@@ -162,7 +163,8 @@ export function DirectoryContent() {
     } catch (error) {
       toast({
         description: error.toString(),
-        status: 'error'
+        status: 'error',
+        duration: ERROR_DURATION
       });
     }
   };
@@ -179,7 +181,8 @@ export function DirectoryContent() {
       toast({
         title: 'Trash not Emptied!',
         description: error.toString(),
-        status: 'error'
+        status: 'error',
+        duration: ERROR_DURATION
       });
     }
   };

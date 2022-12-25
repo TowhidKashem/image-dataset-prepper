@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast, SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcFolder, FcFile } from 'react-icons/fc';
 import { Navigation } from './Navigation';
-import { AppContext, channels, toastConfig } from './_data';
+import { AppContext, channels, toastConfig, ERROR_DURATION } from './_data';
 import { sortImages } from './_utils';
 
 const { ipcRenderer } = window.electron;
@@ -40,7 +40,8 @@ export function DirectoryList() {
     } catch (error) {
       toast({
         description: error.toString(),
-        status: 'error'
+        status: 'error',
+        duration: ERROR_DURATION
       });
     }
   };

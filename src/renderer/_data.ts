@@ -24,9 +24,12 @@ export const channels = {
   EMPTY_TRASH: 'EMPTY_TRASH'
 } as const;
 
+const SUCCESS_DURATION = 3_000;
+export const ERROR_DURATION = 10_000;
+
 export const toastConfig: Partial<UseToastOptions> = {
   position: 'top',
-  duration: 2_000,
+  duration: SUCCESS_DURATION,
   containerStyle: {
     fontSize: 'md'
   }

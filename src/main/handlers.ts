@@ -7,13 +7,13 @@ const handleListDirectory = async (
   _e: IpcMainInvokeEvent,
   filePath: string
 ): Promise<ResponseT<DirContentT[]>> => {
-  const BLACKLIST = ['1', '.DS_Store', 'trash.tmp'];
+  const BLOCK_LIST = ['1', '.DS_Store', 'trash.tmp'];
 
   try {
     const contents = fs
       .readdirSync(filePath)
       .filter(
-        (dirName) => !BLACKLIST.includes(dirName) && !dirName.startsWith('.')
+        (dirName) => !BLOCK_LIST.includes(dirName) && !dirName.startsWith('.')
       )
       .map((dirName) => {
         const newFilePath = `${filePath}/${dirName}`;

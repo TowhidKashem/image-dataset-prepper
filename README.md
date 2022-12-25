@@ -86,4 +86,4 @@ In other words if you have a root folder with subfolders for each _class_, and i
 
 - [IOS Camera Icon](https://iconscout.com/icon/photos-30) by Giulio Smedile
 - [Electron React Boilterplate](https://github.com/electron-react-boilerplate/electron-react-boilerplate)
-- [Chakra UI component library](https://chakra-ui.com)
+- [Chakra UI component library](https://github.com/chakra-ui/chakra-ui)

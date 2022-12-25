@@ -1,5 +1,5 @@
 {
-  "name": "image-classification-dataset-prepper",
+  "name": "image-reviewer",
   "main": "./src/main/main.ts",
   "author": "Towhid Kashem",
   "description": "A minimal desktop app to quickly review and delete images when collecting data sets for image classification models",
