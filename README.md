@@ -8,7 +8,7 @@
   Image Classification Dataset Prepper
 </h1>
 
-https://user-images.githubusercontent.com/1139927/209483361-07815ebc-6448-47b3-9482-991f43574b90.mp4
+https://user-images.githubusercontent.com/1139927/209484470-7ca2c62c-bf67-4cfa-be6f-5a9e014e33dd.mp4
 
 <br />
 
@@ -55,37 +55,26 @@ This will spin up a dev server which auto-reloads on file changes.
 
 ## Folder structure
 
-<img src="./assets/screenshot-buttons.png" alt="" width="50%" />
-
-1. Click the first button if your folder structure looks like this:
+This is a common folder structure for image classification datasets:
 
 ```
-dog-images/
+dog-breeds/
 - doberman/
   - a.jpg
   - b.png
 - german-shepherd/
   - c.jpg
   - d.webp
-- minature-poodle/
+- miniature-poodle/
   - e.png
   - f.jpg
-- etc..
 ```
 
-In other words if you have a root folder with subfolders for each _class_, and inside those folders are your images.
+In other words you have a root folder with sub-folders for each _class_, and inside those sub-folders are the images.
 
-2. Click the second button if you just want to browse a single folder full of images
+You can browse such a root folder using this app, same for individual folders with images.
 
-## Limitations
-
-This app assumes that the selected folder contains either only images or only sub-folders. It's not a full fledged file explorer and can't handle anything else at the moment.
-
-If you ever see anything like the following it means that you clicked on the wrong button:
-
-<img src="./assets/screenshot-error.png" alt="" width="50%" />
-
-Refresh the app (CMD/CTRL + R) and try selecting the same folder but with the blue button.
+Just make sure that the selected folder contains either **only images** or **only sub-folders**. This app isn't a full fledged file explorer and can't handle anything else at the moment.
 
 ## Roadmap
 

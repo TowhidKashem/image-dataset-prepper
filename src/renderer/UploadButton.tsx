@@ -1,18 +1,13 @@
 import { useState } from 'react';
 import { Box, Input, InputProps, Button } from '@chakra-ui/react';
-import { uploadButtonThemes } from './_data';
 
 export function UploadButton({
-  buttonTheme,
   children,
   ...extra
 }: {
-  buttonTheme: keyof typeof uploadButtonThemes;
   children: React.ReactNode;
 } & InputProps) {
   const [hover, setHover] = useState(false);
-
-  const { bgHover, bgColor } = uploadButtonThemes[buttonTheme];
 
   return (
     <Box position="relative">
@@ -34,7 +29,7 @@ export function UploadButton({
         {...extra}
       />
 
-      <Button size="lg" minWidth={230} colorScheme={hover ? bgHover : bgColor}>
+      <Button size="lg" colorScheme={hover ? 'twitter' : 'blue'}>
         {children}
       </Button>
     </Box>

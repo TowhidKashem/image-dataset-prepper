@@ -20,11 +20,9 @@ import { Logo } from './Logo';
 const { ipcRenderer } = window.electron;
 
 const DIR_INITIAL_STATE: {
-  type: 'root' | 'single';
   fileInput: string;
   dirPicker: string;
 } = {
-  type: null,
   fileInput: null,
   dirPicker: null
 };
@@ -69,7 +67,7 @@ export function ChooseDirectory() {
   };
 
   const getFolderContents = async (): Promise<void> => {
-    const { type, fileInput, dirPicker } = dirSelection.current;
+    const { fileInput, dirPicker } = dirSelection.current;
 
     const { segments, path } = getRootDir(fileInput, dirPicker);
 
@@ -84,13 +82,14 @@ export function ChooseDirectory() {
 
       setPathSegments(segments);
 
-      if (type === 'root') {
+      const isParent = data.every(({ isDir }) => isDir);
+
+      if (isParent) {
         setDirectories(data, () => {
           navigate('/directoryList', { replace: true });
         });
       } else {
         images.current = data;
-
         navigate('/directoryContent', { replace: true });
       }
     } catch (error) {
@@ -122,25 +121,7 @@ export function ChooseDirectory() {
         <Logo />
       </Flex>
 
-      <UploadButton
-        buttonTheme="green"
-        onChange={(e) => {
-          dirSelection.current.type = 'root';
-          chooseFolder(e);
-        }}
-      >
-        Choose Root Folder
-      </UploadButton>
-
-      <UploadButton
-        buttonTheme="blue"
-        onChange={(e) => {
-          dirSelection.current.type = 'single';
-          chooseFolder(e);
-        }}
-      >
-        Choose Single Folder
-      </UploadButton>
+      <UploadButton onChange={chooseFolder}>Choose Folder</UploadButton>
 
       <AlertDialog
         leastDestructiveRef={null}
@@ -162,12 +143,7 @@ export function ChooseDirectory() {
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button
-                colorScheme={
-                  dirSelection.current.type === 'root' ? 'green' : 'blue'
-                }
-                onClick={chooseAgain}
-              >
+              <Button colorScheme="green" onClick={chooseAgain}>
                 Choose Again
               </Button>
             </AlertDialogFooter>
