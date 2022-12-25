@@ -1,4 +1,7 @@
-import { app, Menu, BrowserWindow, MenuItemConstructorOptions } from 'electron';
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions } from 'electron';
+
+const isDev =
+  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -13,12 +16,7 @@ export default class MenuBuilder {
   }
 
   buildMenu(): Menu {
-    if (
-      process.env.NODE_ENV === 'development' ||
-      process.env.DEBUG_PROD === 'true'
-    ) {
-      this.setupDevelopmentEnvironment();
-    }
+    if (isDev) this.setupDevelopmentEnvironment();
 
     const template =
       process.platform === 'darwin'
@@ -43,6 +41,7 @@ export default class MenuBuilder {
     });
   }
 
+  // mac & linux menu
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
       label: 'Electron',
@@ -51,9 +50,7 @@ export default class MenuBuilder {
           label: 'About ImageReviewer',
           selector: 'orderFrontStandardAboutPanel:'
         },
-        {
-          type: 'separator'
-        },
+        { type: 'separator' },
         {
           label: 'Hide ImageReviewer',
           accelerator: 'Command+H',
@@ -93,23 +90,13 @@ export default class MenuBuilder {
           click: () =>
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen())
         },
-        {
-          label: 'Toggle Developer Tools',
-          accelerator: 'Alt+Command+I',
-          click: () => this.mainWindow.webContents.toggleDevTools()
-        }
-      ]
-    };
-
-    const subMenuViewProd: MenuItemConstructorOptions = {
-      label: 'View',
-      submenu: [
-        {
-          label: 'Toggle Full Screen',
-          accelerator: 'Ctrl+Command+F',
-          click: () =>
-            this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen())
-        }
+        isDev
+          ? {
+              label: 'Toggle Developer Tools',
+              accelerator: 'Alt+Command+I',
+              click: () => this.mainWindow.webContents.toggleDevTools()
+            }
+          : null
       ]
     };
 
@@ -126,9 +113,7 @@ export default class MenuBuilder {
           accelerator: 'Command+W',
           selector: 'performClose:'
         },
-        {
-          type: 'separator'
-        },
+        { type: 'separator' },
         {
           label: 'Bring All to Front',
           selector: 'arrangeInFront:'
@@ -136,15 +121,10 @@ export default class MenuBuilder {
       ]
     };
 
-    const subMenuView =
-      process.env.NODE_ENV === 'development' ||
-      process.env.DEBUG_PROD === 'true'
-        ? subMenuViewDev
-        : subMenuViewProd;
-
-    return [subMenuAbout, subMenuView, subMenuWindow];
+    return [subMenuAbout, subMenuViewDev, subMenuWindow];
   }
 
+  // windows menu
   buildDefaultTemplate() {
     const templateDefault = [
       {
@@ -163,39 +143,26 @@ export default class MenuBuilder {
       },
       {
         label: '&View',
-        submenu:
-          process.env.NODE_ENV === 'development' ||
-          process.env.DEBUG_PROD === 'true'
-            ? [
-                {
-                  label: '&Reload',
-                  accelerator: 'Ctrl+R',
-                  click: () => this.mainWindow.webContents.reload()
-                },
-                {
-                  label: 'Toggle &Full Screen',
-                  accelerator: 'F11',
-                  click: () =>
-                    this.mainWindow.setFullScreen(
-                      !this.mainWindow.isFullScreen()
-                    )
-                },
-                {
-                  label: 'Toggle &Developer Tools',
-                  accelerator: 'Alt+Ctrl+I',
-                  click: () => this.mainWindow.webContents.toggleDevTools()
-                }
-              ]
-            : [
-                {
-                  label: 'Toggle &Full Screen',
-                  accelerator: 'F11',
-                  click: () =>
-                    this.mainWindow.setFullScreen(
-                      !this.mainWindow.isFullScreen()
-                    )
-                }
-              ]
+        submenu: [
+          {
+            label: '&Reload',
+            accelerator: 'Ctrl+R',
+            click: () => this.mainWindow.webContents.reload()
+          },
+          {
+            label: 'Toggle &Full Screen',
+            accelerator: 'F11',
+            click: () =>
+              this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen())
+          },
+          isDev
+            ? {
+                label: 'Toggle &Developer Tools',
+                accelerator: 'Alt+Ctrl+I',
+                click: () => this.mainWindow.webContents.toggleDevTools()
+              }
+            : null
+        ]
       }
     ];
 

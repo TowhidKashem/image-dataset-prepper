@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['erb', 'prettier'],
+  extends: ['erb'],
   rules: {
     'import/no-unresolved': 2,
 
