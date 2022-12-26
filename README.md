@@ -70,9 +70,7 @@ dog-breeds/
   - f.jpg
 ```
 
-In other words you have a root folder with sub-folders for each _class_, and inside those sub-folders are the images.
-
-You can browse such a root folder using this app, same for individual folders with images.
+In other words you have a root folder with sub-folders for each _class_, and inside those sub-folders are the images. You can browse such a root folder using this app, same for individual folders with images.
 
 Just make sure that the selected folder contains either **only images** or **only sub-folders**. This app isn't a full fledged file explorer and can't handle anything else at the moment.
 
@@ -80,6 +78,9 @@ Just make sure that the selected folder contains either **only images** or **onl
 
 - Automate deleting duplicate images
 - Automate deleting broken images
+- Crop and keep only part of an image
+- Convert all images to a particular format
+- Rename all images with numeric file names
 
 ## Credits
 
