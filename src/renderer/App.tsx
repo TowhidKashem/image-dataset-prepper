@@ -9,17 +9,23 @@ import { AppContext } from './_data';
 
 export function App() {
   const images = useRef<DirContentT[]>([]);
+
   const [pathSegments, setPathSegments] = useState<string[]>([]);
   const [directories, setDirectories] = useStateCallback<DirContentT[]>([]);
+  const [visitedDirs, setVisitedDirs] = useState<string[]>(
+    JSON.parse(localStorage.getItem('visitedDirs')) ?? []
+  );
 
   return (
     <AppContext.Provider
       value={{
+        images,
         pathSegments,
         setPathSegments,
         directories,
         setDirectories,
-        images
+        visitedDirs,
+        setVisitedDirs
       }}
     >
       <ChakraProvider>

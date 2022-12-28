@@ -1,86 +1,40 @@
-import { useContext, useRef } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  useToast,
-  useDisclosure,
-  Flex,
-  Button,
-  AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogBody
-} from '@chakra-ui/react';
-import { UploadButton } from './UploadButton';
+import { useToast, Flex, Button } from '@chakra-ui/react';
 import { AppContext, channels, toastConfig, ERROR_DURATION } from './_data';
-import { getRootDir } from './_utils';
+import { removeStartEndSlash } from './_utils';
 import { Logo } from './Logo';
 
-const { ipcRenderer } = window.electron;
-
-const DIR_INITIAL_STATE: {
-  fileInput: string;
-  dirPicker: string;
-} = {
-  fileInput: null,
-  dirPicker: null
-};
+const { ipcRenderer, openDialogPicker, onDialogPickerResult } = window.app;
 
 export function ChooseDirectory() {
   const navigate = useNavigate();
 
   const toast = useToast(toastConfig);
 
-  const dirSelection = useRef(DIR_INITIAL_STATE);
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   const { setPathSegments, setDirectories, images } = useContext(AppContext);
 
-  const chooseFolder = (e: React.SyntheticEvent<HTMLInputElement>): void => {
-    dirSelection.current.fileInput = e.currentTarget.files[0].path;
-    onOpen();
-  };
+  useEffect(() => {
+    onDialogPickerResult(({ canceled, filePaths }) => {
+      if (!canceled) {
+        getFolderContents(filePaths[0]);
+      }
+    });
+  }, []);
 
-  const chooseAgain = async (): Promise<void> => {
-    try {
-      const { name } = await window.showDirectoryPicker();
-      dirSelection.current.dirPicker = name;
-
-      getFolderContents();
-      onClose();
-    } catch (error) {
-      toast({
-        description: error.toString(),
-        status: 'error',
-        duration: ERROR_DURATION
-      });
-    }
-  };
-
-  const resetHistory = (): void => {
-    setPathSegments([]);
-    setDirectories([]);
-    images.current = [];
-    dirSelection.current = DIR_INITIAL_STATE;
-  };
-
-  const getFolderContents = async (): Promise<void> => {
-    const { fileInput, dirPicker } = dirSelection.current;
-
-    const { segments, path } = getRootDir(fileInput, dirPicker);
+  const getFolderContents = async (dirPath: string): Promise<void> => {
+    const pathSegments = removeStartEndSlash(dirPath).split('/');
 
     resetHistory();
 
     try {
       const { data, error } = await ipcRenderer.invoke<
         ResponseT<DirContentT[]>
-      >(channels.LIST_DIR, path);
+      >(channels.LIST_DIR, dirPath);
 
       if (error) throw error;
 
-      setPathSegments(segments);
+      setPathSegments(pathSegments);
 
       const isParent = data.every(({ isDir }) => isDir);
 
@@ -102,6 +56,12 @@ export function ChooseDirectory() {
     }
   };
 
+  const resetHistory = (): void => {
+    setPathSegments([]);
+    setDirectories([]);
+    images.current = [];
+  };
+
   return (
     <Flex
       width="100%"
@@ -121,35 +81,9 @@ export function ChooseDirectory() {
         <Logo />
       </Flex>
 
-      <UploadButton onChange={chooseFolder}>Choose Folder</UploadButton>
-
-      <AlertDialog
-        leastDestructiveRef={null}
-        isOpen={isOpen}
-        onClose={onClose}
-        size="sm"
-        motionPreset="slideInBottom"
-        isCentered
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Choose the same folder again
-            </AlertDialogHeader>
-
-            <AlertDialogBody fontSize="md">
-              This is kinda annoying but due to some file system limitations
-              you'll need to pick the same folder twice!
-            </AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button colorScheme="green" onClick={chooseAgain}>
-                Choose Again
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+      <Button colorScheme="blue" size="lg" onClick={openDialogPicker}>
+        Choose Folder
+      </Button>
     </Flex>
   );
 }

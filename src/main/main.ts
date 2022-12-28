@@ -1,5 +1,5 @@
 import path from 'path';
-import { app, shell, protocol, BrowserWindow } from 'electron';
+import { app, protocol, BrowserWindow, ipcMain, dialog } from 'electron';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './_utils';
 
@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-const isDebug =
+export const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) require('electron-debug')({ showDevTools: false });
@@ -22,15 +22,17 @@ const installExtensions = async () => {
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS'];
 
-  return installer
-    .default(
+  try {
+    return installer.default(
       extensions.map((name) => installer[name]),
       forceDownload
-    )
-    .catch(console.log);
+    );
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-const createWindow = async () => {
+const createWindow = async (): Promise<void> => {
   if (isDebug) await installExtensions();
 
   const RESOURCES_PATH = app.isPackaged
@@ -54,56 +56,45 @@ const createWindow = async () => {
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-  mainWindow.on('ready-to-show', () => {
-    if (!mainWindow) throw new Error('`mainWindow` is not defined');
+  mainWindow
+    .on('ready-to-show', () => {
+      if (!mainWindow) throw new Error('`mainWindow` is not defined');
+      if (process.env.START_MINIMIZED) return mainWindow.minimize();
 
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
       mainWindow.show();
-    }
-  });
+    })
+    .on('closed', () => {
+      mainWindow = null;
+    });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
-
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
-  // open urls in the user's browser
-  mainWindow.webContents.setWindowOpenHandler((edata) => {
-    shell.openExternal(edata.url);
-    return { action: 'deny' };
-  });
+  new MenuBuilder(mainWindow).buildMenu();
 };
 
-// event listeners
-
-// respect the osx convention of having the application in memory even after all windows have been closed
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
-});
-
-// restrict navigation to known domains for better security
-const NAV_ALLOW_LIST = ['https://image-reviewer.com'];
-app.on('web-contents-created', (_, contents) => {
-  contents.on('will-navigate', (e, navigationUrl) => {
-    const parsedUrl = new URL(navigationUrl);
-
-    if (!NAV_ALLOW_LIST.includes(parsedUrl.origin)) {
-      e.preventDefault();
-    }
-  });
-});
-
 app
-  .whenReady()
-  .then(() => {
+  // respect the osx convention of having the application in memory
+  // even after all windows have been closed
+  .on('window-all-closed', () => {
+    if (process.platform !== 'darwin') app.quit();
+  })
+  // restrict navigation to known domains for better security
+  .on('web-contents-created', (_, contents) => {
+    contents.on('will-navigate', (e, navigationUrl) => {
+      const parsedUrl = new URL(navigationUrl);
+      const NAV_ALLOW_LIST = ['https://image-reviewer.com'];
+
+      if (!NAV_ALLOW_LIST.includes(parsedUrl.origin)) e.preventDefault();
+    });
+  });
+
+const onAppReady = async (): Promise<void> => {
+  try {
+    await app.whenReady();
+
     createWindow();
 
+    // on mac its common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open
     app.on('activate', () => {
-      // on mac it's common to re-create a window in the app when the dock icon is clicked and there are no other windows open
       if (mainWindow === null) createWindow();
     });
 
@@ -118,5 +109,22 @@ app
         return callback({ error: 404 });
       }
     });
-  })
-  .catch(console.log);
+
+    // open directory picker dialog
+    ipcMain.on('open-picker-dialog', async () => {
+      try {
+        const result = await dialog.showOpenDialog(mainWindow, {
+          properties: ['openDirectory']
+        });
+
+        mainWindow.webContents.send('dialog-picker-result', result);
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+onAppReady();

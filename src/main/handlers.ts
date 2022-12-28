@@ -3,11 +3,14 @@ import path from 'path';
 import { ipcMain, IpcMainInvokeEvent } from 'electron';
 import { channels } from '../renderer/_data';
 
+const TRASH_DIR = '_trash';
+const PICKED_DIR = '_picked';
+
 const handleListDirectory = async (
   _e: IpcMainInvokeEvent,
   filePath: string
 ): Promise<ResponseT<DirContentT[]>> => {
-  const BLOCK_LIST = ['1', '.DS_Store', 'trash.tmp'];
+  const BLOCK_LIST = ['1', '.DS_Store', TRASH_DIR, PICKED_DIR];
 
   try {
     const contents = fs
@@ -49,7 +52,7 @@ const handleDeleteFile = async (
 
     const parentDir = pathSegments.join('/');
 
-    const trashDir = `${parentDir}/trash.tmp`;
+    const trashDir = `${parentDir}/${TRASH_DIR}`;
 
     if (!fs.existsSync(trashDir)) fs.mkdirSync(trashDir);
 
@@ -74,7 +77,7 @@ const handleUndoDeleteFile = async (
 
     const parentDir = pathSegments.join('/');
 
-    const trashDir = `${parentDir}/trash.tmp`;
+    const trashDir = `${parentDir}/${TRASH_DIR}`;
 
     fs.renameSync(`${trashDir}/${fileToDelete}`, filePath);
 
@@ -91,10 +94,39 @@ const handleEmptyTrash = async (
   filePath: string
 ): Promise<ResponseT<void>> => {
   try {
-    fs.rmSync(`${filePath}/trash.tmp`, {
-      recursive: true,
-      force: true
-    });
+    const TRASH_DIR_PATH = `/${filePath}/${TRASH_DIR}`;
+
+    if (fs.existsSync(TRASH_DIR_PATH)) {
+      fs.rmSync(TRASH_DIR_PATH, {
+        recursive: true,
+        force: true
+      });
+    }
+
+    return { error: null };
+  } catch (error) {
+    return {
+      error: new Error(error as string)
+    };
+  }
+};
+
+const handleMoveFile = async (
+  _e: IpcMainInvokeEvent,
+  filePath: string
+): Promise<ResponseT<void>> => {
+  try {
+    const pathSegments = filePath.split('/');
+
+    const fileToMove = pathSegments.pop();
+
+    const parentDir = pathSegments.join('/');
+
+    const pickedDir = `${parentDir}/${PICKED_DIR}`;
+
+    if (!fs.existsSync(pickedDir)) fs.mkdirSync(pickedDir);
+
+    fs.renameSync(filePath, `${pickedDir}/${fileToMove}`);
 
     return { error: null };
   } catch (error) {
@@ -106,6 +138,9 @@ const handleEmptyTrash = async (
 
 // endpoints
 ipcMain.handle(channels.LIST_DIR, handleListDirectory);
+
 ipcMain.handle(channels.DELETE_FILE, handleDeleteFile);
 ipcMain.handle(channels.UNDO_DELETE, handleUndoDeleteFile);
 ipcMain.handle(channels.EMPTY_TRASH, handleEmptyTrash);
+
+ipcMain.handle(channels.MOVE_FILE, handleMoveFile);

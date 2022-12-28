@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast, SimpleGrid, Flex, Heading, Icon } from '@chakra-ui/react';
 import { FcFolder, FcFile } from 'react-icons/fc';
@@ -6,18 +6,15 @@ import { Navigation } from './Navigation';
 import { AppContext, channels, toastConfig, ERROR_DURATION } from './_data';
 import { sortImages } from './_utils';
 
-const { ipcRenderer } = window.electron;
+const { ipcRenderer } = window.app;
 
 export function DirectoryList() {
   const navigate = useNavigate();
 
   const toast = useToast(toastConfig);
 
-  const { directories, images, setPathSegments } = useContext(AppContext);
-
-  const [viewedDirs, setViewedDirs] = useState<string[]>(
-    JSON.parse(localStorage.getItem('viewedDirs')) ?? []
-  );
+  const { directories, images, setPathSegments, visitedDirs } =
+    useContext(AppContext);
 
   const handleFolderClick = async (
     path: string,
@@ -32,8 +29,6 @@ export function DirectoryList() {
 
       setPathSegments((prevSegments) => [...prevSegments, name]);
 
-      updateHistory(path);
-
       images.current = sortImages(data);
 
       navigate('/directoryContent', { replace: true });
@@ -46,20 +41,9 @@ export function DirectoryList() {
     }
   };
 
-  const updateHistory = (visitedDir: string): void => {
-    const newViewedDirs = [...viewedDirs, visitedDir];
-
-    setViewedDirs(newViewedDirs);
-
-    localStorage.setItem('viewedDirs', JSON.stringify(newViewedDirs));
-  };
-
   return (
     <>
-      <Navigation
-        backPath="/chooseDirectory"
-        onClearHistory={() => setViewedDirs([])}
-      />
+      <Navigation backPath="/chooseDirectory" />
 
       <SimpleGrid
         spacing={2}
@@ -79,7 +63,7 @@ export function DirectoryList() {
             padding={3}
             cursor={isDir ? 'pointer' : 'not-allowed'}
             borderRadius={10}
-            opacity={viewedDirs.includes(path) ? 0.3 : 1}
+            opacity={visitedDirs.includes(path) ? 0.3 : 1}
             _hover={{
               background: 'rgba(0, 0, 0, 0.3)'
             }}

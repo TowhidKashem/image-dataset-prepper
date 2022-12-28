@@ -8,7 +8,7 @@
   Image Classification Dataset Prepper
 </h1>
 
-https://user-images.githubusercontent.com/1139927/209484470-7ca2c62c-bf67-4cfa-be6f-5a9e014e33dd.mp4
+https://user-images.githubusercontent.com/1139927/209875258-38f3774f-0d5e-4926-964c-a2f3a80ec60a.mp4
 
 <br />
 
@@ -49,8 +49,9 @@ This will spin up a dev server which auto-reloads on file changes.
 - <kbd>←</kbd> - prev image
 - <kbd>Space</kbd> - delete image
 - <kbd>CMD</kbd> / <kbd>CTRL</kbd> + <kbd>Z</kbd> - undo delete
+- <kbd>a</kbd> - pick image (this moves the image into a subfolder called `_picked`)
 - <kbd>CMD</kbd> / <kbd>CTRL</kbd> + <kbd>R</kbd> - refresh the app
-- click the "&#x21bb;" icon on the top right of the screen to reset history (visited folders appear at a lower opacity for tracking purposes)
+- click the "&#x21bb;" icon on the top right of the screen to reset history (visited folders whose contents were looped through at least once appear at a lower opacity for tracking purposes)
 - &#9835; pop noise sounds each time a full loop completes when cycling through a directory
 
 ## Folder structure
@@ -80,7 +81,6 @@ Just make sure that the selected folder contains either **only images** or **onl
 - Automate deleting broken images
 - Crop and keep only part of an image
 - Convert all images to a particular format
-- Rename all images with numeric file names
 
 ## Credits
 

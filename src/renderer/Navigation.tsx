@@ -22,18 +22,13 @@ import {
 } from 'react-icons/io5';
 import { AppContext } from './_data';
 
-export function Navigation({
-  backPath,
-  onClearHistory
-}: {
-  backPath: string;
-  onClearHistory?: () => void;
-}) {
+export function Navigation({ backPath }: { backPath: string }) {
   const navigate = useNavigate();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { pathSegments, setPathSegments } = useContext(AppContext);
+  const { pathSegments, setPathSegments, setVisitedDirs } =
+    useContext(AppContext);
 
   const handleBackClick = (): void => {
     setPathSegments((prevSegments) => {
@@ -46,8 +41,8 @@ export function Navigation({
   };
 
   const handleClearHistory = (): void => {
-    localStorage.removeItem('viewedDirs');
-    onClearHistory && onClearHistory();
+    localStorage.removeItem('visitedDirs');
+    setVisitedDirs([]);
     onClose();
   };
 
