@@ -16,13 +16,15 @@ declare global {
   }
 
   interface Window {
-    electron: {
+    app: {
       ipcRenderer: {
         invoke<T>(channel: ChannelT, args: unknown): Promise<T>;
-        removeAllListeners(channel: ChannelT): void;
       };
+      openDialogPicker(): void;
+      onDialogPickerResult(
+        callback: (result: Electron.OpenDialogReturnValue) => void
+      ): void;
     };
-    showDirectoryPicker: () => Promise<FileSystemDirectoryHandle>;
   }
 }
 

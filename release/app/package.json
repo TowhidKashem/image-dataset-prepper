@@ -1,7 +1,7 @@
 {
   "name": "image-reviewer",
-  "version": "0.1.0",
-  "description": "A minimal desktop app to quickly review and delete images when collecting data sets for image classification models",
+  "version": "0.2.0",
+  "description": "A desktop file explorer with keyboard shortcuts to quickly prep images when collecting datasets for training image classification models",
   "license": "MIT",
   "author": "Towhid Kashem",
   "main": "./dist/main/main.js",

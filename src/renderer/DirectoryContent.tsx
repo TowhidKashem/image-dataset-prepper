@@ -14,18 +14,26 @@ import {
 import { FcOpenedFolder, FcDocument } from 'react-icons/fc';
 import { IoLocation, IoArrowRedo, IoImage } from 'react-icons/io5';
 import { Navigation } from './Navigation';
-import { AppContext, channels, toastConfig, ERROR_DURATION } from './_data';
-import { sortImages, isImage } from './_utils';
+import {
+  AppContext,
+  channels,
+  toastConfig,
+  ERROR_DURATION,
+  NAV_KEYS
+} from './_data';
+import { sortImages, isValidImage } from './_utils';
 import popSound from '../../assets/pop.mp3';
 
-const { ipcRenderer } = window.electron;
+const { ipcRenderer } = window.app;
 
 export function DirectoryContent() {
   const toast = useToast(toastConfig);
 
-  const { pathSegments, directories, images } = useContext(AppContext);
+  const { pathSegments, directories, visitedDirs, setVisitedDirs, images } =
+    useContext(AppContext);
 
   const imageIndex = useRef(0);
+
   const deleteHistory = useRef<DirContentT[]>([]);
   const isDeleteTouched = useRef(false);
 
@@ -43,23 +51,38 @@ export function DirectoryContent() {
     window.addEventListener('keydown', handleKeyboardNav);
 
     return () => {
-      if (isDeleteTouched.current) emptyTrash();
+      emptyTrash();
 
       window.removeEventListener('keydown', handleKeyboardNav);
     };
   }, []);
 
-  const handleKeyboardNav = (e: KeyboardEvent): void | Promise<void> => {
-    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z')
-      return undoDelete();
+  const markDirVisited = (): void => {
+    const curPath = `/${pathSegments.join('/')}`;
 
-    switch (e.key) {
-      case ' ':
+    if (visitedDirs.includes(curPath)) return;
+
+    const newVisitedDirs = [...visitedDirs, curPath];
+
+    setVisitedDirs(newVisitedDirs);
+    localStorage.setItem('visitedDirs', JSON.stringify(newVisitedDirs));
+  };
+
+  const handleKeyboardNav = (e: KeyboardEvent): void | Promise<void> => {
+    const KEY = e.key.toLowerCase();
+    const isUndo = (e.ctrlKey || e.metaKey) && KEY === 'z';
+
+    if (isUndo) return undoDelete();
+
+    switch (KEY) {
+      case NAV_KEYS.delete:
         return deleteImage();
-      case 'ArrowRight':
+      case NAV_KEYS.next:
         return nextImage();
-      case 'ArrowLeft':
+      case NAV_KEYS.prev:
         return prevImage();
+      case NAV_KEYS.pick:
+        return pickImage();
     }
   };
 
@@ -77,6 +100,10 @@ export function DirectoryContent() {
         setLoopCount((prevCount) => prevCount + 1);
 
         new Audio(popSound).play();
+
+        // only mark the directory as visited if the
+        // user has looped through all the images at least once
+        markDirVisited();
       }
     }
 
@@ -150,8 +177,7 @@ export function DirectoryContent() {
 
       if (error) throw error;
 
-      // put it back in the images array and sort again
-      // and don't forget to re-render after...
+      // put it back in the images array
       images.current.push(lastDeleted);
       sortImages(images.current);
       setTriggerRender((prev) => !prev);
@@ -187,6 +213,43 @@ export function DirectoryContent() {
     }
   };
 
+  const pickImage = async (): Promise<void> => {
+    const pickedImage = images.current[imageIndex.current];
+
+    try {
+      const { error } = await ipcRenderer.invoke<ResponseT<void>>(
+        channels.MOVE_FILE,
+        pickedImage.path
+      );
+
+      if (error) throw error;
+
+      images.current = sortImages(
+        images.current.filter(({ path }) => path !== pickedImage.path)
+      );
+
+      setTriggerRender((prev) => !prev);
+
+      if (images.current.length === 0) {
+        setIsDirEmpty(true);
+
+        window.removeEventListener('keyup', handleKeyboardNav);
+      }
+
+      toast({
+        description: 'Image picked!',
+        status: 'info',
+        variant: 'subtle'
+      });
+    } catch (error) {
+      toast({
+        description: error.toString(),
+        status: 'error',
+        duration: ERROR_DURATION
+      });
+    }
+  };
+
   const { path, name, extension } = images.current[imageIndex.current];
 
   const totalImages = images.current.length;
@@ -212,7 +275,7 @@ export function DirectoryContent() {
     }
   ];
 
-  const isImageFile = isImage({ extension: extension.slice(1) });
+  const isImageFile = isValidImage({ extension: extension.slice(1) });
 
   const NAV_BAR_HEIGHT = '105px'; // nav height (55px) + vertical margins (25px * 2)
 

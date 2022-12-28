@@ -1,7 +1,5 @@
 import { app, BrowserWindow, Menu, MenuItemConstructorOptions } from 'electron';
-
-const isDev =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+import { isDebug } from './main';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -16,7 +14,7 @@ export default class MenuBuilder {
   }
 
   buildMenu(): Menu {
-    if (isDev) this.setupDevelopmentEnvironment();
+    if (isDebug) this.setupDevelopmentEnvironment();
 
     const template =
       process.platform === 'darwin'
@@ -90,7 +88,7 @@ export default class MenuBuilder {
           click: () =>
             this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen())
         },
-        isDev
+        isDebug
           ? {
               label: 'Toggle Developer Tools',
               accelerator: 'Alt+Command+I',
@@ -155,7 +153,7 @@ export default class MenuBuilder {
             click: () =>
               this.mainWindow.setFullScreen(!this.mainWindow.isFullScreen())
           },
-          isDev
+          isDebug
             ? {
                 label: 'Toggle &Developer Tools',
                 accelerator: 'Alt+Ctrl+I',

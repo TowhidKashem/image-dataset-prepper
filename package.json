@@ -2,8 +2,8 @@
   "name": "image-reviewer",
   "main": "./src/main/main.ts",
   "author": "Towhid Kashem",
-  "description": "A minimal desktop app to quickly review and delete images when collecting data sets for image classification models",
-  "version": "0.1.0",
+  "description": "A desktop file explorer with keyboard shortcuts to quickly prep images when collecting datasets for training image classification models",
+  "version": "0.2.0",
   "license": "MIT",
   "browserslist": {
     "production": [
@@ -101,8 +101,10 @@
     "pretty": "prettier --write '**/*.{js,ts,tsx,mts,json,yaml,yml,md}'",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "type-check": "tsc",
+    "bump": "yarn version --new-version",
     "git:commit": "git status && git add . && git commit -m 'work' && git push",
     "git:commit-skip-hooks": "git status && git add . && git commit -m 'work' --no-verify && git push --no-verify",
+    "git:rebase": "git fetch origin && git rebase -i origin/main",
     "git:reset": "git clean --force && git reset --hard",
     "git:undo-last-commit": "git reset --soft HEAD~1",
     "git:unstage-all-files": "git reset HEAD -- .",
