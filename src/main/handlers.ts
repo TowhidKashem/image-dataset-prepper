@@ -136,6 +136,28 @@ const handleMoveFile = async (
   }
 };
 
+const handleGetPickedCount = async (
+  _e: IpcMainInvokeEvent,
+  dirPath: string
+): Promise<ResponseT<number>> => {
+  try {
+    const PICKED_DIR_PATH = `${dirPath}/${PICKED_DIR}`;
+
+    const pickedCount = fs.existsSync(PICKED_DIR_PATH)
+      ? fs.readdirSync(PICKED_DIR_PATH).length
+      : 0;
+
+    return {
+      data: pickedCount,
+      error: null
+    };
+  } catch (error) {
+    return {
+      error: new Error(error as string)
+    };
+  }
+};
+
 // endpoints
 ipcMain.handle(channels.LIST_DIR, handleListDirectory);
 
@@ -144,3 +166,4 @@ ipcMain.handle(channels.UNDO_DELETE, handleUndoDeleteFile);
 ipcMain.handle(channels.EMPTY_TRASH, handleEmptyTrash);
 
 ipcMain.handle(channels.MOVE_FILE, handleMoveFile);
+ipcMain.handle(channels.GET_PICKED_COUNT, handleGetPickedCount);

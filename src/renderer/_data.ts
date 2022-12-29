@@ -25,7 +25,8 @@ export const channels = {
   DELETE_FILE: 'DELETE_FILE',
   UNDO_DELETE: 'UNDO_DELETE',
   EMPTY_TRASH: 'EMPTY_TRASH',
-  MOVE_FILE: 'MOVE_FILE'
+  MOVE_FILE: 'MOVE_FILE',
+  GET_PICKED_COUNT: 'GET_PICKED_COUNT'
 } as const;
 
 export const NAV_KEYS = {

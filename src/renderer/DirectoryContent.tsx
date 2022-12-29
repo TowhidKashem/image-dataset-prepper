@@ -12,7 +12,7 @@ import {
   ListIcon
 } from '@chakra-ui/react';
 import { FcOpenedFolder, FcDocument } from 'react-icons/fc';
-import { IoLocation, IoArrowRedo, IoImage } from 'react-icons/io5';
+import { IoLocation, IoArrowRedo, IoImage, IoHeart } from 'react-icons/io5';
 import { Navigation } from './Navigation';
 import {
   AppContext,
@@ -21,7 +21,7 @@ import {
   ERROR_DURATION,
   NAV_KEYS
 } from './_data';
-import { sortImages, isValidImage } from './_utils';
+import { sortImages, isValidImage, getParentDir } from './_utils';
 import popSound from '../../assets/pop.mp3';
 
 const { ipcRenderer } = window.app;
@@ -40,22 +40,42 @@ export function DirectoryContent() {
   // since we use refs to store images and the active image index, updating them won't trigger a re-render
   // so use this flag to force re-renders. And the reason for using refs instead of state is due to stale values
   // being cached inside event handlers - https://reactjs.org/docs/hooks-faq.html#why-am-i-seeing-stale-props-or-state-inside-my-function
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setTriggerRender] = useState(false);
 
   const [loopCount, setLoopCount] = useState(0);
+  const [pickedCount, setPickedCount] = useState(0);
   const [isDirEmpty, setIsDirEmpty] = useState(false);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyboardNav);
+    getPickedCount();
 
     return () => {
-      emptyTrash();
-
       window.removeEventListener('keydown', handleKeyboardNav);
+      emptyTrash();
     };
   }, []);
+
+  const getPickedCount = async (): Promise<void> => {
+    try {
+      const { data, error } = await ipcRenderer.invoke<ResponseT<number>>(
+        channels.GET_PICKED_COUNT,
+        getParentDir(path)
+      );
+
+      if (error) throw error;
+
+      setPickedCount(data);
+    } catch (error) {
+      toast({
+        title: 'Failed to fetch picked count',
+        description: error.toString(),
+        status: 'error',
+        duration: ERROR_DURATION
+      });
+    }
+  };
 
   const markDirVisited = (): void => {
     const curPath = `/${pathSegments.join('/')}`;
@@ -155,6 +175,7 @@ export function DirectoryContent() {
       });
     } catch (error) {
       toast({
+        title: 'Failed to delete image',
         description: error.toString(),
         status: 'error',
         duration: ERROR_DURATION
@@ -188,6 +209,7 @@ export function DirectoryContent() {
       });
     } catch (error) {
       toast({
+        title: 'Failed to restore image',
         description: error.toString(),
         status: 'error',
         duration: ERROR_DURATION
@@ -205,7 +227,7 @@ export function DirectoryContent() {
       if (error) throw error;
     } catch (error) {
       toast({
-        title: 'Trash not Emptied!',
+        title: 'Failed to empty trash',
         description: error.toString(),
         status: 'error',
         duration: ERROR_DURATION
@@ -236,6 +258,8 @@ export function DirectoryContent() {
         window.removeEventListener('keyup', handleKeyboardNav);
       }
 
+      setPickedCount((prevCount) => prevCount + 1);
+
       toast({
         description: 'Image picked!',
         status: 'info',
@@ -243,6 +267,7 @@ export function DirectoryContent() {
       });
     } catch (error) {
       toast({
+        title: 'Failed to pick image',
         description: error.toString(),
         status: 'error',
         duration: ERROR_DURATION
@@ -272,10 +297,18 @@ export function DirectoryContent() {
       isVisible: !!extension,
       icon: IoImage,
       value: extension
+    },
+    {
+      key: 'pickedCount',
+      isVisible: pickedCount > 0,
+      icon: IoHeart,
+      value: pickedCount
     }
   ];
 
-  const isImageFile = isValidImage({ extension: extension.slice(1) });
+  const isImageFile = isValidImage({
+    extension: extension.slice(1)
+  });
 
   const NAV_BAR_HEIGHT = '105px'; // nav height (55px) + vertical margins (25px * 2)
 

@@ -34,6 +34,7 @@ export function DirectoryList() {
       navigate('/directoryContent', { replace: true });
     } catch (error) {
       toast({
+        title: 'Failed to get folder contents',
         description: error.toString(),
         status: 'error',
         duration: ERROR_DURATION

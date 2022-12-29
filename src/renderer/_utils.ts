@@ -4,6 +4,12 @@ export const removeStartEndSlash = (path: string): string => {
   return path;
 };
 
+export const getParentDir = (path: string): string => {
+  const segments = path.split('/');
+  segments.pop();
+  return segments.join('/');
+};
+
 export const sortImages = (images: DirContentT[]): DirContentT[] =>
   images.sort((a, b) => {
     if (a.name < b.name) return -1;

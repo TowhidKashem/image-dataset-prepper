@@ -48,7 +48,7 @@ export function ChooseDirectory() {
       }
     } catch (error) {
       toast({
-        title: 'Are you sure you picked the same folder both times?',
+        title: 'Failed to get folder contents',
         description: error.toString(),
         status: 'error',
         duration: ERROR_DURATION
